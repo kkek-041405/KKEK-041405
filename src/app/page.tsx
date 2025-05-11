@@ -12,15 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook, PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Notebook } from 'lucide-react';
+import { AppBar } from '@/components/app-bar';
+
 
 export default function HomePage() {
   const [notes, setNotes] = useLocalStorage<Note[]>('notenest-items', []);
@@ -109,70 +103,53 @@ export default function HomePage() {
     );
   }
 
+  const noteFormProps = {
+    onSave: handleSaveNote,
+    isLoading: isLoading,
+    onFormSubmit: () => setIsFormOpen(false),
+  };
+
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8 min-h-screen flex flex-col">
-      <header className="my-8 text-center">
-        <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
-          <Notebook className="h-10 w-10 text-primary" />
-        </div>
-        <h1 className="text-5xl font-bold text-primary">NoteNest</h1>
-        <p className="text-lg text-muted-foreground mt-2">
+    <div className="flex flex-col min-h-screen">
+      <AppBar 
+        isFormOpen={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        noteFormProps={noteFormProps}
+      />
+      
+      <div className="container mx-auto flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
+        <p className="text-lg text-muted-foreground mt-4 mb-8 text-center">
           Your personal space for thoughts, ideas, and key information, enhanced by AI.
         </p>
-      </header>
 
-      <main className="flex-grow">
-        <section aria-labelledby="create-item-heading" className="mb-10 text-center">
-          <h2 id="create-item-heading" className="sr-only">Create a new item</h2>
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-            <DialogTrigger asChild>
-              <Button size="lg" className="shadow-md">
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Add New Item
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
-              <DialogHeader>
-                <DialogTitle>Create New Item</DialogTitle>
-              </DialogHeader>
-              <NoteForm 
-                onSave={handleSaveNote} 
-                isLoading={isLoading} 
-                onFormSubmit={() => setIsFormOpen(false)} // Pass this to NoteForm
-              />
-            </DialogContent>
-          </Dialog>
-        </section>
-        
-        <Separator className="my-10" />
-
-        <section aria-labelledby="items-list-heading" className="mb-10">
-           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
-          <NoteList
-            notes={notes}
-            selectedNoteId={selectedNoteId}
-            onSelectNote={handleSelectNote}
-            onDeleteNote={handleDeleteNote}
-          />
-        </section>
-
-        {selectedNote && (
-          <section aria-labelledby="view-item-heading" className="mb-10">
-            <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
-            <NoteView
-              note={selectedNote}
-              onSummarize={handleSummarizeNote}
-              isLoadingSummary={isLoadingSummary}
+        <main className="flex-grow">
+          <section aria-labelledby="items-list-heading" className="mb-10">
+            <h2 id="items-list-heading" className="sr-only">Your Items</h2>
+            <NoteList
+              notes={notes}
+              selectedNoteId={selectedNoteId}
+              onSelectNote={handleSelectNote}
+              onDeleteNote={handleDeleteNote}
             />
           </section>
-        )}
-      </main>
-      
-      <footer className="text-center py-6 text-sm text-muted-foreground border-t mt-auto">
-        <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
-      </footer>
+
+          {selectedNote && (
+            <section aria-labelledby="view-item-heading" className="mb-10">
+              <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
+              <NoteView
+                note={selectedNote}
+                onSummarize={handleSummarizeNote}
+                isLoadingSummary={isLoadingSummary}
+              />
+            </section>
+          )}
+        </main>
+        
+        <footer className="text-center py-6 text-sm text-muted-foreground border-t mt-auto">
+          <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
+        </footer>
+      </div>
       <Toaster />
     </div>
   );
 }
-
