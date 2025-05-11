@@ -122,8 +122,11 @@ export default function HomePage() {
           Your personal space for thoughts, ideas, and key information, enhanced by AI.
         </p>
 
-        <main className="flex-grow">
-          <section aria-labelledby="items-list-heading" className="mb-10">
+        <main className="flex-1 flex flex-col"> {/* Ensure main is flex-col and can grow */}
+          <section 
+            aria-labelledby="items-list-heading" 
+            className="mb-10 flex flex-col flex-1" // NoteList section will grow
+          >
             <h2 id="items-list-heading" className="sr-only">Your Items</h2>
             <NoteList
               notes={notes}
@@ -134,7 +137,10 @@ export default function HomePage() {
           </section>
 
           {selectedNote && (
-            <section aria-labelledby="view-item-heading" className="mb-10">
+            <section 
+              aria-labelledby="view-item-heading" 
+              className="mb-10 flex flex-col flex-1" // NoteView section will also grow if present
+            >
               <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
               <NoteView
                 note={selectedNote}

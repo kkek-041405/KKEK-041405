@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -24,7 +25,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
   const ItemIcon = note.type === 'note' ? FileText : Info;
 
   return (
-    <Card className="mt-8 shadow-lg">
+    <Card className="mt-8 shadow-lg flex flex-col flex-1"> {/* Card fills available space */}
       <CardHeader>
         <div className="flex justify-between items-start">
           <CardTitle className="text-2xl break-words">{note.title}</CardTitle>
@@ -37,7 +38,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
           Created on: {format(new Date(note.createdAt), "PPP p")}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-y-auto"> {/* CardContent expands and scrolls if needed */}
         {note.type === 'note' && note.content && (
           <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
             {note.content}
