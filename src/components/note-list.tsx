@@ -4,8 +4,9 @@
 import type { Note } from '@/lib/types';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ListChecks, Filter } from 'lucide-react'; 
+import { Button } from '@/components/ui/button';
+import { ListChecks, ListFilter, FileText, Info, List } from 'lucide-react'; 
+import { cn } from '@/lib/utils';
 
 
 interface NoteListProps {
@@ -20,10 +21,46 @@ interface NoteListProps {
 export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote, sortType, onSortChange }: NoteListProps) {
   const displayedNotes = notes.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   
+  const handleSortToggle = () => {
+    if (sortType === 'all') {
+      onSortChange('note');
+    } else if (sortType === 'note') {
+      onSortChange('keyInformation');
+    } else {
+      onSortChange('all');
+    }
+  };
+
+  const getSortIcon = () => {
+    switch (sortType) {
+      case 'note':
+        return <FileText className="h-4 w-4" />;
+      case 'keyInformation':
+        return <Info className="h-4 w-4" />;
+      case 'all':
+      default:
+        return <ListFilter className="h-4 w-4" />;
+    }
+  };
+
+  const getTooltipText = () => {
+     switch (sortType) {
+      case 'all':
+        return "Showing all items. Click to filter Notes.";
+      case 'note':
+        return "Showing Notes. Click to filter Key Information.";
+      case 'keyInformation':
+        return "Showing Key Information. Click to show all items.";
+      default:
+        return "Filter items";
+    }
+  }
+
+
   if (notes.length === 0 && sortType === 'all') { // Only show empty state if no notes at all and filter is 'all'
     return (
       <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
-        <div className="p-6 border-b flex items-center justify-between">
+        <div className="p-4 border-b flex items-center justify-between">
           <h3 className="flex items-center text-xl font-semibold text-foreground">
              <ListChecks className="mr-2 h-5 w-5 text-primary" />
             Your Items
@@ -43,17 +80,16 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote, so
            <ListChecks className="mr-2 h-5 w-5 text-primary shrink-0" />
            <span className="truncate">Your Items</span>
         </h3>
-        <Select value={sortType} onValueChange={onSortChange}>
-          <SelectTrigger className="w-[180px] h-9 shadow-sm">
-            <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
-            <SelectValue placeholder="Sort by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Items</SelectItem>
-            <SelectItem value="note">Notes Only</SelectItem>
-            <SelectItem value="keyInformation">Key Information Only</SelectItem>
-          </SelectContent>
-        </Select>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleSortToggle}
+          className="h-9 w-9 shadow-sm border"
+          title={getTooltipText()}
+          aria-label={getTooltipText()}
+        >
+          {getSortIcon()}
+        </Button>
       </div>
       {displayedNotes.length === 0 && sortType !== 'all' ? (
          <div className="p-6 pt-0 flex-1 flex flex-col justify-center items-center">
@@ -79,3 +115,4 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote, so
     </div>
   );
 }
+
