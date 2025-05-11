@@ -18,6 +18,7 @@ interface NoteViewProps {
 
 export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
+  const [isCopyingSummary, setIsCopyingSummary] = useState(false);
   const { toast } = useToast();
   
   // Effect to handle client-side only clipboard access
@@ -51,6 +52,27 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
       });
     } finally {
       setIsCopyingValue(false);
+    }
+  };
+
+  const handleCopySummary = async () => {
+    if (!canCopy || !note.summary) return;
+    setIsCopyingSummary(true);
+    try {
+      await navigator.clipboard.writeText(note.summary);
+      toast({
+        title: "Summary Copied!",
+        description: "The AI summary has been copied to your clipboard.",
+      });
+    } catch (err) {
+      console.error('Failed to copy summary: ', err);
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy summary to clipboard.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCopyingSummary(false);
     }
   };
 
@@ -96,13 +118,13 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
                     disabled={isCopyingValue || !note.content}
                     variant="ghost" 
                     size="icon"
-                    className="shrink-0"
+                    className="shrink-0 h-8 w-8"
                     aria-label="Copy value"
                   >
                     {isCopyingValue ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Copy className="h-5 w-5" />
+                      <Copy className="h-4 w-4" />
                     )}
                   </Button>
                 )}
@@ -115,10 +137,28 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
           <div className={`${!(note.type === 'note' && note.content) ? 'pt-6' : ''}`}>
             {note.type === 'note' && note.content && <Separator className="my-6" />}
             <div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center">
-                <Sparkles className="mr-2 h-5 w-5 text-primary" />
-                AI Summary
-              </h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-primary" />
+                  AI Summary
+                </h3>
+                {canCopy && (
+                  <Button
+                    onClick={handleCopySummary}
+                    disabled={isCopyingSummary || !note.summary}
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 h-8 w-8"
+                    aria-label="Copy AI summary"
+                  >
+                    {isCopyingSummary ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </div>
               <p className="text-muted-foreground whitespace-pre-wrap break-words">{note.summary}</p>
             </div>
           </div>
@@ -145,3 +185,4 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
     </div>
   );
 }
+
