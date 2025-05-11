@@ -118,11 +118,8 @@ export default function HomePage() {
       />
       
       <div className="container mx-auto flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
-        <p className="text-lg text-muted-foreground mt-4 mb-8 text-center">
-          Your personal space for thoughts, ideas, and key information, enhanced by AI.
-        </p>
-
-        <main className="flex-1 flex flex-col"> {/* Ensure main is flex-col and can grow */}
+        
+        <main className="flex-1 flex flex-col mt-8"> {/* Ensure main is flex-col and can grow, added mt-8 */}
           <section 
             aria-labelledby="items-list-heading" 
             className="mb-10 flex flex-col flex-1" // NoteList section will grow
