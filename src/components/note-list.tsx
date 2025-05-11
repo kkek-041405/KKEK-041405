@@ -18,7 +18,7 @@ interface NoteListProps {
 export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NoteListProps) {
   if (notes.length === 0) {
     return (
-      <Card className="mt-8 shadow-lg flex flex-col flex-1"> {/* Card fills available space */}
+      <Card className="shadow-lg flex flex-col flex-1"> {/* Adjusted: Removed mt-8. Card fills available space */}
         <CardHeader>
           <CardTitle className="flex items-center text-xl">
              <ListChecks className="mr-2 h-5 w-5 text-primary" />
@@ -33,7 +33,7 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: 
   }
   
   return (
-    <Card className="mt-8 shadow-lg flex flex-col flex-1"> {/* Card fills available space */}
+    <Card className="shadow-lg flex flex-col flex-1"> {/* Adjusted: Removed mt-8. Card fills available space */}
       <CardHeader>
         <CardTitle className="flex items-center text-xl">
            <ListChecks className="mr-2 h-5 w-5 text-primary" />
@@ -58,3 +58,4 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: 
     </Card>
   );
 }
+

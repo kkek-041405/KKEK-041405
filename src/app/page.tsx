@@ -119,10 +119,10 @@ export default function HomePage() {
       
       <div className="container mx-auto flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
         
-        <main className="flex-1 flex flex-col mt-8"> {/* Ensure main is flex-col and can grow, added mt-8 */}
+        <main className="flex-1 flex flex-col gap-6"> {/* Adjusted: removed mt-8, added gap-6 */}
           <section 
             aria-labelledby="items-list-heading" 
-            className="mb-10 flex flex-col flex-1" // NoteList section will grow
+            className="flex flex-col flex-1" // Adjusted: removed mb-10
           >
             <h2 id="items-list-heading" className="sr-only">Your Items</h2>
             <NoteList
@@ -136,7 +136,7 @@ export default function HomePage() {
           {selectedNote && (
             <section 
               aria-labelledby="view-item-heading" 
-              className="mb-10 flex flex-col flex-1" // NoteView section will also grow if present
+              className="flex flex-col flex-1" // Adjusted: removed mb-10
             >
               <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
               <NoteView
@@ -148,7 +148,7 @@ export default function HomePage() {
           )}
         </main>
         
-        <footer className="text-center py-6 text-sm text-muted-foreground border-t mt-auto">
+        <footer className="text-center py-4 text-sm text-muted-foreground border-t mt-auto"> {/* Adjusted: py-6 to py-4 */}
           <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
         </footer>
       </div>
@@ -156,3 +156,4 @@ export default function HomePage() {
     </div>
   );
 }
+

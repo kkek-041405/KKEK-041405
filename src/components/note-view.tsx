@@ -25,7 +25,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
   const ItemIcon = note.type === 'note' ? FileText : Info;
 
   return (
-    <Card className="mt-8 shadow-lg flex flex-col flex-1"> {/* Card fills available space */}
+    <Card className="shadow-lg flex flex-col flex-1"> {/* Adjusted: Removed mt-8. Card fills available space */}
       <CardHeader>
         <div className="flex justify-between items-start">
           <CardTitle className="text-2xl break-words">{note.title}</CardTitle>
@@ -79,3 +79,4 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
     </Card>
   );
 }
+
