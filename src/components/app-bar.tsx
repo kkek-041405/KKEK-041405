@@ -45,9 +45,14 @@ export function AppBar({ isFormOpen, onOpenChange, noteFormProps }: AppBarProps)
         <div>
           <Dialog open={isFormOpen} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
-              <Button size="default" className="shadow-md" onClick={() => onOpenChange(true)}>
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Add New Item
+              <Button 
+                size="default" 
+                className="shadow-md" 
+                onClick={() => onOpenChange(true)}
+                aria-label="Add New Item"
+              >
+                <PlusCircle className="h-5 w-5 sm:mr-2" />
+                <span className="hidden sm:inline">Add New Item</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
