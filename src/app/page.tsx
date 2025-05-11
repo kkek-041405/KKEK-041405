@@ -22,6 +22,7 @@ export default function HomePage() {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
+  const [sortType, setSortType] = useState<'all' | 'note' | 'keyInformation'>('all');
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -108,6 +109,11 @@ export default function HomePage() {
     onFormSubmit: () => setIsFormOpen(false),
   };
 
+  const filteredNotes = notes.filter(note => {
+    if (sortType === 'all') return true;
+    return note.type === sortType;
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <AppBar 
@@ -123,14 +129,15 @@ export default function HomePage() {
         >
           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
           <NoteList
-            notes={notes}
+            notes={filteredNotes}
             selectedNoteId={selectedNoteId}
             onSelectNote={handleSelectNote}
             onDeleteNote={handleDeleteNote}
+            sortType={sortType}
+            onSortChange={setSortType}
           />
         </section>
 
-        {/* <Separator orientation="vertical" className="hidden md:block mx-2" /> */}
 
         {selectedNote ? (
           <section 
