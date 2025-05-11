@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -34,7 +33,8 @@ export default function HomePage() {
     const newNote: Note = {
       id: crypto.randomUUID(),
       title: data.title,
-      content: data.type === 'note' ? (data as Extract<NoteFormValues, {type: 'note'}>).content : "",
+      // content is now guaranteed by the form schema for both types
+      content: data.content,
       type: data.type,
       createdAt: new Date().toISOString(),
     };
@@ -44,7 +44,7 @@ export default function HomePage() {
       description: `Your item "${newNote.title}" has been successfully saved.`,
     });
     setIsLoading(false);
-    setIsFormOpen(false); 
+    setIsFormOpen(false);
   };
 
   const handleSelectNote = (id: string) => {
@@ -115,15 +115,15 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <AppBar 
+      <AppBar
         isFormOpen={isFormOpen}
         onOpenChange={setIsFormOpen}
         noteFormProps={noteFormProps}
       />
       
       <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8">
-        <section 
-          aria-labelledby="items-list-heading" 
+        <section
+          aria-labelledby="items-list-heading"
           className="md:w-1/3 flex flex-col"
         >
           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
@@ -140,8 +140,8 @@ export default function HomePage() {
 
 
         {selectedNote ? (
-          <section 
-            aria-labelledby="view-item-heading" 
+          <section
+            aria-labelledby="view-item-heading"
             className="md:w-2/3 flex flex-col"
           >
             <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
@@ -167,4 +167,3 @@ export default function HomePage() {
     </div>
   );
 }
-
