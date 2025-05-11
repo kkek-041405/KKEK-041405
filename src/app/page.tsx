@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import { NoteForm } from '@/components/note-form';
 import { NoteList } from '@/components/note-list';
 import { NoteView } from '@/components/note-view';
-import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
@@ -131,7 +130,7 @@ export default function HomePage() {
           />
         </section>
 
-        <Separator orientation="vertical" className="hidden md:block mx-2" />
+        {/* <Separator orientation="vertical" className="hidden md:block mx-2" /> */}
 
         {selectedNote ? (
           <section 
