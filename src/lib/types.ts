@@ -4,4 +4,6 @@ export interface Note {
   content: string;
   createdAt: string; // ISO Date string
   summary?: string;
+  type: 'note' | 'keyInformation';
 }
+

@@ -9,14 +9,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { PlusCircle, Info } from 'lucide-react';
 
 const noteFormSchema = z.object({
   title: z.string().min(1, { message: "Title is required." }).max(100, { message: "Title must be 100 characters or less." }),
   content: z.string().min(1, { message: "Content is required." }),
+  type: z.enum(['note', 'keyInformation'], { required_error: "You need to select a type." }),
 });
 
-type NoteFormValues = z.infer<typeof noteFormSchema>;
+export type NoteFormValues = z.infer<typeof noteFormSchema>;
 
 interface NoteFormProps {
   onSave: (data: NoteFormValues) => void;
@@ -29,8 +31,11 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
     defaultValues: {
       title: '',
       content: '',
+      type: 'note',
     },
   });
+
+  const selectedType = form.watch('type');
 
   const onSubmit = (data: NoteFormValues) => {
     onSave(data);
@@ -41,8 +46,8 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl">
-          <PlusCircle className="mr-2 h-6 w-6 text-primary" />
-          Create a New Note
+          {selectedType === 'note' ? <PlusCircle className="mr-2 h-6 w-6 text-primary" /> : <Info className="mr-2 h-6 w-6 text-primary" />}
+          Create New {selectedType === 'note' ? 'Note' : 'Key Information'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -50,12 +55,42 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="note" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Note</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="keyInformation" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Key Information</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter note title" {...field} />
+                    <Input placeholder={selectedType === 'note' ? "Enter note title" : "Enter key information title"} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -66,16 +101,16 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Content</FormLabel>
+                  <FormLabel>{selectedType === 'note' ? 'Content' : 'Details'}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Write your note here..." {...field} rows={6} />
+                    <Textarea placeholder={selectedType === 'note' ? "Write your note here..." : "Enter key details..."} {...field} rows={6} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-              {isLoading ? 'Saving...' : 'Save Note'}
+              {isLoading ? 'Saving...' : `Save ${selectedType === 'note' ? 'Note' : 'Information'}`}
             </Button>
           </form>
         </Form>

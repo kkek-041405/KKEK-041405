@@ -3,7 +3,7 @@
 import type * as React from 'react';
 import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Trash2, FileText } from 'lucide-react';
+import { Trash2, FileText, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NoteListItemProps {
@@ -18,6 +18,8 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
     e.stopPropagation(); // Prevent selection when deleting
     onDelete();
   };
+
+  const ItemIcon = note.type === 'note' ? FileText : Info;
   
   return (
     <div
@@ -31,7 +33,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
       )}
     >
       <div className="flex items-center space-x-3">
-        <FileText className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
+        <ItemIcon className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
         <span className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{note.title}</span>
       </div>
       <Button
@@ -39,7 +41,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
         size="icon"
         className="h-8 w-8 text-muted-foreground hover:text-destructive"
         onClick={handleDelete}
-        aria-label={`Delete note titled ${note.title}`}
+        aria-label={`Delete ${note.type === 'note' ? 'note' : 'key information'} titled ${note.title}`}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

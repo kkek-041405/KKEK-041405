@@ -4,7 +4,8 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Loader2, FileText, Info } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface NoteViewProps {
@@ -18,10 +19,19 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
     onSummarize(note.id, note.content);
   };
 
+  const itemTypeDisplay = note.type === 'note' ? 'Note' : 'Key Information';
+  const ItemIcon = note.type === 'note' ? FileText : Info;
+
   return (
     <Card className="mt-8 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl break-words">{note.title}</CardTitle>
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-2xl break-words">{note.title}</CardTitle>
+          <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="ml-2 whitespace-nowrap">
+            <ItemIcon className="mr-1 h-4 w-4" />
+            {itemTypeDisplay}
+          </Badge>
+        </div>
         <CardDescription>
           Created on: {format(new Date(note.createdAt), "PPP p")}
         </CardDescription>
@@ -30,7 +40,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
         <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
           {note.content}
         </div>
-        {note.summary && (
+        {note.summary && note.type === 'note' && (
           <>
             <Separator className="my-6" />
             <div>
@@ -43,21 +53,23 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
           </>
         )}
       </CardContent>
-      <CardFooter>
-        <Button onClick={handleSummarize} disabled={isLoadingSummary}>
-          {isLoadingSummary ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Summarizing...
-            </>
-          ) : (
-            <>
-              <Sparkles className="mr-2 h-4 w-4" />
-              Summarize Note
-            </>
-          )}
-        </Button>
-      </CardFooter>
+      {note.type === 'note' && (
+        <CardFooter>
+          <Button onClick={handleSummarize} disabled={isLoadingSummary}>
+            {isLoadingSummary ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Summarizing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Summarize Note
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }

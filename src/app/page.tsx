@@ -1,6 +1,7 @@
 "use client";
 
 import type { Note } from '@/lib/types';
+import type { NoteFormValues } from '@/components/note-form';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useState, useEffect } from 'react';
 import { NoteForm } from '@/components/note-form';
@@ -13,29 +14,29 @@ import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-not
 import { Notebook } from 'lucide-react';
 
 export default function HomePage() {
-  const [notes, setNotes] = useLocalStorage<Note[]>('notenest-notes', []);
+  const [notes, setNotes] = useLocalStorage<Note[]>('notenest-items', []); // Changed key to reflect generic items
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // For general loading, e.g. saving note
+  const [isLoading, setIsLoading] = useState(false); 
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const { toast } = useToast();
 
-  // Effect to ensure notes are loaded on initial client render
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const handleSaveNote = (data: { title: string; content: string }) => {
+  const handleSaveNote = (data: NoteFormValues) => {
     setIsLoading(true);
     const newNote: Note = {
       id: crypto.randomUUID(),
       title: data.title,
       content: data.content,
+      type: data.type,
       createdAt: new Date().toISOString(),
     };
     setNotes((prevNotes) => [...prevNotes, newNote]);
     toast({
-      title: "Note Saved!",
+      title: `${data.type === 'note' ? 'Note' : 'Key Information'} Saved!`,
       description: `"${newNote.title}" has been successfully saved.`,
     });
     setIsLoading(false);
@@ -46,13 +47,14 @@ export default function HomePage() {
   };
 
   const handleDeleteNote = (id: string) => {
+    const itemToDelete = notes.find(note => note.id === id);
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
     if (selectedNoteId === id) {
       setSelectedNoteId(null);
     }
     toast({
-      title: "Note Deleted",
-      description: "The note has been removed.",
+      title: `${itemToDelete?.type === 'note' ? 'Note' : 'Key Information'} Deleted`,
+      description: `The item "${itemToDelete?.title}" has been removed.`,
       variant: "destructive"
     });
   };
@@ -89,8 +91,6 @@ export default function HomePage() {
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
 
   if (!isClient) {
-    // Render a loading state or null during SSR/SSG and first client render pass
-    // This avoids hydration mismatches with localStorage
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Notebook className="h-12 w-12 animate-pulse text-primary" />
@@ -106,20 +106,20 @@ export default function HomePage() {
         </div>
         <h1 className="text-5xl font-bold text-primary">NoteNest</h1>
         <p className="text-lg text-muted-foreground mt-2">
-          Your personal space for thoughts and ideas, enhanced by AI.
+          Your personal space for thoughts, ideas, and key information, enhanced by AI.
         </p>
       </header>
 
       <main className="flex-grow">
-        <section aria-labelledby="create-note-heading" className="mb-10">
-          <h2 id="create-note-heading" className="sr-only">Create a new note</h2>
+        <section aria-labelledby="create-item-heading" className="mb-10">
+          <h2 id="create-item-heading" className="sr-only">Create a new item</h2>
           <NoteForm onSave={handleSaveNote} isLoading={isLoading} />
         </section>
         
         <Separator className="my-10" />
 
-        <section aria-labelledby="notes-list-heading" className="mb-10">
-           <h2 id="notes-list-heading" className="sr-only">Your Notes</h2>
+        <section aria-labelledby="items-list-heading" className="mb-10">
+           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
           <NoteList
             notes={notes}
             selectedNoteId={selectedNoteId}
@@ -129,8 +129,8 @@ export default function HomePage() {
         </section>
 
         {selectedNote && (
-          <section aria-labelledby="view-note-heading" className="mb-10">
-            <h2 id="view-note-heading" className="sr-only">Selected Note: {selectedNote.title}</h2>
+          <section aria-labelledby="view-item-heading" className="mb-10">
+            <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
             <NoteView
               note={selectedNote}
               onSummarize={handleSummarizeNote}
