@@ -110,7 +110,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8 max-w-3xl min-h-screen flex flex-col">
+    <div className="container mx-auto p-4 sm:p-6 md:p-8 min-h-screen flex flex-col">
       <header className="my-8 text-center">
         <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
           <Notebook className="h-10 w-10 text-primary" />
@@ -175,3 +175,4 @@ export default function HomePage() {
     </div>
   );
 }
+
