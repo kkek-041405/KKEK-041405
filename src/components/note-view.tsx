@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -106,7 +107,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
         )}
       </div>
       
-      <div className="flex items-center p-6 pt-0 border-t mt-auto">
+      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto">
         {note.type === 'note' && (
           <Button onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
             {isLoadingSummary ? (
