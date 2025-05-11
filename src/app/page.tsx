@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -11,13 +12,22 @@ import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook } from 'lucide-react';
+import { Notebook, PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export default function HomePage() {
   const [notes, setNotes] = useLocalStorage<Note[]>('notenest-items', []);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
 
   const [isClient, setIsClient] = useState(false);
@@ -30,8 +40,6 @@ export default function HomePage() {
     const newNote: Note = {
       id: crypto.randomUUID(),
       title: data.title,
-      // For 'note' type, data.content is guaranteed by Zod schema.
-      // For 'keyInformation', data.content might be undefined or '', we ensure it's stored as ''.
       content: data.type === 'note' ? (data as Extract<NoteFormValues, {type: 'note'}>).content : "",
       type: data.type,
       createdAt: new Date().toISOString(),
@@ -42,6 +50,7 @@ export default function HomePage() {
       description: `Your item "${newNote.title}" has been successfully saved.`,
     });
     setIsLoading(false);
+    setIsFormOpen(false); // Close the dialog after saving
   };
 
   const handleSelectNote = (id: string) => {
@@ -113,9 +122,26 @@ export default function HomePage() {
       </header>
 
       <main className="flex-grow">
-        <section aria-labelledby="create-item-heading" className="mb-10">
+        <section aria-labelledby="create-item-heading" className="mb-10 text-center">
           <h2 id="create-item-heading" className="sr-only">Create a new item</h2>
-          <NoteForm onSave={handleSaveNote} isLoading={isLoading} />
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="shadow-md">
+                <PlusCircle className="mr-2 h-5 w-5" />
+                Add New Item
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
+              <DialogHeader>
+                <DialogTitle>Create New Item</DialogTitle>
+              </DialogHeader>
+              <NoteForm 
+                onSave={handleSaveNote} 
+                isLoading={isLoading} 
+                onFormSubmit={() => setIsFormOpen(false)} // Pass this to NoteForm
+              />
+            </DialogContent>
+          </Dialog>
         </section>
         
         <Separator className="my-10" />
