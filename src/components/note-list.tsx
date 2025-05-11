@@ -5,7 +5,7 @@ import type { Note } from '@/lib/types';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { ListChecks, ListFilter, FileText, Info, List } from 'lucide-react'; 
+import { ListChecks, ListFilter, FileText, Info } from 'lucide-react'; 
 import { cn } from '@/lib/utils';
 
 
@@ -115,4 +115,5 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote, so
     </div>
   );
 }
+
 
