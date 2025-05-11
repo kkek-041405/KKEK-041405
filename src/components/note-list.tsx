@@ -76,21 +76,20 @@ export function NoteList({ notes, filteredNotes, selectedNoteId, onSelectNote, o
           <p className="text-center text-muted-foreground py-4">No items of type "{sortType === 'note' ? 'Note' : 'Key Information'}" found.</p>
         </div>
       ) : (
-        <div className="p-4 pt-0 flex-1">
-          <ScrollArea className="h-full pr-3">
-            <div className="space-y-2 pt-4"> 
-              {displayedNotesList.map((note) => (
-                <NoteListItem
-                  key={note.id}
-                  note={note}
-                  isSelected={note.id === selectedNoteId}
-                  onSelect={() => onSelectNote(note.id)}
-                  onDelete={() => onDeleteNote(note.id)}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
+        <div className="p-4 pt-0 max-h-[500px] overflow-y-auto">
+  <div className="space-y-2 pt-4"> 
+    {displayedNotesList.map((note) => (
+      <NoteListItem
+        key={note.id}
+        note={note}
+        isSelected={note.id === selectedNoteId}
+        onSelect={() => onSelectNote(note.id)}
+        onDelete={() => onDeleteNote(note.id)}
+      />
+    ))}
+  </div>
+</div>
+
       )}
     </div>
   );

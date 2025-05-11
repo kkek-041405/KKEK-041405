@@ -5,7 +5,7 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -14,14 +14,14 @@ interface NoteViewProps {
   note: Note;
   onSummarize: (noteId: string, noteContent: string) => Promise<void>;
   isLoadingSummary: boolean;
+  onEditRequest: (note: Note) => void;
 }
 
-export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps) {
+export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
   const { toast } = useToast();
   
-  // Effect to handle client-side only clipboard access
   const [canCopy, setCanCopy] = useState(false);
   useEffect(() => {
     setCanCopy(typeof navigator !== 'undefined' && !!navigator.clipboard);
@@ -84,7 +84,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
       <div className="flex flex-col space-y-1.5 p-6 border-b">
         <div className="flex justify-between items-start">
           <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
-            {note.type === 'note' ? note.title : note.title} {/* For keyInformation, title is Key Name */}
+            {note.title}
           </h2>
           <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="ml-2 whitespace-nowrap">
             <ItemIcon className="mr-1 h-4 w-4" />
@@ -165,7 +165,10 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
         )}
       </div>
       
-      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto min-h-[76px]"> {/* Ensure consistent footer height */}
+      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto min-h-[76px] gap-2">
+        <Button variant="outline" size="default" onClick={() => onEditRequest(note)}>
+            <Pencil className="mr-2 h-4 w-4" /> Edit
+        </Button>
         {note.type === 'note' && (
           <Button onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
             {isLoadingSummary ? (
@@ -186,3 +189,4 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
   );
 }
 
+    

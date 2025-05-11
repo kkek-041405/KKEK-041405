@@ -1,22 +1,24 @@
-import type {Metadata} from 'next';
-import { Geist, Geist_Mono } from 'next/font/google'; // Corrected import for Geist
-import './globals.css';
 
-const geistSans = Geist({ // Corrected usage of Geist
+import type {Metadata} from 'next';
+import { Geist, Geist_Mono } from 'next/font/google'; // Corrected import to use next/font/google
+import './globals.css';
+import { Toaster } from "@/components/ui/toaster"; 
+
+const geistSans = Geist({ // Corrected font import usage
   variable: '--font-geist-sans',
   subsets: ['latin'],
-  display: 'swap', // Added display swap for better font loading
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
+const geistMono = Geist_Mono({ // Corrected font import usage
   variable: '--font-geist-mono',
   subsets: ['latin'],
-  display: 'swap', // Added display swap
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'NoteNest - Your Personal Note Organizer',
-  description: 'An app that helps store and summarize your notes, built with Next.js and AI.',
+  title: 'Your Name - Portfolio', // More generic title for root layout
+  description: 'Personal portfolio website showcasing projects, skills, and experience of Your Name.',
 };
 
 export default function RootLayout({
@@ -28,6 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className={`font-sans antialiased`}> {/* Use --font-geist-sans directly via font-sans Tailwind utility */}
         {children}
+        <Toaster />
       </body>
     </html>
   );
