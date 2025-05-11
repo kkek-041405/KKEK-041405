@@ -16,6 +16,7 @@ interface NoteViewProps {
 
 export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps) {
   const handleSummarize = () => {
+    // Content for 'note' type is guaranteed by how it's saved.
     onSummarize(note.id, note.content);
   };
 
@@ -37,9 +38,13 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
-          {note.content}
-        </div>
+        {note.type === 'note' && note.content && (
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
+            {note.content}
+          </div>
+        )}
+        {/* If it's keyInformation, the title already displays the information, so no separate content block is needed. */}
+        
         {note.summary && note.type === 'note' && (
           <>
             <Separator className="my-6" />

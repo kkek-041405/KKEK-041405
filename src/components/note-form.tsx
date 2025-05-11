@@ -12,11 +12,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PlusCircle, Info } from 'lucide-react';
 
-const noteFormSchema = z.object({
+const noteSchema = z.object({
+  type: z.literal('note'),
   title: z.string().min(1, { message: "Title is required." }).max(100, { message: "Title must be 100 characters or less." }),
   content: z.string().min(1, { message: "Content is required." }),
-  type: z.enum(['note', 'keyInformation'], { required_error: "You need to select a type." }),
 });
+
+const keyInformationSchema = z.object({
+  type: z.literal('keyInformation'),
+  title: z.string().min(1, { message: "Key information is required." }).max(250, { message: "Key information must be 250 characters or less." }),
+  content: z.string().optional(), // Content is not user-editable for keyInformation, but part of form state
+});
+
+const noteFormSchema = z.discriminatedUnion("type", [
+  noteSchema,
+  keyInformationSchema,
+]);
 
 export type NoteFormValues = z.infer<typeof noteFormSchema>;
 
@@ -32,15 +43,24 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
       title: '',
       content: '',
       type: 'note',
-    },
+    } as NoteFormValues, // Ensure type safety for defaultValues
   });
 
   const selectedType = form.watch('type');
 
   const onSubmit = (data: NoteFormValues) => {
     onSave(data);
-    form.reset();
+    form.reset({ title: '', content: '', type: selectedType } as NoteFormValues);
   };
+
+  // Reset content field if type changes to keyInformation, or title if type changes to note (if it was key info)
+  React.useEffect(() => {
+    if (selectedType === 'keyInformation') {
+      form.setValue('content', ''); // Clear content if switching to keyInformation
+    }
+    // No need to clear title as it's used by both, just placeholder/label changes
+  }, [selectedType, form]);
+
 
   return (
     <Card className="shadow-lg">
@@ -61,7 +81,10 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
                   <FormLabel>Type</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value as 'note' | 'keyInformation');
+                        form.reset({ title: '', content: '', type: value as 'note' | 'keyInformation' });
+                      }}
                       defaultValue={field.value}
                       className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                     >
@@ -88,27 +111,38 @@ export function NoteForm({ onSave, isLoading = false }: NoteFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{selectedType === 'note' ? 'Title' : 'Key Information'}</FormLabel>
                   <FormControl>
-                    <Input placeholder={selectedType === 'note' ? "Enter note title" : "Enter key information title"} {...field} />
+                    <Input 
+                      placeholder={selectedType === 'note' ? "Enter note title" : "Enter key information"} 
+                      {...field} 
+                      value={field.value || ''} // Ensure value is not undefined
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{selectedType === 'note' ? 'Content' : 'Details'}</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder={selectedType === 'note' ? "Write your note here..." : "Enter key details..."} {...field} rows={6} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {selectedType === 'note' && (
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Write your note here..." 
+                        {...field} 
+                        rows={6} 
+                        value={field.value || ''} // Ensure value is not undefined
+                        />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
               {isLoading ? 'Saving...' : `Save ${selectedType === 'note' ? 'Note' : 'Information'}`}
             </Button>

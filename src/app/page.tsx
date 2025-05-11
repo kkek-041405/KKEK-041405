@@ -14,7 +14,7 @@ import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-not
 import { Notebook } from 'lucide-react';
 
 export default function HomePage() {
-  const [notes, setNotes] = useLocalStorage<Note[]>('notenest-items', []); // Changed key to reflect generic items
+  const [notes, setNotes] = useLocalStorage<Note[]>('notenest-items', []);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false); 
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -30,14 +30,16 @@ export default function HomePage() {
     const newNote: Note = {
       id: crypto.randomUUID(),
       title: data.title,
-      content: data.content,
+      // For 'note' type, data.content is guaranteed by Zod schema.
+      // For 'keyInformation', data.content might be undefined or '', we ensure it's stored as ''.
+      content: data.type === 'note' ? (data as Extract<NoteFormValues, {type: 'note'}>).content : "",
       type: data.type,
       createdAt: new Date().toISOString(),
     };
     setNotes((prevNotes) => [...prevNotes, newNote]);
     toast({
-      title: `${data.type === 'note' ? 'Note' : 'Key Information'} Saved!`,
-      description: `"${newNote.title}" has been successfully saved.`,
+      title: `${newNote.type === 'note' ? 'Note' : 'Key Information'} Saved!`,
+      description: `Your item "${newNote.title}" has been successfully saved.`,
     });
     setIsLoading(false);
   };
