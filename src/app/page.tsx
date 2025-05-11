@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook } from 'lucide-react';
+import { Notebook, FileText } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 
 
@@ -44,7 +44,7 @@ export default function HomePage() {
       description: `Your item "${newNote.title}" has been successfully saved.`,
     });
     setIsLoading(false);
-    setIsFormOpen(false); // Close the dialog after saving
+    setIsFormOpen(false); 
   };
 
   const handleSelectNote = (id: string) => {
@@ -117,10 +117,10 @@ export default function HomePage() {
         noteFormProps={noteFormProps}
       />
       
-      <main className="flex-1 flex flex-col gap-6 p-4 sm:p-6 md:p-8">
+      <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8">
         <section 
           aria-labelledby="items-list-heading" 
-          className="flex flex-col flex-1"
+          className="md:w-1/3 flex flex-col"
         >
           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
           <NoteList
@@ -131,10 +131,12 @@ export default function HomePage() {
           />
         </section>
 
-        {selectedNote && (
+        <Separator orientation="vertical" className="hidden md:block mx-2" />
+
+        {selectedNote ? (
           <section 
             aria-labelledby="view-item-heading" 
-            className="flex flex-col flex-1"
+            className="md:w-2/3 flex flex-col"
           >
             <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
             <NoteView
@@ -143,10 +145,16 @@ export default function HomePage() {
               isLoadingSummary={isLoadingSummary}
             />
           </section>
+        ) : (
+          <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
+            <p className="text-muted-foreground">Select an item from the list to view its details, or add a new one.</p>
+          </div>
         )}
       </main>
       
-      <footer className="text-center py-4 text-sm text-muted-foreground border-t mt-auto">
+      <footer className="text-center py-4 text-sm text-muted-foreground border-t">
         <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
       </footer>
       <Toaster />

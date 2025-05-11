@@ -3,13 +3,12 @@
 
 import type { Note } from '@/lib/types';
 import { NoteListItem } from './note-list-item';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ListChecks } from 'lucide-react'; // Changed icon to be more generic
+import { ListChecks } from 'lucide-react'; 
 
 
 interface NoteListProps {
-  notes: Note[]; // notes prop now represents general items
+  notes: Note[]; 
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
   onDeleteNote: (id: string) => void;
@@ -18,31 +17,31 @@ interface NoteListProps {
 export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NoteListProps) {
   if (notes.length === 0) {
     return (
-      <Card className="shadow-lg flex flex-col flex-1"> {/* Adjusted: Removed mt-8. Card fills available space */}
-        <CardHeader>
-          <CardTitle className="flex items-center text-xl">
+      <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
+        <div className="p-6 border-b">
+          <h3 className="flex items-center text-xl font-semibold text-foreground">
              <ListChecks className="mr-2 h-5 w-5 text-primary" />
             Your Items
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-center items-center"> {/* Content centers message */}
-          <p className="text-center text-muted-foreground py-4">You haven't created any notes or key information yet. Use the form above to get started!</p>
-        </CardContent>
-      </Card>
+          </h3>
+        </div>
+        <div className="p-6 pt-0 flex-1 flex flex-col justify-center items-center">
+          <p className="text-center text-muted-foreground py-4">You haven't created any notes or key information yet. Click "Add New Item" to get started!</p>
+        </div>
+      </div>
     );
   }
   
   return (
-    <Card className="shadow-lg flex flex-col flex-1"> {/* Adjusted: Removed mt-8. Card fills available space */}
-      <CardHeader>
-        <CardTitle className="flex items-center text-xl">
+    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
+      <div className="p-6 border-b">
+        <h3 className="flex items-center text-xl font-semibold text-foreground">
            <ListChecks className="mr-2 h-5 w-5 text-primary" />
            Your Items
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1"> {/* CardContent expands */}
-        <ScrollArea className="h-full pr-3"> {/* ScrollArea fills CardContent */}
-          <div className="space-y-2">
+        </h3>
+      </div>
+      <div className="p-6 pt-0 flex-1">
+        <ScrollArea className="h-full pr-3">
+          <div className="space-y-2 pt-6"> {/* Added pt-6 to create space from header */}
             {notes.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((note) => (
               <NoteListItem
                 key={note.id}
@@ -54,8 +53,8 @@ export function NoteList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: 
             ))}
           </div>
         </ScrollArea>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
