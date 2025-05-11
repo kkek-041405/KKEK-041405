@@ -86,9 +86,27 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
               <h3 className="text-sm font-medium text-muted-foreground">Key Name:</h3>
               <p className="text-lg text-foreground break-words">{note.title}</p>
             </div>
-            <div>
+            <div className="space-y-1">
               <h3 className="text-sm font-medium text-muted-foreground">Value:</h3>
-              <p className="text-base text-foreground whitespace-pre-wrap break-words bg-muted/50 p-3 rounded-md">{note.content}</p>
+              <div className="flex items-start gap-2">
+                <p className="flex-1 text-base text-foreground whitespace-pre-wrap break-words bg-muted/50 p-3 rounded-md">{note.content}</p>
+                {canCopy && (
+                  <Button 
+                    onClick={handleCopyValue} 
+                    disabled={isCopyingValue || !note.content}
+                    variant="ghost" 
+                    size="icon"
+                    className="shrink-0 mt-1"
+                    aria-label="Copy value"
+                  >
+                    {isCopyingValue ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Copy className="h-5 w-5" />
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -107,7 +125,7 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
         )}
       </div>
       
-      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto">
+      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto min-h-[76px]"> {/* Ensure consistent footer height */}
         {note.type === 'note' && (
           <Button onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
             {isLoadingSummary ? (
@@ -123,17 +141,8 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
             )}
           </Button>
         )}
-        {note.type === 'keyInformation' && canCopy && (
-          <Button onClick={handleCopyValue} disabled={isCopyingValue || !note.content}>
-            {isCopyingValue ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Copy className="mr-2 h-4 w-4" />
-            )}
-            Copy Value
-          </Button>
-        )}
       </div>
     </div>
   );
 }
+
