@@ -88,15 +88,15 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-medium text-muted-foreground">Value:</h3>
-              <div className="flex items-start gap-2">
-                <p className="flex-1 text-base text-foreground whitespace-pre-wrap break-words bg-muted/50 p-3 rounded-md">{note.content}</p>
+              <div className="flex items-center justify-between gap-2 bg-muted/50 p-3 rounded-md">
+                <p className="flex-1 text-base text-foreground whitespace-pre-wrap break-words">{note.content}</p>
                 {canCopy && (
                   <Button 
                     onClick={handleCopyValue} 
                     disabled={isCopyingValue || !note.content}
                     variant="ghost" 
                     size="icon"
-                    className="shrink-0 mt-1"
+                    className="shrink-0"
                     aria-label="Copy value"
                   >
                     {isCopyingValue ? (
@@ -145,4 +145,3 @@ export function NoteView({ note, onSummarize, isLoadingSummary }: NoteViewProps)
     </div>
   );
 }
-
