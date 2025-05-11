@@ -117,43 +117,39 @@ export default function HomePage() {
         noteFormProps={noteFormProps}
       />
       
-      <div className="container mx-auto flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
-        
-        <main className="flex-1 flex flex-col gap-6"> {/* Adjusted: removed mt-8, added gap-6 */}
+      <main className="flex-1 flex flex-col gap-6 p-4 sm:p-6 md:p-8">
+        <section 
+          aria-labelledby="items-list-heading" 
+          className="flex flex-col flex-1"
+        >
+          <h2 id="items-list-heading" className="sr-only">Your Items</h2>
+          <NoteList
+            notes={notes}
+            selectedNoteId={selectedNoteId}
+            onSelectNote={handleSelectNote}
+            onDeleteNote={handleDeleteNote}
+          />
+        </section>
+
+        {selectedNote && (
           <section 
-            aria-labelledby="items-list-heading" 
-            className="flex flex-col flex-1" // Adjusted: removed mb-10
+            aria-labelledby="view-item-heading" 
+            className="flex flex-col flex-1"
           >
-            <h2 id="items-list-heading" className="sr-only">Your Items</h2>
-            <NoteList
-              notes={notes}
-              selectedNoteId={selectedNoteId}
-              onSelectNote={handleSelectNote}
-              onDeleteNote={handleDeleteNote}
+            <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
+            <NoteView
+              note={selectedNote}
+              onSummarize={handleSummarizeNote}
+              isLoadingSummary={isLoadingSummary}
             />
           </section>
-
-          {selectedNote && (
-            <section 
-              aria-labelledby="view-item-heading" 
-              className="flex flex-col flex-1" // Adjusted: removed mb-10
-            >
-              <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
-              <NoteView
-                note={selectedNote}
-                onSummarize={handleSummarizeNote}
-                isLoadingSummary={isLoadingSummary}
-              />
-            </section>
-          )}
-        </main>
-        
-        <footer className="text-center py-4 text-sm text-muted-foreground border-t mt-auto"> {/* Adjusted: py-6 to py-4 */}
-          <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
-        </footer>
-      </div>
+        )}
+      </main>
+      
+      <footer className="text-center py-4 text-sm text-muted-foreground border-t mt-auto">
+        <p>&copy; {new Date().getFullYear()} NoteNest. All rights reserved.</p>
+      </footer>
       <Toaster />
     </div>
   );
 }
-
