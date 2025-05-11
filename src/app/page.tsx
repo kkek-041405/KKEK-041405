@@ -22,7 +22,7 @@ export default function HomePage() {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
-  const [sortType, setSortType] = useState<'all' | 'note' | 'keyInformation'>('all');
+  const [sortType, setSortType] = useState<'note' | 'keyInformation'>('note');
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -110,7 +110,6 @@ export default function HomePage() {
   };
 
   const filteredNotes = notes.filter(note => {
-    if (sortType === 'all') return true;
     return note.type === sortType;
   });
 
@@ -129,7 +128,8 @@ export default function HomePage() {
         >
           <h2 id="items-list-heading" className="sr-only">Your Items</h2>
           <NoteList
-            notes={filteredNotes}
+            notes={notes} // Pass all notes to NoteList for it to handle global empty state
+            filteredNotes={filteredNotes} // Pass filtered notes for display
             selectedNoteId={selectedNoteId}
             onSelectNote={handleSelectNote}
             onDeleteNote={handleDeleteNote}
@@ -167,3 +167,4 @@ export default function HomePage() {
     </div>
   );
 }
+
