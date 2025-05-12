@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -213,12 +212,17 @@ export default function PortfolioPage() {
           <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-20 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center text-center space-y-5 lg:col-span-2 xl:col-span-1">
-                  <div className="flex items-center flex-col md:flex-row gap-4 md:gap-6">
-                  <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl mb-1">
-                    <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
-                    <AvatarFallback>KKEK</AvatarFallback>
-                  </Avatar>
-                  <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
+                  <div className="flex flex-col md:flex-row items-center md:items-center gap-4 md:gap-6">
+                    <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl">
+                      <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
+                      <AvatarFallback>KKEK</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-center md:items-start">
+                      <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
+                      <p className="text-base sm:text-lg text-primary font-medium mt-1">
+                        3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
+                      </p>
+                    </div>
                   </div>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground text-center">
                     <span className="block text-center">Building Real-World Apps</span>
@@ -228,9 +232,6 @@ export default function PortfolioPage() {
                     A passionate full-stack developer specializing in React, Next.js, and Firebase. 
                     I love creating efficient, user-friendly web applications and exploring the potential of AI. 
                     Currently seeking opportunities to contribute to innovative projects.
-                  </p>
-                  <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium">
-                    3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 pt-3 w-full sm:w-auto">
                     <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
@@ -470,6 +471,5 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
 
 
