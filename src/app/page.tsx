@@ -9,7 +9,7 @@ import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'K. Komal Eshwara Kumar - Full-Stack Developer | AI Enthusiast',
+  title: 'K. Komal Eshwara Kumar - Full-Stack Developer',
   description: 'Welcome to the portfolio of K. Komal Eshwara Kumar. Discover my projects, skills, and learn more about my journey in tech and AI.',
 };
 
@@ -34,7 +34,7 @@ export default function PortfolioPage() {
                     K.KOMAL ESHWARA KUMAR
                   </h1>
                   <p className="text-lg sm:text-xl md:text-2xl text-primary font-semibold">
-                    Full-Stack Developer | AI Enthusiast | Creative Problem Solver
+                    Full-Stack Developer | Creative Problem Solver
                   </p>
                 </div>
               </div>
