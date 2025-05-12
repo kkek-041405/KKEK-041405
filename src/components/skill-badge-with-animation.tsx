@@ -9,15 +9,22 @@ interface SkillBadgeWithAnimationProps {
   name: string;
   skillIcon: LucideIcon;
   proficiency: number;
-  isVisible: boolean; // Prop to trigger animation
+  isVisible: boolean; // Prop to trigger animation when section is visible
 }
 
 const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name, skillIcon: SkillIcon, proficiency, isVisible }) => {
   const [animatedProficiency, setAnimatedProficiency] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const animationFrameId = useRef<number | null>(null);
+  const hasPlayedInitialAnimation = useRef(false);
 
   useEffect(() => {
-    if (isVisible) {
+    const animate = () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+      setAnimatedProficiency(0); // Reset before starting animation
+
       let startTimestamp: number | null = null;
       const animationDuration = 1000; // Animation duration in ms
 
@@ -32,24 +39,43 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
           animationFrameId.current = requestAnimationFrame(animateStep);
         }
       };
-
       animationFrameId.current = requestAnimationFrame(animateStep);
+    };
+
+    if (isVisible) {
+      if (isHovered) {
+        animate(); // Animate on hover
+      } else if (!hasPlayedInitialAnimation.current) {
+        animate(); // Animate on first becoming visible
+        hasPlayedInitialAnimation.current = true;
+      } else {
+        // Visible, not hovered, and initial animation has played. Reset to 0.
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+        }
+        setAnimatedProficiency(0); 
+      }
+    } else {
+      // Not visible, reset everything
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+      setAnimatedProficiency(0);
+      hasPlayedInitialAnimation.current = false; // Reset for next time it becomes visible
     }
-    // Optional: Reset animation if it goes out of view and you want it to re-animate
-    // else {
-    //   setAnimatedProficiency(0); 
-    // }
 
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [isVisible, proficiency]);
+  }, [isVisible, isHovered, proficiency]);
 
   return (
     <div 
       className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <TooltipProvider>
         <Tooltip>
@@ -58,7 +84,7 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
               className="w-10 h-10 p-1 rounded-lg flex items-center justify-center"
               style={{
                 background: `conic-gradient(hsl(var(--primary)) ${animatedProficiency}%, hsl(var(--secondary)) ${animatedProficiency}% 100%)`,
-                transition: 'background 0.1s linear', // Attempt a slight transition for smoothness
+                transition: 'background 0.1s linear', 
               }}
             >
               <div className="w-full h-full bg-card rounded-md flex items-center justify-center">
