@@ -49,11 +49,11 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
         animate(); // Animate on first becoming visible
         hasPlayedInitialAnimation.current = true;
       } else {
-        // Visible, not hovered, and initial animation has played. Reset to 0.
-        if (animationFrameId.current) {
+        // Visible, not hovered, and initial animation has played. Reset to 0 if not hovered.
+        if (!isHovered && animationFrameId.current) {
           cancelAnimationFrame(animationFrameId.current);
+          setAnimatedProficiency(0);
         }
-        setAnimatedProficiency(0); 
       }
     } else {
       // Not visible, reset everything
@@ -72,14 +72,14 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
   }, [isVisible, isHovered, proficiency]);
 
   return (
-    <div 
-      className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div 
+            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <div
               className="w-10 h-10 p-1 rounded-lg flex items-center justify-center"
               style={{
@@ -91,16 +91,15 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
                 <SkillIcon size={24} className="text-primary" />
               </div>
             </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{name} ({proficiency}%)</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <span className="font-medium text-xs text-foreground mt-1">{name}</span>
-    </div>
+            <span className="font-medium text-xs text-foreground mt-1">{name}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{name} ({proficiency}%)</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
 export default SkillBadgeWithAnimation;
-
