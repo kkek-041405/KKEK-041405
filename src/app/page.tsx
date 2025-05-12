@@ -220,10 +220,15 @@ export default function PortfolioPage() {
                   </Avatar>
                   <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
                   </div>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
-                    Building Real-World Apps<br />
-                    Scalable. Searchable. Performant.
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground text-center">
+                    <span className="block text-center">Building Real-World Apps</span>
+                    <span className="block text-center text-primary">Scalable. Searchable. Performant.</span>
                   </h1>
+                   <p className="max-w-2xl text-lg sm:text-xl text-muted-foreground md:mx-0">
+                    A passionate full-stack developer specializing in React, Next.js, and Firebase. 
+                    I love creating efficient, user-friendly web applications and exploring the potential of AI. 
+                    Currently seeking opportunities to contribute to innovative projects.
+                  </p>
                   <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium">
                     3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
                   </p>
@@ -465,5 +470,6 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
 
 
