@@ -211,8 +211,8 @@ export default function PortfolioPage() {
         <AnimatedSection as="div" triggerOnce={true} initialClassName="opacity-0" animateClassName="opacity-100" duration="duration-1000" delay="delay-100">
           <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-20 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center text-center space-y-5 lg:col-span-2 xl:col-span-1">
-                  <div className="flex flex-col md:flex-row items-center md:items-center gap-4 md:gap-6">
+                <div className="flex flex-col items-center text-center space-y-6 lg:col-span-2 xl:col-span-1">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-6">
                     <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl">
                       <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
                       <AvatarFallback>KKEK</AvatarFallback>
@@ -224,11 +224,11 @@ export default function PortfolioPage() {
                       </p>
                     </div>
                   </div>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground text-center">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-foreground text-center">
                     <span className="block text-center">Building Real-World Apps</span>
-                    <span className="block text-center text-primary">Scalable. Searchable. Performant.</span>
+                    <span className="block text-center text-primary">Scalable. Performant.</span>
                   </h1>
-                   <p className="max-w-2xl text-lg sm:text-xl text-muted-foreground md:mx-0">
+                   <p className="max-w-2xl text-base sm:text-lg text-muted-foreground md:mx-0">
                     A passionate full-stack developer specializing in React, Next.js, and Firebase. 
                     I love creating efficient, user-friendly web applications and exploring the potential of AI. 
                     Currently seeking opportunities to contribute to innovative projects.
