@@ -399,9 +399,7 @@ export default function PortfolioPage() {
                             </div>
                           )}
                           <span className="font-medium text-foreground flex-grow">{skill.name}</span>
-                          {typeof skill.proficiency === 'number' && (
-                            <span className="text-sm font-semibold text-primary">{skill.proficiency}%</span>
-                          )}
+                          {/* Percentage text removed from here */}
                         </div>
                       ))}
                     </div>
