@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +13,7 @@ import { PortfolioHeader } from "@/components/portfolio-header";
 import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { ExperienceItem } from "@/components/experience-section"; 
 import { ExperienceSection } from "@/components/experience-section";
-import React, { useState, useEffect, useRef } from 'react'; // Added useRef
+import React, { useState, useEffect, useRef } from 'react';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -397,9 +398,9 @@ export default function PortfolioPage() {
         {/* Skills Section */}
         <section id="skills" ref={skillsSectionRef} className="py-16 md:py-24 bg-background dark:bg-background">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+            {/* <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
-            </h2>
+            </h2> */}
             <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
               {skillsData.map((skillCategory) => (
                 <div key={skillCategory.category}>
@@ -470,3 +471,4 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
