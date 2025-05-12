@@ -5,13 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
   UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Brain, Users, Settings, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Link as LinkIcon, Eye, Trophy, CaseSensitive,
-  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench
+  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench, TabletSmartphone, Share2, Home
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PortfolioHeader } from "@/components/portfolio-header";
 import { PortfolioFooter } from "@/components/portfolio-footer";
-import type { ExperienceItem } from "@/components/experience-section"; // Keep ExperienceItem type
+import type { ExperienceItem } from "@/components/experience-section"; 
 import { ExperienceSection } from "@/components/experience-section";
 import React, { useState, useEffect } from 'react';
 
@@ -115,71 +115,18 @@ const initialProjects: Project[] = [
 // Skills Data
 const skillsData = [
   {
-    category: "Frontend Development",
+    category: "Core Technologies",
     icon: Code2,
     items: [
-      { name: "HTML5", skillIcon: FileCode },
-      { name: "CSS3", skillIcon: Palette },
-      { name: "JavaScript (ES6+)", skillIcon: Braces },
-      { name: "TypeScript", skillIcon: Type },
       { name: "React", skillIcon: Orbit },
-      { name: "Next.js", skillIcon: ServerIcon }, // Using ServerIcon as a placeholder for Next.js
-      { name: "Vue.js", skillIcon: Code2 }, // Placeholder, Vue has specific logo
+      { name: "Next.js", skillIcon: ServerIcon },
+      { name: "TypeScript", skillIcon: Type },
       { name: "Tailwind CSS", skillIcon: Wind },
-      { name: "ShadCN UI", skillIcon: Feather }, // Conceptual for lightness/utility
-      { name: "Responsive Design", skillIcon: TabletSmartphone }, // Need to import TabletSmartphone
-    ],
-  },
-  {
-    category: "Backend Development",
-    icon: ServerCog, // Changed from Settings
-    items: [
       { name: "Node.js", skillIcon: ServerCog },
-      { name: "Express.js", skillIcon: ServerIcon },
-      { name: "Python", skillIcon: FileCode }, // No direct Python icon, use FileCode
-      { name: "Django", skillIcon: FileCode },
-      { name: "Flask", skillIcon: FileCode },
-      { name: "Firebase (Firestore, Auth)", skillIcon: Cloud }, // Cloud or Database
-      { name: "REST APIs", skillIcon: LinkIcon },
-      { name: "GraphQL", skillIcon: Share2 }, // Need to import Share2
-    ],
-  },
-  {
-    category: "Databases",
-    icon: Database, // Changed from Zap
-    items: [
+      { name: "Firebase", skillIcon: Cloud },
+      { name: "Python", skillIcon: FileCode },
+      { name: "Firestore", skillIcon: Database },
       { name: "MongoDB", skillIcon: Database },
-      { name: "PostgreSQL", skillIcon: Database },
-      { name: "MySQL", skillIcon: Database },
-      { name: "Firestore", skillIcon: Cloud }, // Consistent with Firebase
-      { name: "Redis", skillIcon: Database }, // Generic DB icon
-    ],
-  },
-  {
-    category: "AI & Machine Learning",
-    icon: Brain,
-    items: [
-      { name: "Genkit", skillIcon: Wand2 },
-      { name: "TensorFlow", skillIcon: BrainCircuit },
-      { name: "PyTorch", skillIcon: Cpu }, // Conceptual
-      { name: "Scikit-learn", skillIcon: Cpu }, // Conceptual
-      { name: "Natural Language Processing", skillIcon: MessageCircleIcon },
-      { name: "Computer Vision", skillIcon: Eye },
-      { name: "Prompt Engineering", skillIcon: Sparkles },
-    ],
-  },
-  {
-    category: "DevOps & Tools",
-    icon: Wrench, // Changed from Settings
-    items: [
-      { name: "Git", skillIcon: GitFork },
-      { name: "GitHub", skillIcon: Github },
-      { name: "Docker", skillIcon: Container },
-      { name: "Kubernetes (Basic)", skillIcon: PackageIcon }, // Conceptual for orchestration
-      { name: "CI/CD (GitHub Actions)", skillIcon: Repeat }, // Conceptual for pipeline/automation
-      { name: "AWS (EC2, S3 - Basic)", skillIcon: Cloud },
-      { name: "Google Cloud Platform (Basic)", skillIcon: Cloud },
-      { name: "VS Code", skillIcon: TerminalSquare },
     ],
   },
   {
@@ -190,14 +137,10 @@ const skillsData = [
       { name: "Team Collaboration", skillIcon: Handshake },
       { name: "Agile Methodologies", skillIcon: IterationCcw },
       { name: "Communication", skillIcon: MessageCircleIcon },
-      { name: "Project Management (Basic)", skillIcon: ClipboardList },
       { name: "Leadership", skillIcon: Crown },
     ],
   },
 ];
-
-// Helper function to import TabletSmartphone and Share2 if not already
-import { TabletSmartphone, Share2 } from "lucide-react";
 
 
 export default function PortfolioPage() {
@@ -486,3 +429,4 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
