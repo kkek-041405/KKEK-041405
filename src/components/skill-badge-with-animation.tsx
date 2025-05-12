@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -19,11 +18,11 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
   const hasPlayedInitialAnimation = useRef(false);
 
   useEffect(() => {
-    const animate = () => {
+    const animateToFullProficiency = () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
-      setAnimatedProficiency(0); // Reset before starting animation
+      setAnimatedProficiency(0); // Reset before starting animation for a consistent effect
 
       let startTimestamp: number | null = null;
       const animationDuration = 1000; // Animation duration in ms
@@ -37,6 +36,8 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
 
         if (progress < animationDuration) {
           animationFrameId.current = requestAnimationFrame(animateStep);
+        } else {
+          setAnimatedProficiency(proficiency); // Ensure it ends exactly at target
         }
       };
       animationFrameId.current = requestAnimationFrame(animateStep);
@@ -44,26 +45,34 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
 
     if (isVisible) {
       if (isHovered) {
-        animate(); // Animate on hover
-      } else if (!hasPlayedInitialAnimation.current) {
-        animate(); // Animate on first becoming visible
-        hasPlayedInitialAnimation.current = true;
+        // Hovering and visible: always animate to full proficiency
+        animateToFullProficiency();
       } else {
-        // Visible, not hovered, and initial animation has played. Reset to 0 if not hovered.
-        if (!isHovered && animationFrameId.current) {
-          cancelAnimationFrame(animationFrameId.current);
-          setAnimatedProficiency(0);
+        // Not hovering, but visible
+        if (!hasPlayedInitialAnimation.current) {
+          // First time section is visible (or visible again after scrolling out): animate
+          animateToFullProficiency();
+          hasPlayedInitialAnimation.current = true;
+        } else {
+          // Visible, not first time, and not hovered:
+          // Ensure it's at full proficiency. This handles cases where a hover animation might have been interrupted
+          // or to maintain the state after the initial scroll-in animation.
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+          }
+          setAnimatedProficiency(proficiency);
         }
       }
-    } else {
-      // Not visible, reset everything
+    } else { // Not visible
+      // Reset everything when not visible
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
       setAnimatedProficiency(0);
-      hasPlayedInitialAnimation.current = false; // Reset for next time it becomes visible
+      hasPlayedInitialAnimation.current = false; // Allow re-animation when it becomes visible again
     }
 
+    // Cleanup function to cancel animation frame if component unmounts or dependencies change
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);

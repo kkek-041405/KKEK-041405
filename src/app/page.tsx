@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -166,7 +165,7 @@ export default function PortfolioPage() {
           // observer.unobserve(entry.target); 
         } else {
           // Optional: set to false if you want animation to reset and replay if it scrolls out and back in
-          // setIsSkillsSectionVisible(false); 
+          setIsSkillsSectionVisible(false); 
         }
       },
       {
@@ -471,4 +470,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
