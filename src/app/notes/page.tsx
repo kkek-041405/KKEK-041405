@@ -1,29 +1,39 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { NoteAuthForm, type NoteAuthFormValues } from '@/components/note-auth-form';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LockKeyhole } from 'lucide-react';
+import { LockKeyhole, LogIn } from 'lucide-react';
 import { PortfolioHeader } from '@/components/portfolio-header';
 import { PortfolioFooter } from '@/components/portfolio-footer';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function NotesAuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if already authenticated and redirect
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const authStatus = sessionStorage.getItem('notesAuthenticated');
+      if (authStatus === 'true') {
+        router.replace('/notes/content');
+      }
+    }
+  }, [router]);
+
   const handleAuthenticate = (data: NoteAuthFormValues) => {
     setIsLoading(true);
-    // Basic client-side check for simplicity. In a real app, this should be more secure.
     if (data.accessCode === process.env.NEXT_PUBLIC_NOTES_ACCESS_CODE) {
-      // Store a flag in session storage to indicate authentication
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('notesAuthenticated', 'true');
       }
-      router.push('/notes/content');
+      router.replace('/notes/content'); // Use replace to avoid back button to auth page
     } else {
       toast({
         title: 'Access Denied',
@@ -45,11 +55,16 @@ export default function NotesAuthPage() {
             </div>
             <CardTitle className="text-2xl md:text-3xl">Access Protected Notes</CardTitle>
             <CardDescription className="text-md md:text-lg">
-              Please enter the access code to view your notes.
+              This section requires an access code. Please enter it below or use the "Notes" button in the header.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <NoteAuthForm onAuthenticate={handleAuthenticate} isLoading={isLoading} />
+             <Button variant="outline" className="w-full" asChild>
+                <Link href="/#home">
+                    Go Back to Portfolio
+                </Link>
+            </Button>
           </CardContent>
         </Card>
       </main>
