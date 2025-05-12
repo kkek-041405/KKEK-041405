@@ -218,7 +218,7 @@ export default function PortfolioPage() {
                     <AvatarFallback>KKEK</AvatarFallback>
                   </Avatar>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
-                    Hi, I’m KKEK — <br className="block sm:hidden" />Crafting Scalable Apps <br className="hidden sm:block lg:hidden" />with React & Firebase.
+                    Building Real-World Apps <br className="block sm:hidden" /> — Scalable. Searchable. <br className="hidden sm:block lg:hidden" />Performant.
                   </h1>
                   <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium">
                     3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
@@ -334,53 +334,55 @@ export default function PortfolioPage() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProjects.map((project) => (
-                <Card key={project.id} className="flex flex-col overflow-hidden shadow-xl hover:shadow-primary/20 transition-all duration-300 rounded-lg transform hover:-translate-y-1">
-                  <CardHeader className="p-0 relative">
-                    <Image src={project.imageSrc} alt={project.title} width={600} height={400} className="object-cover aspect-video" data-ai-hint={project.imageHint} />
-                  </CardHeader>
-                  <CardContent className="flex-grow pt-6">
-                    <CardTitle className="mb-1 text-xl">{project.title}</CardTitle>
-                    <p className="text-sm text-primary font-medium mb-2">{project.subtitle}</p>
-                    <CardDescription className="mb-4 text-base leading-relaxed min-h-[4.5em] text-muted-foreground">{project.shortDescription}</CardDescription>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.slice(0, 4).map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
-                      {project.tech.length > 4 && <Badge variant="secondary">+{project.tech.length - 4}</Badge>}
-                    </div>
-                    {project.achievements && project.achievements.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Achievements</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {project.achievements.slice(0,2).map(achievement => (
-                            <Badge key={achievement} variant="outline" className="text-primary border-primary/50 bg-primary/10">
-                              <Trophy className="mr-1.5 h-3 w-3" /> {achievement}
-                            </Badge>
-                          ))}
-                        </div>
+                <AnimatedSection key={project.id} as="div" initialClassName="opacity-0 translate-y-4" animateClassName="opacity-100 translate-y-0" triggerOnce={false} duration="duration-500">
+                  <Card className="flex flex-col overflow-hidden shadow-xl hover:shadow-primary/20 transition-all duration-300 rounded-lg transform hover:-translate-y-1 h-full">
+                    <CardHeader className="p-0 relative">
+                      <Image src={project.imageSrc} alt={project.title} width={600} height={400} className="object-cover aspect-video" data-ai-hint={project.imageHint} />
+                    </CardHeader>
+                    <CardContent className="flex-grow pt-6">
+                      <CardTitle className="mb-1 text-xl">{project.title}</CardTitle>
+                      <p className="text-sm text-primary font-medium mb-2">{project.subtitle}</p>
+                      <CardDescription className="mb-4 text-base leading-relaxed min-h-[4.5em] text-muted-foreground">{project.shortDescription}</CardDescription>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tech.slice(0, 4).map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
+                        {project.tech.length > 4 && <Badge variant="secondary">+{project.tech.length - 4}</Badge>}
                       </div>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-3 border-t pt-4 pb-4 bg-secondary/20 dark:bg-secondary/10 rounded-b-lg px-4">
-                    <div className="flex gap-2">
-                        {project.githubLink && (
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
-                                    <Github className="mr-1.5 h-4 w-4" /> GitHub
-                                </Link>
-                            </Button>
-                        )}
-                        {project.liveLink && (
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="mr-1.5 h-4 w-4" /> Live
-                                </Link>
-                            </Button>
-                        )}
-                    </div>
-                    <Button size="sm" onClick={() => handleOpenModal(project)} className="w-full sm:w-auto">
-                        <Eye className="mr-1.5 h-4 w-4" /> View Details
-                    </Button>
-                  </CardFooter>
-                </Card>
+                      {project.achievements && project.achievements.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Achievements</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {project.achievements.slice(0,2).map(achievement => (
+                              <Badge key={achievement} variant="outline" className="text-primary border-primary/50 bg-primary/10">
+                                <Trophy className="mr-1.5 h-3 w-3" /> {achievement}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-3 border-t pt-4 pb-4 bg-secondary/20 dark:bg-secondary/10 rounded-b-lg px-4 mt-auto">
+                      <div className="flex gap-2">
+                          {project.githubLink && (
+                              <Button variant="outline" size="sm" asChild>
+                                  <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                                      <Github className="mr-1.5 h-4 w-4" /> GitHub
+                                  </Link>
+                              </Button>
+                          )}
+                          {project.liveLink && (
+                              <Button variant="outline" size="sm" asChild>
+                                  <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
+                                      <ExternalLink className="mr-1.5 h-4 w-4" /> Live
+                                  </Link>
+                              </Button>
+                          )}
+                      </div>
+                      <Button size="sm" onClick={() => handleOpenModal(project)} className="w-full sm:w-auto">
+                          <Eye className="mr-1.5 h-4 w-4" /> View Details
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </AnimatedSection>
               ))}
             </div>
             {filteredProjects.length === 0 && (
@@ -420,10 +422,10 @@ export default function PortfolioPage() {
                         ) : (
                           <div 
                             key={skill.name} 
-                            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-28 h-28 sm:w-32 sm:h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
                           >
-                            <div className="w-10 h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
-                              <skill.skillIcon size={24} className="text-secondary-foreground" />
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
+                              <skill.skillIcon className="text-secondary-foreground h-5 w-5 sm:h-6 sm:h-6" />
                             </div>
                             <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
                           </div>

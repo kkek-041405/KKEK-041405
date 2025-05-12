@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -85,19 +86,19 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
       <Tooltip>
         <TooltipTrigger asChild>
           <div 
-            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-28 h-28 sm:w-32 sm:h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
             <div
-              className="w-10 h-10 p-1 rounded-lg flex items-center justify-center"
+              className="w-8 h-8 sm:w-10 sm:h-10 p-1 rounded-lg flex items-center justify-center"
               style={{
                 background: `conic-gradient(hsl(var(--primary)) ${animatedProficiency}%, hsl(var(--secondary)) ${animatedProficiency}% 100%)`,
                 transition: 'background 0.1s linear', 
               }}
             >
               <div className="w-full h-full bg-card rounded-md flex items-center justify-center">
-                <SkillIcon size={24} className="text-primary" />
+                <SkillIcon className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
               </div>
             </div>
             <span className="font-medium text-xs text-foreground mt-1">{name}</span>
