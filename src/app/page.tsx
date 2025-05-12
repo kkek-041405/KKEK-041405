@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -217,7 +216,7 @@ export default function PortfolioPage() {
                       <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
                       <AvatarFallback>KKEK</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col items-center md:items-start">
+                    <div className="flex flex-col items-start text-left">
                       <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
                       <p className="text-base sm:text-lg text-primary font-medium mt-1">
                         3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
