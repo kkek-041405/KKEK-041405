@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Mail, UserCircle2, Download, Zap } from "lucide-react"; // Added Zap for hero image section
+import { Briefcase, Mail, UserCircle2, Download, Zap } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PortfolioHeader } from "@/components/portfolio-header";
@@ -9,8 +9,8 @@ import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'K. Komal Eshwara Kumar - Full-Stack Developer | AI Enthusiast',
-  description: 'Welcome to the portfolio of K. Komal Eshwara Kumar. Discover my projects, skills, and learn more about my journey in tech and AI.',
+  title: 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast',
+  description: 'Welcome to the portfolio of K. Komal Eshwara Kumar (KKEK). 3rd Year CSE, GATE Aspirant, Technical Head @ IUCEE VVIT. Discover projects and skills in React, Firebase, and AI.',
 };
 
 export default function PortfolioPage() {
@@ -20,35 +20,32 @@ export default function PortfolioPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section id="hero" className="w-full py-20 md:py-28 lg:py-36 xl:py-40 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
+        <section id="hero" className="w-full py-20 md:py-28 lg:py-32 xl:py-36 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
               {/* Text Content: Headline, Subtitle, CTAs */}
               <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
                 <Avatar className="w-28 h-28 md:w-32 md:h-32 border-4 border-primary shadow-xl mb-2">
-                  <AvatarImage src="https://picsum.photos/seed/avatar/200" alt="K. Komal Eshwara Kumar" data-ai-hint="professional portrait" />
+                  <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
                   <AvatarFallback>KKEK</AvatarFallback>
                 </Avatar>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
-                  K. Komal Eshwara Kumar
+                  Hi, I’m KKEK — <br className="block sm:hidden" />Crafting Scalable Apps <br className="hidden sm:block lg:hidden" />with React & Firebase.
                 </h1>
-                <p className="text-2xl sm:text-3xl md:text-4xl text-primary font-semibold">
-                  Full-Stack Developer & AI Innovator
-                </p>
-                <p className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
-                  Building cutting-edge digital experiences with a passion for AI, creative problem-solving, and impactful technology solutions.
+                <p className="text-xl sm:text-2xl md:text-3xl text-primary font-medium">
+                  3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
                   <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
                     <Link href="/projects">
-                      <Briefcase className="mr-2 h-5 w-5" /> Discover My Work
+                      <Briefcase className="mr-2 h-5 w-5" /> View Projects
                     </Link>
                   </Button>
                   <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
-                    <Link href="/contact">
-                      <Mail className="mr-2 h-5 w-5" /> Let's Connect
+                    <Link href="/resume.pdf" target="_blank" download>
+                      <Download className="mr-2 h-5 w-5" /> Download Resume
                     </Link>
                   </Button>
                 </div>
@@ -57,11 +54,11 @@ export default function PortfolioPage() {
               {/* Hero Image/Illustration */}
               <div className="hidden lg:flex justify-center items-center p-4">
                 <Image
-                  src="https://picsum.photos/seed/tech-hero/700/650" 
+                  src="https://picsum.photos/seed/hero-visual/700/650" 
                   alt="Abstract representation of technology and innovation"
                   width={700}
                   height={650}
-                  className="rounded-xl shadow-2xl object-cover aspect-[10/9]" // Adjusted aspect ratio
+                  className="rounded-xl shadow-2xl object-cover aspect-[10/9]"
                   data-ai-hint="technology abstract" 
                   priority 
                 />
@@ -79,12 +76,12 @@ export default function PortfolioPage() {
             <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-center">
               <div className="md:col-span-2">
                 <Image
-                  src="https://picsum.photos/seed/about-me/600/700"
-                  alt="A professional working environment or coding setup"
+                  src="https://picsum.photos/seed/about-me-kkek/600/700"
+                  alt="K. Komal Eshwara Kumar working on a project"
                   width={600}
                   height={700}
-                  className="rounded-xl shadow-2xl object-cover aspect-[6/7]" // Maintained aspect ratio
-                  data-ai-hint="person working"
+                  className="rounded-xl shadow-2xl object-cover aspect-[6/7]"
+                  data-ai-hint="person coding"
                 />
               </div>
               <div className="md:col-span-3 text-lg space-y-6 text-muted-foreground">

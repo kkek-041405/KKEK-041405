@@ -4,14 +4,14 @@ import { PortfolioFooter } from "@/components/portfolio-footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Github, Zap } from "lucide-react";
+import { Github, Zap, Link as LinkIcon } from "lucide-react"; // Added LinkIcon
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Projects - Your Name | Portfolio',
-  description: 'Explore a collection of projects by Your Name, showcasing skills in web development and AI.',
+  title: 'Projects - K. Komal Eshwara Kumar | Portfolio',
+  description: 'Explore a collection of projects by K. Komal Eshwara Kumar (KKEK), showcasing skills in web development and AI.',
 };
 
 const projects = [
@@ -21,8 +21,8 @@ const projects = [
     imageSrc: "https://picsum.photos/seed/project1/600/400",
     imageHint: "modern dashboard",
     tech: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS", "Genkit"],
-    githubLink: "#",
-    liveLink: "#",
+    githubLink: "#", // Replace with actual GitHub link
+    liveLink: "#",  // Replace with actual live link
   },
   {
     title: "AI Image Analyzer",
@@ -56,18 +56,18 @@ export default function ProjectsPage() {
             </h1>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {projects.map((project, index) => (
-                <Card key={index} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <Card key={index} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 rounded-lg">
                   <CardHeader className="p-0">
                     <Image src={project.imageSrc} alt={project.title} width={600} height={400} className="object-cover aspect-video" data-ai-hint={project.imageHint} />
                   </CardHeader>
                   <CardContent className="flex-grow pt-6">
                     <CardTitle className="mb-2 text-xl">{project.title}</CardTitle>
-                    <CardDescription className="mb-4 text-base leading-relaxed min-h-[6em]">{project.description}</CardDescription>
+                    <CardDescription className="mb-4 text-base leading-relaxed min-h-[6em] text-muted-foreground">{project.description}</CardDescription>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.tech.map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
                     </div>
                   </CardContent>
-                  <CardFooter className="flex justify-start gap-4 border-t pt-6">
+                  <CardFooter className="flex justify-start gap-4 border-t pt-6 bg-secondary/20 dark:bg-secondary/10 rounded-b-lg">
                     <Button variant="outline" asChild>
                         <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
                             <Github className="mr-2 h-4 w-4" /> GitHub
@@ -75,7 +75,7 @@ export default function ProjectsPage() {
                     </Button>
                     <Button asChild>
                         <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
-                            Live Demo
+                            <LinkIcon className="mr-2 h-4 w-4" /> Live Demo
                         </Link>
                     </Button>
                   </CardFooter>
