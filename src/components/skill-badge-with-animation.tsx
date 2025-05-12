@@ -77,3 +77,4 @@ const SkillBadgeWithAnimation: React.FC<SkillBadgeWithAnimationProps> = ({ name,
 };
 
 export default SkillBadgeWithAnimation;
+
