@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast | Portfolio', 
-  description: 'Comprehensive portfolio of K. Komal Eshwara Kumar (KKEK), showcasing skills, projects, experience, and contact information. Developer specializing in React, Next.js, Firebase, and AI solutions.',
+  title: 'NoteNest - Your Personal Note Taking App', 
+  description: 'NoteNest is a simple and elegant application for taking notes, managing key information, and summarizing content with AI.',
 };
 
 export default function RootLayout({
@@ -35,5 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
