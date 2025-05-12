@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,12 +13,13 @@ import { PortfolioHeader } from "@/components/portfolio-header";
 import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { ExperienceItem } from "@/components/experience-section"; 
 import { ExperienceSection } from "@/components/experience-section";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Added useRef
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import SkillBadgeWithAnimation from '@/components/skill-badge-with-animation';
 
 
 // Experience Data
@@ -145,11 +147,47 @@ const skillsData = [
 export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<string>("All");
+  const [isSkillsSectionVisible, setIsSkillsSectionVisible] = useState(false);
+  const skillsSectionRef = useRef<HTMLElement>(null);
+
 
   // Set document title dynamically for client components
   useEffect(() => {
     document.title = 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast | Portfolio';
   }, []);
+
+  // Intersection Observer for Skills Section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsSkillsSectionVisible(true);
+          // Optional: unobserve after first intersection if you don't want re-animation
+          // observer.unobserve(entry.target); 
+        } else {
+          // Optional: set to false if you want animation to reset and replay if it scrolls out and back in
+          // setIsSkillsSectionVisible(false); 
+        }
+      },
+      {
+        root: null, // viewport
+        rootMargin: '0px',
+        threshold: 0.1, // 10% of the element is visible
+      }
+    );
+
+    const currentSkillsSection = skillsSectionRef.current;
+    if (currentSkillsSection) {
+      observer.observe(currentSkillsSection);
+    }
+
+    return () => {
+      if (currentSkillsSection) {
+        observer.unobserve(currentSkillsSection);
+      }
+    };
+  }, []);
+
 
   const handleOpenModal = (project: Project) => {
     setSelectedProject(project);
@@ -358,12 +396,12 @@ export default function PortfolioPage() {
         )}
 
         {/* Skills Section */}
-        <section id="skills" className="py-16 md:py-24 bg-background dark:bg-background">
+        <section id="skills" ref={skillsSectionRef} className="py-16 md:py-24 bg-background dark:bg-background">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
             </h2>
-            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12"> {/* Changed from space-y-16 to grid */}
+            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
               {skillsData.map((skillCategory) => (
                 <div key={skillCategory.category}>
                   <div className="flex items-center gap-3 mb-8">
@@ -372,37 +410,25 @@ export default function PortfolioPage() {
                   </div>
                   <div className="flex flex-wrap gap-4 justify-start">
                     {skillCategory.items.map(skill => (
-                      <div 
-                        key={skill.name} 
-                        className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
-                      >
-                        {typeof skill.proficiency === 'number' ? (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div
-                                  className="w-10 h-10 p-1 rounded-lg flex items-center justify-center transition-all"
-                                  style={{
-                                    background: `conic-gradient(hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}% 100%)`
-                                  }}
-                                >
-                                  <div className="w-full h-full bg-card rounded-md flex items-center justify-center">
-                                     <skill.skillIcon size={24} className="text-primary" />
-                                  </div>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{skill.name}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ) : (
+                      skill.proficiency !== undefined ? (
+                        <SkillBadgeWithAnimation
+                          key={skill.name}
+                          name={skill.name}
+                          skillIcon={skill.skillIcon}
+                          proficiency={skill.proficiency}
+                          isVisible={isSkillsSectionVisible}
+                        />
+                      ) : (
+                        <div 
+                          key={skill.name} 
+                          className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                        >
                           <div className="w-10 h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
                             <skill.skillIcon size={24} className="text-secondary-foreground" />
                           </div>
-                        )}
-                        <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
-                      </div>
+                          <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>
@@ -445,4 +471,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
