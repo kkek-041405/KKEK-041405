@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,7 +19,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
 
 
 // Experience Data
@@ -374,26 +374,33 @@ export default function PortfolioPage() {
                   <CardContent className="pt-6 flex-grow">
                     <div className="space-y-5">
                       {skillCategory.items.map(skill => (
-                        <div key={skill.name}>
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-2">
-                              <skill.skillIcon size={20} className="text-muted-foreground group-hover:text-primary transition-colors" />
-                              <span className="font-medium text-foreground">{skill.name}</span>
-                            </div>
-                            {typeof skill.proficiency === 'number' && (
-                              <span className="text-sm font-semibold text-primary">{skill.proficiency}%</span>
-                            )}
-                          </div>
+                        <div key={skill.name} className="flex items-center gap-3">
                           {typeof skill.proficiency === 'number' ? (
-                            <Progress 
-                              value={skill.proficiency} 
-                              className="h-2.5 w-full" 
-                              aria-label={`${skill.name} proficiency ${skill.proficiency}%`} 
-                            />
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div
+                                    className="w-7 h-7 p-1 rounded-md flex items-center justify-center"
+                                    style={{
+                                      background: `linear-gradient(to top, hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}%)`
+                                    }}
+                                  >
+                                    <skill.skillIcon size={18} className="text-primary-foreground" />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{skill.name} - {skill.proficiency}% proficiency</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           ) : (
-                            skillCategory.category === "Soft Skills & Methodologies" && (
-                              <p className="text-sm text-muted-foreground italic">Qualitative skill</p>
-                            )
+                            <div className="w-7 h-7 p-1 rounded-md flex items-center justify-center bg-secondary">
+                              <skill.skillIcon size={18} className="text-secondary-foreground" />
+                            </div>
+                          )}
+                          <span className="font-medium text-foreground flex-grow">{skill.name}</span>
+                          {typeof skill.proficiency === 'number' && (
+                            <span className="text-sm font-semibold text-primary">{skill.proficiency}%</span>
                           )}
                         </div>
                       ))}
