@@ -4,21 +4,22 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Code2, Download, NotebookText, UserCircle, LayoutGrid, Phone } from "lucide-react";
+import { Menu, Code2, Download, NotebookText, UserCircle, LayoutGrid, Phone, Home } from "lucide-react"; // Added Home icon
 import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation';
-import { ThemeToggleButton } from './theme-toggle-button'; // Added import
+import { ThemeToggleButton } from './theme-toggle-button';
 
 export function PortfolioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
+    { href: "/#home", label: "Home", icon: Home }, // Changed About to Home and pointed to /#home
     { href: "/#about", label: "About", icon: UserCircle },
-    { href: "/projects", label: "Projects", icon: LayoutGrid },
-    { href: "/skills", label: "Skills", icon: Code2 },
-    { href: "/contact", label: "Contact", icon: Phone },
-    { href: "/notes", label: "Notes", icon: NotebookText },
+    { href: "/#projects", label: "Projects", icon: LayoutGrid },
+    { href: "/#skills", label: "Skills", icon: Code2 },
+    { href: "/#contact", label: "Contact", icon: Phone },
+    { href: "/notes", label: "Notes", icon: NotebookText }, // Notes remains a separate page
   ];
 
   useEffect(() => {
@@ -26,8 +27,15 @@ export function PortfolioHeader() {
   }, [pathname]);
 
   const isActive = (href: string) => {
-    if (href.includes("#")) {
-      return pathname === "/" || pathname === href.split("#")[0];
+    // For single page app, active link can be determined by current hash or if it's the root path for #home
+    if (href.startsWith("/#")) {
+        if (typeof window !== 'undefined') {
+          const currentHash = window.location.hash;
+          if (href === "/#home" && (pathname === "/" && !currentHash)) return true;
+          return currentHash === href.substring(1); // Check if hash matches section id
+        }
+        // Fallback for server rendering or if window is not available
+        return pathname === "/" && href === "/#home"; 
     }
     return pathname === href;
   };
@@ -35,7 +43,7 @@ export function PortfolioHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/#home" className="flex items-center gap-2"> {/* Default link to home section */}
           <Code2 className="h-7 w-7 text-primary" />
           <span className="font-bold text-xl tracking-tight">KKEK</span>
         </Link>
@@ -58,7 +66,7 @@ export function PortfolioHeader() {
             </Button>
           </nav>
 
-          <ThemeToggleButton /> {/* Added Theme Toggle Button */}
+          <ThemeToggleButton />
 
           {/* Mobile Navigation */}
           <div className="md:hidden">
@@ -99,3 +107,5 @@ export function PortfolioHeader() {
     </header>
   );
 }
+
+    
