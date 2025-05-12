@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import SkillBadgeWithAnimation from '@/components/skill-badge-with-animation';
+import AnimatedSection from '@/components/animated-section';
 
 
 // Experience Data
@@ -162,17 +163,14 @@ export default function PortfolioPage() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsSkillsSectionVisible(true);
-          // Optional: unobserve after first intersection if you don't want re-animation
-          // observer.unobserve(entry.target); 
         } else {
-          // Optional: set to false if you want animation to reset and replay if it scrolls out and back in
           setIsSkillsSectionVisible(false); 
         }
       },
       {
-        root: null, // viewport
+        root: null, 
         rootMargin: '0px',
-        threshold: 0.1, // 10% of the element is visible
+        threshold: 0.1, 
       }
     );
 
@@ -209,50 +207,52 @@ export default function PortfolioPage() {
 
       <main className="flex-1">
         {/* Hero Section (Home) */}
-        <section id="home" className="w-full py-20 md:py-28 lg:py-32 xl:py-36 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-                <Avatar className="w-28 h-28 md:w-32 md:h-32 border-4 border-primary shadow-xl mb-2">
-                  <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
-                  <AvatarFallback>KKEK</AvatarFallback>
-                </Avatar>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
-                  Hi, I’m KKEK — <br className="block sm:hidden" />Crafting Scalable Apps <br className="hidden sm:block lg:hidden" />with React & Firebase.
-                </h1>
-                <p className="text-xl sm:text-2xl md:text-3xl text-primary font-medium">
-                  3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
-                  <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
-                    <Link href="/#projects">
-                      <Briefcase className="mr-2 h-5 w-5" /> View Projects
-                    </Link>
-                  </Button>
-                  <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
-                    <Link href="/resume.pdf" target="_blank" download>
-                      <Download className="mr-2 h-5 w-5" /> Download Resume
-                    </Link>
-                  </Button>
+        <AnimatedSection as="div" triggerOnce={true} initialClassName="opacity-0" animateClassName="opacity-100" duration="duration-1000" delay="delay-100">
+          <section id="home" className="w-full py-20 md:py-28 lg:py-32 xl:py-36 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
+            <div className="container mx-auto px-4">
+              <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+                  <Avatar className="w-28 h-28 md:w-32 md:h-32 border-4 border-primary shadow-xl mb-2">
+                    <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
+                    <AvatarFallback>KKEK</AvatarFallback>
+                  </Avatar>
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
+                    Hi, I’m KKEK — <br className="block sm:hidden" />Crafting Scalable Apps <br className="hidden sm:block lg:hidden" />with React & Firebase.
+                  </h1>
+                  <p className="text-xl sm:text-2xl md:text-3xl text-primary font-medium">
+                    3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
+                    <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
+                      <Link href="/#projects">
+                        <Briefcase className="mr-2 h-5 w-5" /> View Projects
+                      </Link>
+                    </Button>
+                    <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
+                      <Link href="/resume.pdf" target="_blank" download>
+                        <Download className="mr-2 h-5 w-5" /> Download Resume
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+                <div className="hidden lg:flex justify-center items-center p-4">
+                  <Image
+                    src="https://picsum.photos/seed/hero-visual/700/650" 
+                    alt="Abstract representation of technology and innovation"
+                    width={700}
+                    height={650}
+                    className="rounded-xl shadow-2xl object-cover aspect-[10/9]"
+                    data-ai-hint="technology abstract" 
+                    priority 
+                  />
                 </div>
               </div>
-              <div className="hidden lg:flex justify-center items-center p-4">
-                <Image
-                  src="https://picsum.photos/seed/hero-visual/700/650" 
-                  alt="Abstract representation of technology and innovation"
-                  width={700}
-                  height={650}
-                  className="rounded-xl shadow-2xl object-cover aspect-[10/9]"
-                  data-ai-hint="technology abstract" 
-                  priority 
-                />
-              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </AnimatedSection>
 
         {/* About Me Section */}
-        <section id="about" className="py-16 md:py-24 bg-secondary/20 dark:bg-secondary/10">
+        <AnimatedSection as="section" id="about" triggerOnce={true} className="py-16 md:py-24 bg-secondary/20 dark:bg-secondary/10" delay="delay-200">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <UserCircle className="h-10 w-10 text-primary" /> About Me
@@ -289,20 +289,20 @@ export default function PortfolioPage() {
               </div>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* Experience Section */}
-        <section id="experience" className="py-16 md:py-24 bg-background dark:bg-background">
+        <AnimatedSection as="section" id="experience" triggerOnce={true} className="py-16 md:py-24 bg-background dark:bg-background" delay="delay-200">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <TrendingUp className="h-10 w-10 text-primary" /> Experience & Leadership
             </h2>
             <ExperienceSection experiences={experiences} />
           </div>
-        </section>
+        </AnimatedSection>
 
         {/* Projects Section */}
-        <section id="projects" className="py-16 md:py-24 bg-secondary/10 dark:bg-secondary/5">
+        <AnimatedSection as="section" id="projects" triggerOnce={true} className="py-16 md:py-24 bg-secondary/10 dark:bg-secondary/5" delay="delay-200">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
@@ -386,7 +386,7 @@ export default function PortfolioPage() {
                 <p className="text-center text-muted-foreground mt-10 text-lg">No projects found for the selected filter.</p>
             )}
           </div>
-        </section>
+        </AnimatedSection>
         {selectedProject && (
           <ExpandedProjectModal
             project={selectedProject}
@@ -396,49 +396,49 @@ export default function PortfolioPage() {
         )}
 
         {/* Skills Section */}
-        <section id="skills" ref={skillsSectionRef} className="py-16 md:py-24 bg-background dark:bg-background">
-          <div className="container mx-auto px-4">
-            {/* <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
-              <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
-            </h2> */}
-            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
-              {skillsData.map((skillCategory) => (
-                <div key={skillCategory.category}>
-                  <div className="flex items-center gap-3 mb-8">
-                    {skillCategory.icon && <skillCategory.icon className="h-8 w-8 text-primary" />}
-                    <h3 className="text-2xl md:text-3xl font-semibold text-foreground">{skillCategory.category}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-4 justify-start">
-                    {skillCategory.items.map(skill => (
-                      skill.proficiency !== undefined ? (
-                        <SkillBadgeWithAnimation
-                          key={skill.name}
-                          name={skill.name}
-                          skillIcon={skill.skillIcon}
-                          proficiency={skill.proficiency}
-                          isVisible={isSkillsSectionVisible}
-                        />
-                      ) : (
-                        <div 
-                          key={skill.name} 
-                          className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
-                        >
-                          <div className="w-10 h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
-                            <skill.skillIcon size={24} className="text-secondary-foreground" />
+        {/* The ref is for the IntersectionObserver controlling skill badge progress animation */}
+        <AnimatedSection as="div" triggerOnce={true} delay="delay-200">
+          <section id="skills" ref={skillsSectionRef} className="py-16 md:py-24 bg-background dark:bg-background">
+            <div className="container mx-auto px-4">
+              <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
+                {skillsData.map((skillCategory) => (
+                  <div key={skillCategory.category}>
+                    <div className="flex items-center gap-3 mb-8">
+                      {skillCategory.icon && <skillCategory.icon className="h-8 w-8 text-primary" />}
+                      <h3 className="text-2xl md:text-3xl font-semibold text-foreground">{skillCategory.category}</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-4 justify-start">
+                      {skillCategory.items.map(skill => (
+                        skill.proficiency !== undefined ? (
+                          <SkillBadgeWithAnimation
+                            key={skill.name}
+                            name={skill.name}
+                            skillIcon={skill.skillIcon}
+                            proficiency={skill.proficiency}
+                            isVisible={isSkillsSectionVisible}
+                          />
+                        ) : (
+                          <div 
+                            key={skill.name} 
+                            className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                          >
+                            <div className="w-10 h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
+                              <skill.skillIcon size={24} className="text-secondary-foreground" />
+                            </div>
+                            <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
                           </div>
-                          <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
-                        </div>
-                      )
-                    ))}
+                        )
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </AnimatedSection>
 
         {/* Contact Section */}
-        <section id="contact" className="py-16 md:py-24 bg-secondary/30 dark:bg-secondary/10">
+        <AnimatedSection as="section" id="contact" triggerOnce={true} className="py-16 md:py-24 bg-secondary/30 dark:bg-secondary/10" delay="delay-200">
           <div className="container mx-auto text-center px-4">
             <h2 className="text-3xl md:text-4xl font-bold mb-12 flex items-center justify-center gap-3">
               <MessageSquare className="h-10 w-10 text-primary" /> Get In Touch
@@ -464,7 +464,7 @@ export default function PortfolioPage() {
               <span className="text-sm">(Open to remote opportunities)</span>
             </div>
           </div>
-        </section>
+        </AnimatedSection>
       </main>
 
       <PortfolioFooter />
