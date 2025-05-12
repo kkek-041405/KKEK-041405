@@ -9,26 +9,28 @@ export function ThemeToggleButton() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
 
   useEffect(() => {
+    // On component mount, determine the initial theme
     const storedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     
     if (storedTheme) {
-      setTheme(storedTheme);
+      setTheme(storedTheme); // Use stored theme if available
     } else {
-      setTheme(systemPrefersDark ? "dark" : "light");
+      setTheme("dark"); // Default to dark mode if no theme is stored
     }
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   useEffect(() => {
-    if (theme === null) return; 
+    // This effect applies the theme to the HTML element and persists it
+    if (theme === null) return; // Do nothing if theme hasn't been determined yet
 
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
+    // Persist the current theme to localStorage
     localStorage.setItem("theme", theme);
-  }, [theme]);
+  }, [theme]); // This effect runs whenever the theme state changes
 
   const toggleTheme = () => {
     if (theme === null) return; 
@@ -36,9 +38,10 @@ export function ThemeToggleButton() {
   };
 
   if (theme === null) {
+    // Render a placeholder or a default icon while theme is loading
+    // This helps prevent hydration mismatch if server renders one icon and client quickly switches
     return (
       <Button variant="ghost" size="icon" disabled aria-label="Loading theme preferences">
-        {/* Using a static icon during loading to avoid spin animation issues with initial null theme */}
         <Sun className="h-5 w-5 text-muted-foreground" /> 
       </Button>
     );
@@ -50,3 +53,4 @@ export function ThemeToggleButton() {
     </Button>
   );
 }
+
