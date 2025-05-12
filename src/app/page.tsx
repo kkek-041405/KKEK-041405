@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -364,7 +363,7 @@ export default function PortfolioPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
             </h2>
-            <div className="space-y-16">
+            <div className="grid md:grid-cols-2 gap-x-16 gap-y-12"> {/* Changed from space-y-16 to grid */}
               {skillsData.map((skillCategory) => (
                 <div key={skillCategory.category}>
                   <div className="flex items-center gap-3 mb-8">
@@ -375,31 +374,31 @@ export default function PortfolioPage() {
                     {skillCategory.items.map(skill => (
                       <div 
                         key={skill.name} 
-                        className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-36 h-36 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                        className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-32 h-32 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
                       >
                         {typeof skill.proficiency === 'number' ? (
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div
-                                  className="w-12 h-12 p-1.5 rounded-lg flex items-center justify-center transition-all"
+                                  className="w-10 h-10 p-1 rounded-lg flex items-center justify-center transition-all"
                                   style={{
                                     background: `conic-gradient(hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}% 100%)`
                                   }}
                                 >
                                   <div className="w-full h-full bg-card rounded-md flex items-center justify-center">
-                                     <skill.skillIcon size={28} className="text-primary" />
+                                     <skill.skillIcon size={24} className="text-primary" />
                                   </div>
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>{skill.name} - {skill.proficiency}% proficiency</p>
+                                <p>{skill.name}</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         ) : (
-                          <div className="w-12 h-12 p-1.5 rounded-lg flex items-center justify-center bg-secondary transition-all">
-                            <skill.skillIcon size={28} className="text-secondary-foreground" />
+                          <div className="w-10 h-10 p-1 rounded-lg flex items-center justify-center bg-secondary transition-all">
+                            <skill.skillIcon size={24} className="text-secondary-foreground" />
                           </div>
                         )}
                         <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
