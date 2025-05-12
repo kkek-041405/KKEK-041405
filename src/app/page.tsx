@@ -164,13 +164,14 @@ export default function PortfolioPage() {
         if (entry.isIntersecting) {
           setIsSkillsSectionVisible(true);
         } else {
-          setIsSkillsSectionVisible(false); 
+          // Optionally reset animation when out of view
+          // setIsSkillsSectionVisible(false); 
         }
       },
       {
-        root: null, 
+        root: null, // Use the viewport as the root
         rootMargin: '0px',
-        threshold: 0.1, 
+        threshold: 0.1, // Trigger when 10% of the element is visible
       }
     );
 
@@ -208,21 +209,21 @@ export default function PortfolioPage() {
       <main className="flex-1">
         {/* Hero Section (Home) */}
         <AnimatedSection as="div" triggerOnce={true} initialClassName="opacity-0" animateClassName="opacity-100" duration="duration-1000" delay="delay-100">
-          <section id="home" className="w-full py-16 md:py-20 lg:py-24 xl:py-28 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
+          <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-24 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
-              <div className="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
-                <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-                  <Avatar className="w-28 h-28 md:w-32 md:h-32 border-4 border-primary shadow-xl mb-2">
+              <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-5">
+                  <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl mb-1">
                     <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
                     <AvatarFallback>KKEK</AvatarFallback>
                   </Avatar>
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
                     Hi, I’m KKEK — <br className="block sm:hidden" />Crafting Scalable Apps <br className="hidden sm:block lg:hidden" />with React & Firebase.
                   </h1>
-                  <p className="text-xl sm:text-2xl md:text-3xl text-primary font-medium">
+                  <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium">
                     3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-3 w-full sm:w-auto">
                     <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
                       <Link href="/#projects">
                         <Briefcase className="mr-2 h-5 w-5" /> View Projects
@@ -235,12 +236,12 @@ export default function PortfolioPage() {
                     </Button>
                   </div>
                 </div>
-                <div className="hidden lg:flex justify-center items-center p-4">
+                <div className="hidden lg:flex justify-center items-center p-3">
                   <Image
-                    src="https://picsum.photos/seed/hero-visual/700/650" 
+                    src="https://picsum.photos/seed/hero-visual/600/550" 
                     alt="Abstract representation of technology and innovation"
-                    width={700}
-                    height={650}
+                    width={600}
+                    height={550}
                     className="rounded-xl shadow-2xl object-cover aspect-[10/9]"
                     data-ai-hint="technology abstract" 
                     priority 
@@ -252,23 +253,23 @@ export default function PortfolioPage() {
         </AnimatedSection>
 
         {/* About Me Section */}
-        <AnimatedSection as="section" id="about" triggerOnce={true} className="py-16 md:py-24 bg-secondary/20 dark:bg-secondary/10" delay="delay-200">
+        <AnimatedSection as="section" id="about" triggerOnce={true} className="py-12 md:py-16 bg-secondary/20 dark:bg-secondary/10" delay="delay-200">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
               <UserCircle className="h-10 w-10 text-primary" /> About Me
             </h2>
-            <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-center">
+            <div className="grid md:grid-cols-5 gap-8 lg:gap-12 items-center">
               <div className="md:col-span-2">
                 <Image
-                  src="https://picsum.photos/seed/about-me-kkek/600/700"
+                  src="https://picsum.photos/seed/about-me-kkek/500/600"
                   alt="K. Komal Eshwara Kumar working on a project"
-                  width={600}
-                  height={700}
+                  width={500}
+                  height={600}
                   className="rounded-xl shadow-2xl object-cover aspect-[6/7]"
                   data-ai-hint="person coding"
                 />
               </div>
-              <div className="md:col-span-3 text-lg space-y-6 text-muted-foreground">
+              <div className="md:col-span-3 text-lg space-y-5 text-muted-foreground">
                 <p>
                 Hello! I'm K. Komal Eshwara Kumar, a dedicated and results-driven software developer with a solid foundation in modern web technologies and a strong interest in artificial intelligence. My journey in tech began with a deep curiosity about how software can solve real-world problems and elevate user experiences—and I’ve been building solutions ever since.
                 </p>
@@ -292,9 +293,9 @@ export default function PortfolioPage() {
         </AnimatedSection>
 
         {/* Experience Section */}
-        <AnimatedSection as="section" id="experience" triggerOnce={true} className="py-16 md:py-24 bg-background dark:bg-background" delay="delay-200">
+        <AnimatedSection as="section" id="experience" triggerOnce={true} className="py-12 md:py-16 bg-background dark:bg-background" delay="delay-200">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
               <TrendingUp className="h-10 w-10 text-primary" /> Experience & Leadership
             </h2>
             <ExperienceSection experiences={experiences} />
@@ -302,9 +303,9 @@ export default function PortfolioPage() {
         </AnimatedSection>
 
         {/* Projects Section */}
-        <AnimatedSection as="section" id="projects" triggerOnce={true} className="py-16 md:py-24 bg-secondary/10 dark:bg-secondary/5" delay="delay-200">
+        <AnimatedSection as="section" id="projects" triggerOnce={true} className="py-12 md:py-16 bg-secondary/10 dark:bg-secondary/5" delay="delay-200">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
                     <Zap className="h-10 w-10 text-primary" /> Featured Projects
                 </h2>
@@ -312,7 +313,7 @@ export default function PortfolioPage() {
                     A selection of my work. Click on a project to learn more.
                 </p>
             </div>
-            <div className="mb-12 flex flex-wrap justify-center gap-2">
+            <div className="mb-10 flex flex-wrap justify-center gap-2">
               <Button 
                 variant={filter === "All" ? "default" : "outline"} 
                 onClick={() => setFilter("All")}
@@ -396,18 +397,17 @@ export default function PortfolioPage() {
         )}
 
         {/* Skills Section */}
-        {/* The ref is for the IntersectionObserver controlling skill badge progress animation */}
         <AnimatedSection as="div" triggerOnce={true} delay="delay-200">
-          <section id="skills" ref={skillsSectionRef} className="py-16 md:py-24 bg-background dark:bg-background">
+          <section id="skills" ref={skillsSectionRef} className="py-12 md:py-16 bg-background dark:bg-background">
             <div className="container mx-auto px-4">
-              <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
+              <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
                 {skillsData.map((skillCategory) => (
                   <div key={skillCategory.category}>
-                    <div className="flex items-center gap-3 mb-8">
+                    <div className="flex items-center gap-3 mb-6">
                       {skillCategory.icon && <skillCategory.icon className="h-8 w-8 text-primary" />}
                       <h3 className="text-2xl md:text-3xl font-semibold text-foreground">{skillCategory.category}</h3>
                     </div>
-                    <div className="flex flex-wrap gap-4 justify-start">
+                    <div className="flex flex-wrap gap-3 justify-start">
                       {skillCategory.items.map(skill => (
                         skill.proficiency !== undefined ? (
                           <SkillBadgeWithAnimation
@@ -438,15 +438,15 @@ export default function PortfolioPage() {
         </AnimatedSection>
 
         {/* Contact Section */}
-        <AnimatedSection as="section" id="contact" triggerOnce={true} className="py-16 md:py-24 bg-secondary/30 dark:bg-secondary/10" delay="delay-200">
+        <AnimatedSection as="section" id="contact" triggerOnce={true} className="py-12 md:py-16 bg-secondary/30 dark:bg-secondary/10" delay="delay-200">
           <div className="container mx-auto text-center px-4">
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 flex items-center justify-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-bold mb-10 flex items-center justify-center gap-3">
               <MessageSquare className="h-10 w-10 text-primary" /> Get In Touch
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
               I'm actively seeking new opportunities and collaborations. If you have a project in mind, a question, or just want to connect, feel free to reach out! I typically respond within 24-48 hours.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
               <Button size="lg" asChild className="w-full sm:w-auto shadow-lg hover:shadow-primary/50 transition-shadow">
                 <Link href="mailto:k.komaleshwarakumar@example.com">
                   <Mail className="mr-2 h-5 w-5" /> Send an Email
@@ -458,7 +458,7 @@ export default function PortfolioPage() {
                 </Link>
               </Button>
             </div>
-            <div className="mt-16 text-muted-foreground flex flex-col items-center justify-center gap-2">
+            <div className="mt-12 text-muted-foreground flex flex-col items-center justify-center gap-2">
               <MapPin className="h-6 w-6 text-primary" />
               <span>Based in Guntur, Andhra Pradesh, India</span>
               <span className="text-sm">(Open to remote opportunities)</span>
@@ -471,3 +471,4 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
