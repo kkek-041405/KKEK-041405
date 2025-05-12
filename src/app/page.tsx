@@ -3,25 +3,22 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Brain, Users, Settings, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Link as LinkIcon, Eye, Trophy, CaseSensitive } from "lucide-react"; // Renamed UserCircle2 import and added more icons
+import { 
+  UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Brain, Users, Settings, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Link as LinkIcon, Eye, Trophy, CaseSensitive,
+  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PortfolioHeader } from "@/components/portfolio-header";
 import { PortfolioFooter } from "@/components/portfolio-footer";
-import type { Metadata } from 'next';
-import { ExperienceSection, type ExperienceItem } from "@/components/experience-section";
+import type { ExperienceItem } from "@/components/experience-section"; // Keep ExperienceItem type
+import { ExperienceSection } from "@/components/experience-section";
 import React, { useState, useEffect } from 'react';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
-
-
-// Metadata for the single-page portfolio
-// export const metadata: Metadata = { // Static metadata should be in layout or exported from server component.
-//   title: 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast | Portfolio',
-//   description: 'Comprehensive portfolio of K. Komal Eshwara Kumar (KKEK), showcasing skills, projects, experience, and contact information on a single page.',
-// };
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 // Experience Data
@@ -120,34 +117,87 @@ const skillsData = [
   {
     category: "Frontend Development",
     icon: Code2,
-    items: ["HTML5", "CSS3", "JavaScript (ES6+)", "TypeScript", "React", "Next.js", "Vue.js", "Tailwind CSS", "ShadCN UI", "Responsive Design"],
+    items: [
+      { name: "HTML5", skillIcon: FileCode },
+      { name: "CSS3", skillIcon: Palette },
+      { name: "JavaScript (ES6+)", skillIcon: Braces },
+      { name: "TypeScript", skillIcon: Type },
+      { name: "React", skillIcon: Orbit },
+      { name: "Next.js", skillIcon: ServerIcon }, // Using ServerIcon as a placeholder for Next.js
+      { name: "Vue.js", skillIcon: Code2 }, // Placeholder, Vue has specific logo
+      { name: "Tailwind CSS", skillIcon: Wind },
+      { name: "ShadCN UI", skillIcon: Feather }, // Conceptual for lightness/utility
+      { name: "Responsive Design", skillIcon: TabletSmartphone }, // Need to import TabletSmartphone
+    ],
   },
   {
     category: "Backend Development",
-    icon: Settings,
-    items: ["Node.js", "Express.js", "Python", "Django", "Flask", "Firebase (Firestore, Auth)", "REST APIs", "GraphQL"],
+    icon: ServerCog, // Changed from Settings
+    items: [
+      { name: "Node.js", skillIcon: ServerCog },
+      { name: "Express.js", skillIcon: ServerIcon },
+      { name: "Python", skillIcon: FileCode }, // No direct Python icon, use FileCode
+      { name: "Django", skillIcon: FileCode },
+      { name: "Flask", skillIcon: FileCode },
+      { name: "Firebase (Firestore, Auth)", skillIcon: Cloud }, // Cloud or Database
+      { name: "REST APIs", skillIcon: LinkIcon },
+      { name: "GraphQL", skillIcon: Share2 }, // Need to import Share2
+    ],
   },
   {
     category: "Databases",
-    icon: Zap, // Placeholder, consider Database icon from Lucide if available or a generic one
-    items: ["MongoDB", "PostgreSQL", "MySQL", "Firestore", "Redis"],
+    icon: Database, // Changed from Zap
+    items: [
+      { name: "MongoDB", skillIcon: Database },
+      { name: "PostgreSQL", skillIcon: Database },
+      { name: "MySQL", skillIcon: Database },
+      { name: "Firestore", skillIcon: Cloud }, // Consistent with Firebase
+      { name: "Redis", skillIcon: Database }, // Generic DB icon
+    ],
   },
   {
     category: "AI & Machine Learning",
     icon: Brain,
-    items: ["Genkit", "TensorFlow", "PyTorch", "Scikit-learn", "Natural Language Processing", "Computer Vision", "Prompt Engineering"],
+    items: [
+      { name: "Genkit", skillIcon: Wand2 },
+      { name: "TensorFlow", skillIcon: BrainCircuit },
+      { name: "PyTorch", skillIcon: Cpu }, // Conceptual
+      { name: "Scikit-learn", skillIcon: Cpu }, // Conceptual
+      { name: "Natural Language Processing", skillIcon: MessageCircleIcon },
+      { name: "Computer Vision", skillIcon: Eye },
+      { name: "Prompt Engineering", skillIcon: Sparkles },
+    ],
   },
   {
     category: "DevOps & Tools",
-    icon: Settings, // Re-using, can be more specific
-    items: ["Git & GitHub", "Docker", "Kubernetes (Basic)", "CI/CD (GitHub Actions)", "AWS (EC2, S3 - Basic)", "Google Cloud Platform (Basic)", "VS Code"],
+    icon: Wrench, // Changed from Settings
+    items: [
+      { name: "Git", skillIcon: GitFork },
+      { name: "GitHub", skillIcon: Github },
+      { name: "Docker", skillIcon: Container },
+      { name: "Kubernetes (Basic)", skillIcon: PackageIcon }, // Conceptual for orchestration
+      { name: "CI/CD (GitHub Actions)", skillIcon: Repeat }, // Conceptual for pipeline/automation
+      { name: "AWS (EC2, S3 - Basic)", skillIcon: Cloud },
+      { name: "Google Cloud Platform (Basic)", skillIcon: Cloud },
+      { name: "VS Code", skillIcon: TerminalSquare },
+    ],
   },
   {
     category: "Soft Skills & Methodologies",
     icon: Users,
-    items: ["Problem Solving", "Team Collaboration", "Agile Methodologies", "Communication", "Project Management (Basic)", "Leadership"],
+    items: [
+      { name: "Problem Solving", skillIcon: Puzzle },
+      { name: "Team Collaboration", skillIcon: Handshake },
+      { name: "Agile Methodologies", skillIcon: IterationCcw },
+      { name: "Communication", skillIcon: MessageCircleIcon },
+      { name: "Project Management (Basic)", skillIcon: ClipboardList },
+      { name: "Leadership", skillIcon: Crown },
+    ],
   },
 ];
+
+// Helper function to import TabletSmartphone and Share2 if not already
+import { TabletSmartphone, Share2 } from "lucide-react";
 
 
 export default function PortfolioPage() {
@@ -379,13 +429,22 @@ export default function PortfolioPage() {
                     <CardTitle className="text-xl text-foreground">{skillCategory.category}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2.5 pt-2">
-                      {skillCategory.items.map(item => (
-                        <li key={item} className="flex items-center text-muted-foreground">
-                           <Zap size={16} className="mr-2.5 text-primary/70 shrink-0" />
-                           <span>{item}</span>
-                        </li>))}
-                    </ul>
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      {skillCategory.items.map(skill => (
+                        <TooltipProvider key={skill.name} delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="p-2.5 border rounded-lg hover:bg-accent cursor-default shadow-sm">
+                                <skill.skillIcon size={28} className="text-foreground" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="bg-foreground text-background">
+                              <p>{skill.name}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -427,5 +486,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
-    
