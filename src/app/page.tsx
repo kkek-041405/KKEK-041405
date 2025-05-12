@@ -1,17 +1,47 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Mail, UserCircle2, Download, Zap } from "lucide-react";
+import { UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase } from "lucide-react"; // Renamed UserCircle2 import
 import Link from "next/link";
 import Image from "next/image";
 import { PortfolioHeader } from "@/components/portfolio-header";
 import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { Metadata } from 'next';
+import { ExperienceSection, type ExperienceItem } from "@/components/experience-section";
+
 
 export const metadata: Metadata = {
   title: 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast',
   description: 'Welcome to the portfolio of K. Komal Eshwara Kumar (KKEK). 3rd Year CSE, GATE Aspirant, Technical Head @ IUCEE VVIT. Discover projects and skills in React, Firebase, and AI.',
 };
+
+// Use the ExperienceItem type from the component, it will be updated to use iconName
+const experiences: ExperienceItem[] = [
+  {
+    role: "Technical Head",
+    organization: "IUCEE VVIT Student Chapter",
+    dates: "2024 – Present",
+    details: [
+      "Led technical initiatives, workshops, and hackathons impacting 200+ students.",
+      "Mentored junior members in web development and competitive programming.",
+      "Developed and deployed 3+ internal tools for chapter management and event coordination.",
+      "Fostered an innovation-driven culture on campus through collaborative projects.",
+    ],
+    iconName: "Briefcase", // Changed from icon: Briefcase
+  },
+  {
+    role: "Founder & Lead Developer",
+    organization: "Campus Companion (Personal Project)",
+    dates: "2023 – Present",
+    details: [
+      "Conceptualized, designed, and developing a collaborative learning platform for university students.",
+      "Implementing features like AI-powered document search and structured discussion forums.",
+      "Utilizing React, Next.js, Firebase, and Genkit for a scalable and modern tech stack.",
+      "Aiming to enhance student engagement and knowledge sharing within the campus community.",
+    ],
+    iconName: "Zap", // Changed from icon: Zap
+  },
+];
 
 export default function PortfolioPage() {
   return (
@@ -71,7 +101,7 @@ export default function PortfolioPage() {
         <section id="about" className="py-16 md:py-24 bg-secondary/20 dark:bg-secondary/10">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
-              <UserCircle2 className="h-10 w-10 text-primary" /> About Me
+              <UserCircle className="h-10 w-10 text-primary" /> About Me
             </h2>
             <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-center">
               <div className="md:col-span-2">
@@ -106,6 +136,17 @@ export default function PortfolioPage() {
             </div>
           </div>
         </section>
+
+        {/* Experience Section */}
+        <section id="experience" className="py-16 md:py-24 bg-background dark:bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
+              <TrendingUp className="h-10 w-10 text-primary" /> Experience & Leadership
+            </h2>
+            <ExperienceSection experiences={experiences} />
+          </div>
+        </section>
+
       </main>
 
       <PortfolioFooter />
