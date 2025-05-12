@@ -4,8 +4,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
-  UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Brain, Users, Settings, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Link as LinkIcon, Eye, Trophy, CaseSensitive,
-  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench, TabletSmartphone, Share2, Home
+  UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Users, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Eye, Trophy, CaseSensitive,
+  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench, TabletSmartphone, Share2, Home, Code, ListChecks, Brain, Settings, Lightbulb, Activity, Globe, BarChart, GitBranch, LayoutDashboard, Menu, Search, Info
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -375,19 +375,21 @@ export default function PortfolioPage() {
                     {skillCategory.items.map(skill => (
                       <div 
                         key={skill.name} 
-                        className="bg-card border border-border rounded-xl p-4 shadow-lg flex flex-col items-center justify-center gap-3 w-40 h-40 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                        className="bg-card border border-border rounded-xl p-3 shadow-lg flex flex-col items-center justify-center gap-2 w-36 h-36 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
                       >
                         {typeof skill.proficiency === 'number' ? (
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div
-                                  className="w-14 h-14 p-2 rounded-lg flex items-center justify-center transition-all"
+                                  className="w-12 h-12 p-1.5 rounded-lg flex items-center justify-center transition-all"
                                   style={{
-                                    background: `linear-gradient(to top, hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}%)`
+                                    background: `conic-gradient(hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}% 100%)`
                                   }}
                                 >
-                                  <skill.skillIcon size={32} className="text-primary-foreground" />
+                                  <div className="w-full h-full bg-card rounded-md flex items-center justify-center">
+                                     <skill.skillIcon size={28} className="text-primary" />
+                                  </div>
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -396,11 +398,11 @@ export default function PortfolioPage() {
                             </Tooltip>
                           </TooltipProvider>
                         ) : (
-                          <div className="w-14 h-14 p-2 rounded-lg flex items-center justify-center bg-secondary transition-all">
-                            <skill.skillIcon size={32} className="text-secondary-foreground" />
+                          <div className="w-12 h-12 p-1.5 rounded-lg flex items-center justify-center bg-secondary transition-all">
+                            <skill.skillIcon size={28} className="text-secondary-foreground" />
                           </div>
                         )}
-                        <span className="font-medium text-sm text-foreground mt-1">{skill.name}</span>
+                        <span className="font-medium text-xs text-foreground mt-1">{skill.name}</span>
                       </div>
                     ))}
                   </div>
