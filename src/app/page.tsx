@@ -364,47 +364,47 @@ export default function PortfolioPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-16">
               {skillsData.map((skillCategory) => (
-                <Card key={skillCategory.category} className="shadow-xl hover:shadow-primary/10 transition-shadow duration-300 rounded-lg flex flex-col">
-                  <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4 pt-5 border-b">
-                    {skillCategory.icon && <skillCategory.icon className="h-7 w-7 text-primary" />}
-                    <CardTitle className="text-xl text-foreground">{skillCategory.category}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-6 flex-grow">
-                    <div className="space-y-5">
-                      {skillCategory.items.map(skill => (
-                        <div key={skill.name} className="flex items-center gap-3">
-                          {typeof skill.proficiency === 'number' ? (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div
-                                    className="w-7 h-7 p-1 rounded-md flex items-center justify-center"
-                                    style={{
-                                      background: `linear-gradient(to top, hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}%)`
-                                    }}
-                                  >
-                                    <skill.skillIcon size={18} className="text-primary-foreground" />
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{skill.name} - {skill.proficiency}% proficiency</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ) : (
-                            <div className="w-7 h-7 p-1 rounded-md flex items-center justify-center bg-secondary">
-                              <skill.skillIcon size={18} className="text-secondary-foreground" />
-                            </div>
-                          )}
-                          <span className="font-medium text-foreground flex-grow">{skill.name}</span>
-                          {/* Percentage text removed from here */}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                <div key={skillCategory.category}>
+                  <div className="flex items-center gap-3 mb-8">
+                    {skillCategory.icon && <skillCategory.icon className="h-8 w-8 text-primary" />}
+                    <h3 className="text-2xl md:text-3xl font-semibold text-foreground">{skillCategory.category}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-4 justify-start">
+                    {skillCategory.items.map(skill => (
+                      <div 
+                        key={skill.name} 
+                        className="bg-card border border-border rounded-xl p-4 shadow-lg flex flex-col items-center justify-center gap-3 w-40 h-40 text-center hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1"
+                      >
+                        {typeof skill.proficiency === 'number' ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className="w-14 h-14 p-2 rounded-lg flex items-center justify-center transition-all"
+                                  style={{
+                                    background: `linear-gradient(to top, hsl(var(--primary)) ${skill.proficiency}%, hsl(var(--secondary)) ${skill.proficiency}%)`
+                                  }}
+                                >
+                                  <skill.skillIcon size={32} className="text-primary-foreground" />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{skill.name} - {skill.proficiency}% proficiency</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <div className="w-14 h-14 p-2 rounded-lg flex items-center justify-center bg-secondary transition-all">
+                            <skill.skillIcon size={32} className="text-secondary-foreground" />
+                          </div>
+                        )}
+                        <span className="font-medium text-sm text-foreground mt-1">{skill.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
