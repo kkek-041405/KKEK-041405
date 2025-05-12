@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +18,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 
 // Experience Data
@@ -118,15 +118,15 @@ const skillsData = [
     category: "Core Technologies",
     icon: Code2,
     items: [
-      { name: "React", skillIcon: Orbit },
-      { name: "Next.js", skillIcon: ServerIcon },
-      { name: "TypeScript", skillIcon: Type },
-      { name: "Tailwind CSS", skillIcon: Wind },
-      { name: "Node.js", skillIcon: ServerCog },
-      { name: "Firebase", skillIcon: Cloud },
-      { name: "Python", skillIcon: FileCode },
-      { name: "Firestore", skillIcon: Database },
-      { name: "MongoDB", skillIcon: Database },
+      { name: "React", skillIcon: Orbit, proficiency: 85 },
+      { name: "Next.js", skillIcon: ServerIcon, proficiency: 80 },
+      { name: "TypeScript", skillIcon: Type, proficiency: 75 },
+      { name: "Tailwind CSS", skillIcon: Wind, proficiency: 90 },
+      { name: "Node.js", skillIcon: ServerCog, proficiency: 70 },
+      { name: "Firebase", skillIcon: Cloud, proficiency: 80 },
+      { name: "Python", skillIcon: FileCode, proficiency: 65 },
+      { name: "Firestore", skillIcon: Database, proficiency: 78 },
+      { name: "MongoDB", skillIcon: Database, proficiency: 70 },
     ],
   },
   {
@@ -364,28 +364,38 @@ export default function PortfolioPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 flex items-center justify-center gap-3">
               <Code2 className="h-10 w-10 text-primary" /> Technical Proficiency
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {skillsData.map((skillCategory) => (
-                <Card key={skillCategory.category} className="shadow-xl hover:shadow-2xl transition-shadow duration-300 rounded-lg">
-                  <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-3 pt-5">
+                <Card key={skillCategory.category} className="shadow-xl hover:shadow-primary/10 transition-shadow duration-300 rounded-lg flex flex-col">
+                  <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-4 pt-5 border-b">
                     {skillCategory.icon && <skillCategory.icon className="h-7 w-7 text-primary" />}
                     <CardTitle className="text-xl text-foreground">{skillCategory.category}</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-3 pt-2">
+                  <CardContent className="pt-6 flex-grow">
+                    <div className="space-y-5">
                       {skillCategory.items.map(skill => (
-                        <TooltipProvider key={skill.name} delayDuration={100}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="p-2.5 border rounded-lg hover:bg-accent cursor-default shadow-sm">
-                                <skill.skillIcon size={28} className="text-foreground" />
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="bg-foreground text-background">
-                              <p>{skill.name}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <div key={skill.name}>
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <skill.skillIcon size={20} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                              <span className="font-medium text-foreground">{skill.name}</span>
+                            </div>
+                            {typeof skill.proficiency === 'number' && (
+                              <span className="text-sm font-semibold text-primary">{skill.proficiency}%</span>
+                            )}
+                          </div>
+                          {typeof skill.proficiency === 'number' ? (
+                            <Progress 
+                              value={skill.proficiency} 
+                              className="h-2.5 w-full" 
+                              aria-label={`${skill.name} proficiency ${skill.proficiency}%`} 
+                            />
+                          ) : (
+                            skillCategory.category === "Soft Skills & Methodologies" && (
+                              <p className="text-sm text-muted-foreground italic">Qualitative skill</p>
+                            )
+                          )}
+                        </div>
                       ))}
                     </div>
                   </CardContent>
