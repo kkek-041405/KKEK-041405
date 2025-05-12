@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -211,7 +212,6 @@ export default function PortfolioPage() {
         <AnimatedSection as="div" triggerOnce={true} initialClassName="opacity-0" animateClassName="opacity-100" duration="duration-1000" delay="delay-100">
           <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-20 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
-              <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
                 <div className="flex flex-col items-center text-center space-y-5 lg:col-span-2 xl:col-span-1">
                   <div className="flex items-center flex-col md:flex-row gap-4 md:gap-6">
                   <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl mb-1">
@@ -221,7 +221,8 @@ export default function PortfolioPage() {
                   <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
                   </div>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
-                  Building Real-World Apps <br className="block sm:hidden" /> — Scalable. Searchable. <span className="hidden lg:inline-block">—</span> <br className="hidden sm:block lg:hidden" />Performant.
+                    Building Real-World Apps<br />
+                    Scalable. Searchable. Performant.
                   </h1>
                   <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium">
                     3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
@@ -239,7 +240,6 @@ export default function PortfolioPage() {
                     </Button>
                   </div>
                 </div>
-              </div>
             </div>
           </section>
         </AnimatedSection>
@@ -465,4 +465,5 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
 
