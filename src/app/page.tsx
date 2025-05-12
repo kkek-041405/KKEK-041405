@@ -209,7 +209,7 @@ export default function PortfolioPage() {
       <main className="flex-1">
         {/* Hero Section (Home) */}
         <AnimatedSection as="div" triggerOnce={true} initialClassName="opacity-0" animateClassName="opacity-100" duration="duration-1000" delay="delay-100">
-          <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-24 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
+          <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-20 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
               <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-5">
