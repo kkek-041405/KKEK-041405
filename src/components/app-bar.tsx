@@ -14,6 +14,7 @@ import {
 import { NoteForm } from '@/components/note-form';
 import { Notebook, PlusCircle, Home } from 'lucide-react';
 import Link from 'next/link';
+import { ThemeToggleButton } from './theme-toggle-button'; // Added import
 
 interface AppBarProps {
   isFormOpen: boolean;
@@ -31,7 +32,7 @@ export function AppBar({ isFormOpen, onOpenChange, noteFormProps }: AppBarProps)
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container relative flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
-        <div>
+        <div className="flex items-center gap-2"> {/* Added flex container for home and theme toggle */}
           <Link href="/" className="flex items-center group" aria-label="Go to Portfolio Home Page">
             <Home className="h-7 w-7 text-primary group-hover:text-primary/80 transition-colors" />
           </Link>
@@ -42,7 +43,8 @@ export function AppBar({ isFormOpen, onOpenChange, noteFormProps }: AppBarProps)
           <h1 className="text-2xl font-bold text-primary">NoteNest</h1>
         </div>
 
-        <div>
+        <div className="flex items-center gap-2"> {/* Added flex container for add button and theme toggle */}
+           <ThemeToggleButton /> {/* Added ThemeToggleButton */}
           <Dialog open={isFormOpen} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
               <Button 
