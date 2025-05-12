@@ -50,16 +50,18 @@ export function NoteList({ notes, filteredNotes, selectedNoteId, onSelectNote, o
   
   return (
     <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
-      <div className="p-4 border-b flex items-center justify-between gap-2">
-        <h3 className="flex items-center text-xl font-semibold text-foreground">
-           <ListChecks className="mr-2 h-5 w-5 text-primary shrink-0" />
-           <span className="truncate">Your Items</span>
-        </h3>
+      <div className="p-4 border-b flex items-center gap-2">
+        <div className="flex-1 flex justify-center"> {/* Wrapper to center the title */}
+          <h3 className="flex items-center text-xl font-semibold text-foreground">
+            <ListChecks className="mr-2 h-5 w-5 text-primary shrink-0" />
+            <span className="truncate">Your Items</span>
+          </h3>
+        </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={handleSortToggle}
-          className="h-9 w-9 shadow-sm border"
+          className="h-9 w-9 shadow-sm border flex-shrink-0"
           title={getTooltipText()}
           aria-label={getTooltipText()}
         >
@@ -94,3 +96,4 @@ export function NoteList({ notes, filteredNotes, selectedNoteId, onSelectNote, o
     </div>
   );
 }
+
