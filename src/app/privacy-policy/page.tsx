@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPolicyPage() {
-    const appName = "Your Chess App";
-    const companyName = "[Your Company Name/Your Name]";
-    const effectiveDate = "October 26, 2023";
-    const contactEmail = "[your-contact-email@example.com]";
+    const appName = "Chess by KKEK";
+    const companyName = "K.Komal Eshwara Kumar";
+    const effectiveDate = "June 21th, 2025";
+    const contactEmail = "komaleshwrakumarkonatham@gmail.com";
 
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
