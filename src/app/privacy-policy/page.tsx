@@ -86,11 +86,6 @@ export default function PrivacyPolicyPage() {
                                 <br />
                                 <Link href={`mailto:${contactEmail}`} className="text-primary hover:underline">{contactEmail}</Link>
                             </p>
-                            
-                            <div className="p-4 bg-secondary/20 rounded-lg mt-8 text-sm">
-                                <p className="font-bold text-foreground">Disclaimer:</p>
-                                <p>This is a template privacy policy and is not a substitute for legal advice. You should consult with a legal professional to ensure this policy is appropriate for your specific circumstances and complies with all applicable laws.</p>
-                            </div>
                         </CardContent>
                     </Card>
                 </div>
