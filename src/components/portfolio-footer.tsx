@@ -22,11 +22,14 @@ export function PortfolioFooter() {
           </Link>
         </div>
         <p className="text-sm">&copy; {new Date().getFullYear()} K. Komal Eshwara Kumar. All rights reserved.</p>
-        <p className="text-xs mt-2">
-          Built with <Link href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="hover:text-primary underline">Next.js</Link> & <Link href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary underline">Tailwind CSS</Link>.
-        </p>
+        <div className="text-xs mt-4 flex justify-center items-center gap-x-4">
+          <p>
+            Built with <Link href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="hover:text-primary underline">Next.js</Link> & <Link href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary underline">Tailwind CSS</Link>.
+          </p>
+          <span className="text-muted-foreground/50">|</span>
+          <Link href="/privacy-policy" className="hover:text-primary underline">Privacy Policy</Link>
+        </div>
       </div>
     </footer>
   );
 }
-
