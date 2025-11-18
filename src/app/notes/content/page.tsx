@@ -11,7 +11,7 @@ import { NoteView } from '@/components/note-view';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook, FileText, Loader2 } from 'lucide-react';
+import { Notebook, FileText, Loader2, KeyRound, Music } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -19,19 +19,21 @@ import {
   updateNoteInFirestore, 
   deleteNoteFromFirestore 
 } from '@/services/note-service';
+import SpotifyView from '@/components/spotify-view';
+import OtpView from '@/components/otp-view';
 
 const defaultKeyInfo: Note[] = [
   {
-    id: 'default-spotify',
+    id: 'default-spotify-placeholder',
     title: 'Spotify',
-    content: 'Your Spotify credentials',
+    content: 'Connect your Spotify account to manage playback.',
     type: 'keyInformation',
-    createdAt: new Date(0).toISOString(), 
+    createdAt: new Date(0).toISOString(),
   },
   {
-    id: 'default-otp',
+    id: 'default-otp-placeholder',
     title: 'OTP',
-    content: 'Your One-Time Passwords',
+    content: 'View your one-time passwords from connected services.',
     type: 'keyInformation',
     createdAt: new Date(0).toISOString(),
   },
@@ -52,6 +54,8 @@ export default function NotesContentPage() {
 
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [initialFormValues, setInitialFormValues] = useState<NoteFormValues | null>(null);
+  
+  const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'otp'>('notes');
 
   useEffect(() => {
     // Check authentication status
@@ -66,13 +70,13 @@ export default function NotesContentPage() {
   }, [router]);
 
   useEffect(() => {
-    if (!isAuthenticated) return; // Don't fetch notes if not authenticated
+    if (!isAuthenticated || activeView !== 'notes') return; 
 
     const fetchNotes = async () => {
       setIsLoadingNotes(true);
       try {
         const firestoreNotes = await getNotesFromFirestore();
-        setNotes([...defaultKeyInfo, ...firestoreNotes]);
+        setNotes(firestoreNotes);
       } catch (error) {
         console.error("Failed to fetch notes:", error);
         toast({
@@ -80,12 +84,12 @@ export default function NotesContentPage() {
           description: "Could not load your items from the cloud. Please try again later.",
           variant: "destructive",
         });
-        setNotes(defaultKeyInfo); // Set default notes even if fetch fails
+        setNotes([]); 
       }
       setIsLoadingNotes(false);
     };
     fetchNotes();
-  }, [toast, isAuthenticated]);
+  }, [toast, isAuthenticated, activeView]);
 
   if (!isAuthenticated) {
     // Show a loading state or a minimal message while redirecting
@@ -95,6 +99,8 @@ export default function NotesContentPage() {
           isFormOpen={false}
           onOpenChange={() => {}}
           noteFormProps={{ onSave: () => {}, isLoading: false, onFormSubmit: () => {} }}
+          activeView={activeView}
+          onViewChange={setActiveView}
         />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -256,18 +262,22 @@ export default function NotesContentPage() {
     defaultValues: initialFormValues,
     isEditing: !!editingNote,
   };
+  
+  const allNotesWithDefaults = [...defaultKeyInfo, ...notes];
 
-  const filteredNotes = notes.filter(note => {
+  const filteredNotes = allNotesWithDefaults.filter(note => {
     return note.type === sortType;
   });
 
-  if (isLoadingNotes) {
+  if (isLoadingNotes && activeView === 'notes') {
     return (
       <div className="flex flex-col min-h-screen">
         <AppBar
           isFormOpen={isFormOpen}
           onOpenChange={handleDialogValidOpenChange}
           noteFormProps={noteFormProps}
+          activeView={activeView}
+          onViewChange={setActiveView}
         />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -278,62 +288,80 @@ export default function NotesContentPage() {
     );
   }
 
+  const renderNotesView = () => (
+    <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden">
+      <section
+        aria-labelledby="items-list-heading"
+        className="md:w-1/3 flex flex-col"
+      >
+        <h2 id="items-list-heading" className="sr-only">Your Items</h2>
+        <NoteList
+          notes={allNotesWithDefaults}
+          filteredNotes={filteredNotes}
+          selectedNoteId={selectedNoteId}
+          onSelectNote={handleSelectNote}
+          onDeleteNote={handleDeleteNote}
+          sortType={sortType}
+          onSortChange={setSortType}
+        />
+      </section>
+
+      {selectedNote ? (
+        <section
+          aria-labelledby="view-item-heading"
+          className="md:w-2/3 flex flex-col"
+        >
+          <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
+          <NoteView
+            note={selectedNote}
+            onSummarize={handleSummarizeNote}
+            isLoadingSummary={isLoadingSummary}
+            onEditRequest={handleRequestEdit}
+          />
+        </section>
+      ) : (
+        !isLoadingNotes && allNotesWithDefaults.length > 0 && (
+          <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
+            <p className="text-muted-foreground">Select an item from the list to view its details.</p>
+          </div>
+        )
+      )}
+       { !selectedNote && !isLoadingNotes && allNotesWithDefaults.length === 0 && (
+          <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+            <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
+            <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
+          </div>
+        )
+      }
+    </main>
+  );
+
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'spotify':
+        return <SpotifyView />;
+      case 'otp':
+        return <OtpView />;
+      case 'notes':
+      default:
+        return renderNotesView();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <AppBar
         isFormOpen={isFormOpen}
         onOpenChange={handleDialogValidOpenChange}
         noteFormProps={noteFormProps}
+        activeView={activeView}
+        onViewChange={setActiveView}
       />
       
-      <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden">
-        <section
-          aria-labelledby="items-list-heading"
-          className="md:w-1/3 flex flex-col"
-        >
-          <h2 id="items-list-heading" className="sr-only">Your Items</h2>
-          <NoteList
-            notes={notes}
-            filteredNotes={filteredNotes}
-            selectedNoteId={selectedNoteId}
-            onSelectNote={handleSelectNote}
-            onDeleteNote={handleDeleteNote}
-            sortType={sortType}
-            onSortChange={setSortType}
-          />
-        </section>
-
-        {selectedNote ? (
-          <section
-            aria-labelledby="view-item-heading"
-            className="md:w-2/3 flex flex-col"
-          >
-            <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
-            <NoteView
-              note={selectedNote}
-              onSummarize={handleSummarizeNote}
-              isLoadingSummary={isLoadingSummary}
-              onEditRequest={handleRequestEdit}
-            />
-          </section>
-        ) : (
-          !isLoadingNotes && notes.length > 0 && (
-            <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
-              <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
-              <p className="text-muted-foreground">Select an item from the list to view its details.</p>
-            </div>
-          )
-        )}
-         { !selectedNote && !isLoadingNotes && notes.length === 0 && (
-            <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
-              <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
-              <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
-            </div>
-          )
-        }
-      </main>
+      {renderActiveView()}
       
       <Toaster />
     </div>

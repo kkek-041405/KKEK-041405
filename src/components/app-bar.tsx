@@ -11,10 +11,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { NoteForm } from '@/components/note-form';
-import { Notebook, PlusCircle, Home } from 'lucide-react';
+import { Notebook, PlusCircle, Home, Music, KeyRound, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { ThemeToggleButton } from './theme-toggle-button'; // Added import
+import { ThemeToggleButton } from './theme-toggle-button';
 
 interface AppBarProps {
   isFormOpen: boolean;
@@ -26,54 +32,87 @@ interface AppBarProps {
     defaultValues?: NoteFormValues | null;
     isEditing?: boolean;
   };
+  activeView: 'notes' | 'spotify' | 'otp';
+  onViewChange: (view: 'notes' | 'spotify' | 'otp') => void;
 }
 
-export function AppBar({ isFormOpen, onOpenChange, noteFormProps }: AppBarProps) {
+export function AppBar({ isFormOpen, onOpenChange, noteFormProps, activeView, onViewChange }: AppBarProps) {
+  
+  const viewOptions = {
+    notes: { label: 'NoteNest', icon: Notebook },
+    spotify: { label: 'Spotify', icon: Music },
+    otp: { label: 'OTP', icon: KeyRound },
+  };
+
+  const ActiveViewIcon = viewOptions[activeView].icon;
+  const activeViewLabel = viewOptions[activeView].label;
+  
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container relative flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
-        <div className="flex items-center gap-2"> {/* Added flex container for home and theme toggle */}
+        <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center group" aria-label="Go to Portfolio Home Page">
             <Home className="h-7 w-7 text-primary group-hover:text-primary/80 transition-colors" />
           </Link>
         </div>
 
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center space-x-2">
-          <Notebook className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-bold text-primary">NoteNest</h1>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2 text-2xl font-bold text-primary">
+                <ActiveViewIcon className="h-8 w-8" />
+                <h1>{activeViewLabel}</h1>
+                <ChevronDown className="h-6 w-6 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-56">
+              <DropdownMenuItem onSelect={() => onViewChange('notes')}>
+                <Notebook className="mr-2 h-4 w-4" />
+                <span>NoteNest</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onViewChange('spotify')}>
+                <Music className="mr-2 h-4 w-4" />
+                <span>Spotify</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onViewChange('otp')}>
+                <KeyRound className="mr-2 h-4 w-4" />
+                <span>OTP</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="flex items-center gap-2"> {/* Added flex container for add button and theme toggle */}
-           <ThemeToggleButton /> {/* Added ThemeToggleButton */}
-          <Dialog open={isFormOpen} onOpenChange={onOpenChange}>
-            <DialogTrigger asChild>
-              <Button 
-                size="default" 
-                className="shadow-md" 
-                onClick={() => onOpenChange(true)}
-                aria-label="Add New Item"
-              >
-                <PlusCircle className="h-5 w-5 sm:mr-2" />
-                <span className="hidden sm:inline">Add New Item</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
-              <DialogHeader>
-                <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
-              </DialogHeader>
-              <NoteForm
-                onSave={noteFormProps.onSave}
-                isLoading={noteFormProps.isLoading}
-                onFormSubmit={noteFormProps.onFormSubmit}
-                defaultValues={noteFormProps.defaultValues}
-                isEditing={noteFormProps.isEditing}
-              />
-            </DialogContent>
-          </Dialog>
+        <div className="flex items-center gap-2">
+           <ThemeToggleButton />
+           {activeView === 'notes' && (
+             <Dialog open={isFormOpen} onOpenChange={onOpenChange}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="default" 
+                  className="shadow-md" 
+                  onClick={() => onOpenChange(true)}
+                  aria-label="Add New Item"
+                >
+                  <PlusCircle className="h-5 w-5 sm:mr-2" />
+                  <span className="hidden sm:inline">Add New Item</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
+                <DialogHeader>
+                  <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
+                </DialogHeader>
+                <NoteForm
+                  onSave={noteFormProps.onSave}
+                  isLoading={noteFormProps.isLoading}
+                  onFormSubmit={noteFormProps.onFormSubmit}
+                  defaultValues={noteFormProps.defaultValues}
+                  isEditing={noteFormProps.isEditing}
+                />
+              </DialogContent>
+            </Dialog>
+           )}
         </div>
       </div>
     </header>
   );
 }
-
-    
