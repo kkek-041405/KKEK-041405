@@ -4,6 +4,7 @@ import { getSpotifyAccessToken } from "@/lib/spotify-auth";
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("GET /api/spotify/devices");
     const accessToken = await getSpotifyAccessToken(request);
     if (!accessToken) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -14,6 +15,8 @@ export async function GET(request: NextRequest) {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    console.log("Response:", response)
 
     if (!response.ok) {
       const error = await response.json();

@@ -61,9 +61,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const spotifyService = createSpotifyService();
     const tokenData = await spotifyService.exchangeCodeForToken(code);
 
-    // Create response with redirect to success page
+    // Create response with redirect to the notes content page
     const response = NextResponse.redirect(
-      new URL("/auth/success", request.url)
+      new URL("/notes/content", request.url)
     );
 
     // Store tokens in secure HTTP-only cookies
