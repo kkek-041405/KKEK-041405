@@ -2,11 +2,11 @@
 "use client";
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Github, ExternalLink, Link as LinkIcon, Trophy, Film, Image as ImageIcon, CaseSensitive, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, CaseSensitive, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -64,13 +64,9 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
         <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="text-2xl font-bold">{project.title}</DialogTitle>
           <DialogDescription className="text-base text-primary">{project.subtitle}</DialogDescription>
-           <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
         </DialogHeader>
 
-        <ScrollArea className="flex-grow overflow-y-auto">
+        <ScrollArea className="flex-grow">
           <div className="px-6 py-4 space-y-6">
             {/* Screenshots and Video Section */}
             {project.screenshots && project.screenshots.length > 0 && (

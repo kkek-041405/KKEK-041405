@@ -20,6 +20,24 @@ import {
   deleteNoteFromFirestore 
 } from '@/services/note-service';
 
+const defaultKeyInfo: Note[] = [
+  {
+    id: 'default-spotify',
+    title: 'Spotify',
+    content: 'Your Spotify credentials',
+    type: 'keyInformation',
+    createdAt: new Date(0).toISOString(), 
+  },
+  {
+    id: 'default-otp',
+    title: 'OTP',
+    content: 'Your One-Time Passwords',
+    type: 'keyInformation',
+    createdAt: new Date(0).toISOString(),
+  },
+];
+
+
 export default function NotesContentPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,7 +72,7 @@ export default function NotesContentPage() {
       setIsLoadingNotes(true);
       try {
         const firestoreNotes = await getNotesFromFirestore();
-        setNotes(firestoreNotes);
+        setNotes([...defaultKeyInfo, ...firestoreNotes]);
       } catch (error) {
         console.error("Failed to fetch notes:", error);
         toast({
@@ -62,6 +80,7 @@ export default function NotesContentPage() {
           description: "Could not load your items from the cloud. Please try again later.",
           variant: "destructive",
         });
+        setNotes(defaultKeyInfo); // Set default notes even if fetch fails
       }
       setIsLoadingNotes(false);
     };
@@ -130,6 +149,14 @@ export default function NotesContentPage() {
   };
 
   const handleRequestEdit = (noteToEdit: Note) => {
+    if (noteToEdit.id.startsWith('default-')) {
+        toast({
+            title: "Cannot Edit Default Item",
+            description: "Default items are not editable.",
+            variant: "destructive"
+        });
+        return;
+    }
     setEditingNote(noteToEdit);
     setInitialFormValues({
       title: noteToEdit.title,
@@ -153,6 +180,15 @@ export default function NotesContentPage() {
   };
 
   const handleDeleteNote = async (id: string) => {
+    if (id.startsWith('default-')) {
+        toast({
+            title: "Cannot Delete Default Item",
+            description: "Default items cannot be deleted.",
+            variant: "destructive"
+        });
+        return;
+    }
+
     const itemToDelete = notes.find(note => note.id === id);
     if (!itemToDelete) return;
 

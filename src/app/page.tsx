@@ -1,10 +1,11 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
   UserCircle2 as UserCircle, Download, Zap, TrendingUp, Briefcase, Code2, Users, MessageSquare, Mail, MapPin, Linkedin as LinkedinIcon, Github, ExternalLink, Eye, Trophy, CaseSensitive,
-  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench, TabletSmartphone, Share2, Home, Code, ListChecks, Brain, Settings, Lightbulb, Activity, Globe, BarChart, GitBranch, LayoutDashboard, Menu, Search, Info
+  FileCode, Palette, Braces, Type, Orbit, Server as ServerIcon, Wind, Feather, ServerCog, ToyBrick, Database, Cloud, Wand2, Sparkles, BrainCircuit, Cpu, GitFork, GitCommit, Container, Package as PackageIcon, TerminalSquare, Puzzle, Handshake, Repeat, IterationCcw, MessageCircle as MessageCircleIcon, ClipboardList, Crown, UserCheck, Wrench, TabletSmartphone, Share2, Home, Code, ListChecks, Brain, Settings, Lightbulb, Activity, Globe, BarChart, GitBranch, LayoutDashboard, Menu, Search, Info, List
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,6 +14,7 @@ import { PortfolioFooter } from "@/components/portfolio-footer";
 import type { ExperienceItem } from "@/components/experience-section"; 
 import { ExperienceSection } from "@/components/experience-section";
 import React, { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,63 +55,24 @@ const experiences: ExperienceItem[] = [
 // Projects Data
 const initialProjects: Project[] = [
   {
-    id: "project-alpha",
-    title: "Project Alpha",
-    subtitle: "Advanced Task Management",
-    shortDescription: "A revolutionary web application for advanced task management, built with Next.js and Firebase, featuring real-time collaboration.",
-    detailedDescription: "Project Alpha is a cutting-edge task management solution designed for modern teams. It leverages the power of Next.js for a reactive frontend and Firebase for real-time database and authentication. Key features include customizable Kanban boards, real-time updates across all connected clients, user role management, and an intuitive drag-and-drop interface. The project aimed to solve common pain points in team collaboration by providing a centralized, efficient, and visually appealing platform for managing tasks and projects.",
-    imageSrc: "https://picsum.photos/seed/project1/600/400",
-    imageHint: "modern dashboard",
+    id: "online-chess-arena",
+    title: "Online Chess Arena",
+    subtitle: "Play Chess Online with Friends or AI",
+    shortDescription: "A real-time multiplayer chess application built with Kotlin and Firebase, offering matches with friends or the computer.",
+    detailedDescription: "Online Chess Arena is a Kotlin-based mobile application built using Jetpack Compose and Firebase, designed to deliver a seamless online chess experience. Players can challenge friends in real-time matches or play against an AI. The app supports game invitations, match acceptance, and real-time board updates using Firebase Realtime Database. It's built for simplicity, with a sleek UI and robust gameplay mechanics tailored for casual and serious players alike.",
+    imageSrc: "https://raw.githubusercontent.com/kkek-041405/Chess/master/assets/banner.png",
+    imageHint: "chess game",
     screenshots: [
-        { src: "https://picsum.photos/seed/alpha-ss1/800/600", alt: "Project Alpha Dashboard", hint: "dashboard overview" },
-        { src: "https://picsum.photos/seed/alpha-ss2/800/600", alt: "Project Alpha Kanban Board", hint: "kanban board tasks" },
-        { src: "https://picsum.photos/seed/alpha-ss3/800/600", alt: "Project Alpha Settings", hint: "user settings" },
+        { src: "https://raw.githubusercontent.com/kkek-041405/Chess/master/assets/screenshot1.png", alt: "Online Chess Arena Screenshot 1", hint: "mobile app screenshot" },
+        { src: "https://raw.githubusercontent.com/kkek-041405/Chess/master/assets/screenshot2.png", alt: "Online Chess Arena Screenshot 2", hint: "mobile app screenshot" },
+        { src: "https://raw.githubusercontent.com/kkek-041405/Chess/master/assets/screenshot3.png", alt: "Online Chess Arena Screenshot 3", hint: "mobile app screenshot" },
     ],
     videoUrl: undefined,
-    tech: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS", "Genkit", "ShadCN UI"],
-    achievements: ["Winner - University Hackathon '23", "Featured on DevPost"],
-    githubLink: "https://github.com/kkeshkumar/project-alpha-example",
-    liveLink: "https://project-alpha.example.com",
+    tech: ["Kotlin", "Jetpack Compose", "Firebase Realtime Database", "Firebase Authentication", "Google Analytics"],
+    achievements: ["Developed real-time multiplayer sync using Firebase", "Implemented turn-based logic with online matchmaking"],
+    githubLink: "https://github.com/kkek-041405/Chess",
+    liveLink: "https://play.google.com/store/apps/details?id=com.KKEK.chess",
     caseStudyLink: undefined,
-  },
-  {
-    id: "ai-image-analyzer",
-    title: "AI Image Analyzer",
-    subtitle: "Intelligent Image Recognition",
-    shortDescription: "An AI-powered tool to analyze and categorize images using cutting-edge machine learning models and cloud vision APIs.",
-    detailedDescription: "The AI Image Analyzer utilizes Google Cloud Vision API and custom-trained TensorFlow models to provide deep insights into image content. It can detect objects, identify landmarks, read printed and handwritten text, and even understand emotional sentiment in faces. The frontend, built with React, allows users to upload images and view detailed analysis reports. This project showcases the practical application of AI in image processing and data extraction.",
-    imageSrc: "https://picsum.photos/seed/project2/600/400",
-    imageHint: "ai interface",
-     screenshots: [
-        { src: "https://picsum.photos/seed/analyzer-ss1/800/600", alt: "AI Analyzer Upload", hint: "image upload interface" },
-        { src: "https://picsum.photos/seed/analyzer-ss2/800/600", alt: "AI Analyzer Results", hint: "analysis results" },
-    ],
-    videoUrl: undefined,
-    tech: ["Python", "TensorFlow", "Google Cloud Vision", "React", "Flask"],
-    achievements: ["Published Research Paper", "Open Source Contributor Award"],
-    githubLink: "https://github.com/kkeshkumar/ai-image-analyzer-example",
-    liveLink: "https://ai-analyzer.example.com",
-    caseStudyLink: "https://blog.example.com/ai-image-analyzer"
-  },
-  {
-    id: "e-commerce-platform-x",
-    title: "E-commerce Platform X",
-    subtitle: "Full-Stack Online Store",
-    shortDescription: "A full-featured online store with secure payment integration, admin dashboard, and personalized recommendations.",
-    detailedDescription: "Platform X is a comprehensive e-commerce solution built from the ground up. It features a robust backend powered by Node.js and Express, with MongoDB for data storage. Secure payment processing is handled by Stripe integration. The platform includes an administrative dashboard for managing products, orders, and customers. A recommendation engine, using collaborative filtering, provides personalized product suggestions to users. The frontend is built with React for a dynamic shopping experience.",
-    imageSrc: "https://picsum.photos/seed/project3/600/400",
-    imageHint: "online store",
-    screenshots: [
-        { src: "https://picsum.photos/seed/ecomm-ss1/800/600", alt: "E-commerce Homepage", hint: "storefront homepage" },
-        { src: "https://picsum.photos/seed/ecomm-ss2/800/600", alt: "E-commerce Product Page", hint: "product detail" },
-        { src: "https://picsum.photos/seed/ecomm-ss3/800/600", alt: "E-commerce Admin Panel", hint: "admin dashboard" },
-    ],
-    videoUrl: undefined,
-    tech: ["Node.js", "Express", "MongoDB", "Stripe API", "React", "Redux"],
-    achievements: ["Processed 10k+ Orders", "5-Star User Rating"],
-    githubLink: "https://github.com/kkeshkumar/ecommerce-x-example",
-    liveLink: "https://ecommerce-x.example.com",
-    caseStudyLink: undefined
   },
 ];
 
@@ -149,6 +112,7 @@ export default function PortfolioPage() {
   const [filter, setFilter] = useState<string>("All");
   const [isSkillsSectionVisible, setIsSkillsSectionVisible] = useState(false);
   const skillsSectionRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
 
 
   // Set document title dynamically for client components
@@ -203,7 +167,7 @@ export default function PortfolioPage() {
     
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <PortfolioHeader />
+       {pathname !== '/lm' && <PortfolioHeader />}
 
       <main className="flex-1">
         {/* Hero Section (Home) */}
@@ -234,8 +198,8 @@ export default function PortfolioPage() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 pt-3 w-full sm:w-auto">
                     <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
-                      <Link href="/#projects">
-                        <Briefcase className="mr-2 h-5 w-5" /> View Projects
+                      <Link href="/lm">
+                        <BrainCircuit className="mr-2 h-5 w-5" /> LM
                       </Link>
                     </Button>
                     <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
@@ -472,3 +436,8 @@ export default function PortfolioPage() {
 }
 
 
+
+
+    
+
+    
