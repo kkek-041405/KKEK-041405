@@ -42,7 +42,7 @@ const defaultKeyInfo: Note[] = [
 
 export default function NotesContentPage() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [isLoadingNotes, setIsLoadingNotes] = useState(true);
@@ -58,14 +58,12 @@ export default function NotesContentPage() {
   const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'otp'>('notes');
 
   useEffect(() => {
-    // Check authentication status
-    if (typeof window !== 'undefined') {
-      const authStatus = sessionStorage.getItem('notesAuthenticated');
-      if (authStatus !== 'true') {
-        router.replace('/notes'); // Redirect to auth page if not authenticated
-      } else {
-        setIsAuthenticated(true);
-      }
+    // Check authentication status on the client side only
+    const authStatus = sessionStorage.getItem('notesAuthenticated');
+    if (authStatus !== 'true') {
+      router.replace('/notes'); // Redirect to auth page if not authenticated
+    } else {
+      setIsAuthenticated(true);
     }
   }, [router]);
 
@@ -92,7 +90,8 @@ export default function NotesContentPage() {
   }, [toast, isAuthenticated, activeView]);
 
   if (!isAuthenticated) {
-    // Show a loading state or a minimal message while redirecting
+    // Show a loading state or a minimal message while checking auth status and redirecting.
+    // This view is consistent between server and initial client render.
     return (
        <div className="flex flex-col min-h-screen">
         <AppBar
@@ -367,3 +366,5 @@ export default function NotesContentPage() {
     </div>
   );
 }
+
+    
