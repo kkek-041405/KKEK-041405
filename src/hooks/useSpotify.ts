@@ -255,9 +255,12 @@ export function useSpotify(): UseSpotifyReturn {
         clearInterval(refreshTimerRef.current);
         refreshTimerRef.current = null;
       }
+      
+      // Clear cookies by setting expiry to a past date
+      document.cookie = 'spotify_access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
+      document.cookie = 'spotify_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
+      document.cookie = 'spotify_token_expires_at=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
 
-      // Clear tokens on server (if you have a logout endpoint)
-      // await fetch("/api/spotify/logout", { method: "POST" });
 
       // Clear local state
       if (isMountedRef.current) {
@@ -270,9 +273,8 @@ export function useSpotify(): UseSpotifyReturn {
         });
       }
 
-      // Optionally: Clear cookies via document.cookie or reload page
-      // to ensure all auth state is cleared
-      window.location.href = "/";
+      // Reload to ensure all auth state is cleared from the app
+      window.location.reload();
     } catch (error) {
       console.error("Error during logout:", error);
     }
