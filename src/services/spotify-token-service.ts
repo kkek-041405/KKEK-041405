@@ -2,8 +2,8 @@
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 
-const TOKENS_COLLECTION = 'spotify_tokens';
-const TOKEN_DOC_ID = 'user_session';
+const TOKENS_COLLECTION = 'config';
+const TOKEN_DOC_ID = 'spotify_tokens';
 
 export interface SpotifyTokenData {
   accessToken: string;
