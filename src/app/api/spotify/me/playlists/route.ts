@@ -26,7 +26,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (!apiResponse.ok) {
-      const error = await apiResponse.json();
+      const errorText = await apiResponse.text();
+      let error = { message: errorText };
+      try {
+        error = JSON.parse(errorText);
+      } catch (e) {
+        // Not a JSON response
+      }
       return NextResponse.json(
         { error: "Failed to fetch playlists", details: error },
         { status: apiResponse.status }
@@ -39,7 +45,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching playlists:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error" + error },
       { status: 500 }
     );
   }

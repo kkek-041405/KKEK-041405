@@ -24,7 +24,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (!apiResponse.ok) {
-      const error = await apiResponse.json();
+      const errorText = await apiResponse.text();
+      let error = { message: errorText };
+      try {
+        error = JSON.parse(errorText);
+      } catch (e) {
+        // Not a JSON response
+      }
       return NextResponse.json(
         { error: "Failed to fetch player state", details: error },
         { status: apiResponse.status }

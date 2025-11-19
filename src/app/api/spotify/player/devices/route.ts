@@ -17,7 +17,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (!apiResponse.ok) {
-      const error = await apiResponse.json();
+      const errorText = await apiResponse.text();
+      let error = { message: errorText };
+      try {
+        error = JSON.parse(errorText);
+      } catch (e) {
+        // Not a JSON response
+      }
       return NextResponse.json(
         { error: "Failed to fetch devices", details: error },
         { status: apiResponse.status }
@@ -29,7 +35,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to fetch devices", details: error },
       { status: 500 }
     );
   }
