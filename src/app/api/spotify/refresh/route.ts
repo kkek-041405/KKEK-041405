@@ -13,6 +13,7 @@ import { createSpotifyService } from "@/services/spotify-service";
 import {
   getTokensFromFirestore,
   saveTokensToFirestore,
+  deleteTokensFromFirestore,
   type SpotifyTokenData
 } from "@/services/spotify-token-service";
 
@@ -54,7 +55,7 @@ export async function POST(): Promise<NextResponse> {
   } catch (error) {
     console.error("Error in /api/spotify/refresh:", error);
     // If refresh fails, it's a critical auth issue.
-    // We could also delete the tokens from Firestore here to force a re-login.
+    // We clear the tokens from Firestore to force a re-login.
     await deleteTokensFromFirestore();
 
     return NextResponse.json(

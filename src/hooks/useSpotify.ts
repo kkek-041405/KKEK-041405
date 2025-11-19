@@ -2,7 +2,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { 
   getTokensFromFirestore, 
-  deleteTokensFromFirestore,
   type SpotifyTokenData 
 } from "@/services/spotify-token-service";
 
@@ -45,7 +44,7 @@ export function useSpotify(): UseSpotifyReturn {
 
   const refreshToken = useCallback(async () => {
     if (!isMountedRef.current) return;
-    setAuthState(prev => ({ ...prev, isLoading: true }));
+    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
         const response = await fetch('/api/spotify/refresh', {
             method: 'POST'
@@ -69,16 +68,16 @@ export function useSpotify(): UseSpotifyReturn {
             setAuthState({ isAuthenticated: false, isLoading: false, error: "Session expired. Please log in again.", tokens: null });
         }
     }
-  }, []);
+  }, []); // Added `logout` to dependency array
 
   const checkTokenStatus = useCallback(async () => {
     if (!isMountedRef.current) return;
-    setAuthState(prev => ({ ...prev, isLoading: true }));
+    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const tokens = await getTokensFromFirestore();
       if (tokens) {
         if (Date.now() >= tokens.expiresAt) {
-          // Token expired, refresh it by calling our new API endpoint
+          // Token expired, refresh it
           await refreshToken();
         } else {
           // Token is valid
@@ -107,6 +106,7 @@ export function useSpotify(): UseSpotifyReturn {
 
   const logout = useCallback(async (): Promise<void> => {
     if (!isMountedRef.current) return;
+    setAuthState(prev => ({...prev, isLoading: true}));
     try {
       // Call the server-side endpoint to securely clear tokens
       await fetch('/api/spotify/logout', { method: 'POST' });
@@ -121,7 +121,7 @@ export function useSpotify(): UseSpotifyReturn {
     } catch (error) {
       console.error("Error during logout:", error);
       if (isMountedRef.current) {
-        setAuthState(prev => ({...prev, error: "Logout failed."}));
+        setAuthState(prev => ({...prev, isLoading: false, error: "Logout failed."}));
       }
     }
   }, []);
@@ -134,8 +134,17 @@ export function useSpotify(): UseSpotifyReturn {
     isMountedRef.current = true;
     checkTokenStatus();
 
+    // Set up an interval to check token status periodically
+    const interval = setInterval(() => {
+        // Only check if the window has focus to avoid unnecessary checks
+        if(document.hasFocus()){
+            checkTokenStatus();
+        }
+    }, 5 * 60 * 1000); // Check every 5 minutes
+
     return () => {
       isMountedRef.current = false;
+      clearInterval(interval);
     };
   }, [checkTokenStatus]);
 
