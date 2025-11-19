@@ -156,7 +156,7 @@ function AuthenticatedSpotifyView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshingPlaylists, setIsRefreshingPlaylists] = useState(false);
 
-  const { play } = usePlayer();
+  const { play, playerState } = usePlayer();
 
   const fetchPlaylists = useCallback(async () => {
     setIsRefreshingPlaylists(true);
@@ -279,7 +279,7 @@ function AuthenticatedSpotifyView() {
           </main>
         </div>
       </div>
-      <SpotifyPlayer />
+      {playerState && playerState.item && <SpotifyPlayer />}
     </div>
   );
 }
@@ -313,3 +313,5 @@ export default function SpotifyView() {
     <SpotifyLogin login={() => window.location.href = "/api/spotify/auth"} error={authState.error} />
   );
 }
+
+    
