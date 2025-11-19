@@ -25,7 +25,7 @@ import { Countdown } from './countdown';
 import { useToast } from "@/hooks/use-toast";
 import { SpotifyPlayer } from "./spotify-player";
 import { usePlayer } from "@/hooks/usePlayer";
-import { getPlaylistsFromFirestore, savePlaylistsToFirestore } from "@/services/spotify-playlist-service";
+import { getPlaylistsFromFirestore, savePlaylistsToFirestore, getTracksFromFirestore, saveTracksToFirestore } from "@/services/spotify-playlist-service";
 
 
 // Login View
@@ -212,10 +212,22 @@ function AuthenticatedSpotifyView() {
     setIsLoadingTracks(true);
     setSelectedPlaylistId(playlistId);
     try {
+      // 1. Try to get from Firestore first
+      const cachedTracks = await getTracksFromFirestore(playlistId);
+      if (cachedTracks) {
+        setSelectedPlaylist(cachedTracks);
+        setIsLoadingTracks(false);
+        return;
+      }
+
+      // 2. If not in cache, fetch from Spotify API
       const response = await fetch(`/api/spotify/playlists/${playlistId}`);
       if (response.ok) {
         const data = await response.json();
-        setSelectedPlaylist(data.tracks.items);
+        const tracks = data.tracks.items as SpotifyPlaylistTrack[];
+        setSelectedPlaylist(tracks);
+        // 3. Save to Firestore for next time
+        await saveTracksToFirestore(playlistId, tracks);
       } else {
          toast({
           title: "Error Loading Tracks",
