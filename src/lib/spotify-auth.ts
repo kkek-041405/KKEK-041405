@@ -7,19 +7,25 @@ const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // 5 minute buffer
 /**
  * Retrieves a valid Spotify access token, refreshing it if necessary.
  *
+ * This function is designed to be called from within your API routes.
+ * It returns the valid token and a function to apply new cookies to the response if a refresh occurred.
+ *
  * @param request - The incoming NextRequest, used to access cookies.
- * @returns A promise that resolves to the access token, or null if unauthorized.
+ * @returns A promise that resolves to an object containing the access token and a cookie-setting function.
  */
 export async function getSpotifyAccessToken(
   request: NextRequest,
-): Promise<string | null> {
-  const accessToken = request.cookies.get("spotify_access_token")?.value;
+): Promise<{ accessToken: string | null; applyCookies: (res: NextResponse) => void }> {
+  let accessToken = request.cookies.get("spotify_access_token")?.value;
   const refreshToken = request.cookies.get("spotify_refresh_token")?.value;
   const expiresAtStr = request.cookies.get("spotify_token_expires_at")?.value;
 
+  // No-op function by default
+  let applyCookies = (res: NextResponse) => {};
+
   if (!refreshToken) {
     // If there's no refresh token, the user is not authenticated.
-    return null;
+    return { accessToken: null, applyCookies };
   }
 
   const expiresAt = expiresAtStr ? parseInt(expiresAtStr, 10) : 0;
@@ -27,7 +33,7 @@ export async function getSpotifyAccessToken(
 
   if (accessToken && !isExpired) {
     // If we have a valid, non-expired access token, use it.
-    return accessToken;
+    return { accessToken, applyCookies };
   }
 
   // If the token is expired or missing, we must refresh it.
@@ -35,20 +41,51 @@ export async function getSpotifyAccessToken(
     const spotifyService = createSpotifyService();
     const tokenData = await spotifyService.refreshAccessToken(refreshToken);
 
-    // After a successful refresh, we need to return a response that sets the new cookies.
-    // However, since this is a utility function, we can't directly manipulate the response.
-    // The calling API route must handle setting the cookies. For now, we'll just return
-    // the new token and rely on the next full auth check to update cookies,
-    // or expect the calling function to handle it.
-    
-    // This is a limitation of this helper. A better approach might be middleware,
-    // but for now, we'll return the new token. The cookies will be outdated until the next
-    // call to an auth-checking endpoint that *does* set cookies.
-    return tokenData.accessToken;
+    // The new token is the one we should use now.
+    accessToken = tokenData.accessToken;
+
+    // Prepare a function to set the new cookies on the actual response
+    applyCookies = (response: NextResponse) => {
+      response.cookies.set("spotify_access_token", tokenData.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60, // 1 hour
+        path: "/",
+      });
+      if (tokenData.refreshToken !== refreshToken) {
+          response.cookies.set("spotify_refresh_token", tokenData.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+            path: "/",
+          });
+      }
+      response.cookies.set(
+        "spotify_token_expires_at",
+        tokenData.expiresAt.toString(),
+        {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60, // 1 hour
+          path: "/",
+        }
+      );
+    };
+
+    return { accessToken, applyCookies };
 
   } catch (error) {
     console.error("Failed to refresh Spotify token in helper:", error);
     // If refresh fails, the user is likely unauthorized.
-    return null;
+    // We'll also define a function to clear the invalid cookies.
+    applyCookies = (response: NextResponse) => {
+        response.cookies.delete('spotify_access_token');
+        response.cookies.delete('spotify_refresh_token');
+        response.cookies.delete('spotify_token_expires_at');
+    }
+    return { accessToken: null, applyCookies };
   }
 }

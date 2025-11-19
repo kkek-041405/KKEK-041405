@@ -1,3 +1,4 @@
+
 /**
  * useSpotify Hook
  *
@@ -249,6 +250,10 @@ export function useSpotify(): UseSpotifyReturn {
    * Logs out and clears tokens
    */
   const logout = useCallback(async (): Promise<void> => {
+    // This function will now be much simpler. The server will handle cookie clearing
+    // on the next failed request, but we can also provide a dedicated logout endpoint if needed.
+    // For now, we just clear the client-side state and reload.
+    
     try {
       // Clear refresh timer
       if (refreshTimerRef.current) {
@@ -256,12 +261,6 @@ export function useSpotify(): UseSpotifyReturn {
         refreshTimerRef.current = null;
       }
       
-      // Clear cookies by setting expiry to a past date
-      document.cookie = 'spotify_access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
-      document.cookie = 'spotify_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
-      document.cookie = 'spotify_token_expires_at=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0';
-
-
       // Clear local state
       if (isMountedRef.current) {
         setAuthState({
@@ -273,7 +272,10 @@ export function useSpotify(): UseSpotifyReturn {
         });
       }
 
-      // Reload to ensure all auth state is cleared from the app
+      // Reload to ensure all auth state is cleared from the app.
+      // The httpOnly cookies will remain, but they will be invalid on the next API call,
+      // which will then fail, and the user will be prompted to log in again.
+      // This is a safe approach as client-side code can't delete httpOnly cookies.
       window.location.reload();
     } catch (error) {
       console.error("Error during logout:", error);

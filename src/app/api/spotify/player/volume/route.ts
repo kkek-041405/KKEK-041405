@@ -3,10 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSpotifyAccessToken } from "@/lib/spotify-auth";
 
 export async function PUT(request: NextRequest) {
+  let response: NextResponse;
   try {
-    const accessToken = await getSpotifyAccessToken(request);
+    const { accessToken, applyCookies } = await getSpotifyAccessToken(request);
     if (!accessToken) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      response = NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      applyCookies(response);
+      return response;
     }
 
     const { searchParams } = new URL(request.url);
@@ -21,19 +24,23 @@ export async function PUT(request: NextRequest) {
     }
 
 
-    const response = await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}`, {
+    const apiResponse = await fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    if (!response.ok) {
-       const error = await response.text();
-       return NextResponse.json({ error: "Failed to set volume", details: error }, { status: response.status });
+    if (!apiResponse.ok) {
+       const error = await apiResponse.text();
+       response = NextResponse.json({ error: "Failed to set volume", details: error }, { status: apiResponse.status });
+       applyCookies(response);
+       return response;
     }
 
-    return new NextResponse(null, { status: 204 });
+    response = new NextResponse(null, { status: 204 });
+    applyCookies(response);
+    return response;
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },
