@@ -2,41 +2,23 @@
 "use client";
 
 import type React from 'react';
-import type { NoteFormValues } from '@/components/note-form';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { NoteForm } from '@/components/note-form';
-import { Notebook, PlusCircle, Home, Music, KeyRound, ChevronDown } from 'lucide-react';
+import { Notebook, Home, Music, KeyRound, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggleButton } from './theme-toggle-button';
 
 interface AppBarProps {
-  isFormOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  noteFormProps: {
-    onSave: (data: NoteFormValues) => void;
-    isLoading: boolean;
-    onFormSubmit: () => void;
-    defaultValues?: NoteFormValues | null;
-    isEditing?: boolean;
-  };
   activeView: 'notes' | 'spotify' | 'otp';
   onViewChange: (view: 'notes' | 'spotify' | 'otp') => void;
 }
 
-export function AppBar({ isFormOpen, onOpenChange, noteFormProps, activeView, onViewChange }: AppBarProps) {
+export function AppBar({ activeView, onViewChange }: AppBarProps) {
   
   const viewOptions = {
     notes: { label: 'NoteNest', icon: Notebook },
@@ -84,33 +66,6 @@ export function AppBar({ isFormOpen, onOpenChange, noteFormProps, activeView, on
 
         <div className="flex items-center gap-2">
            <ThemeToggleButton />
-           {activeView === 'notes' && (
-             <Dialog open={isFormOpen} onOpenChange={onOpenChange}>
-              <DialogTrigger asChild>
-                <Button 
-                  size="default" 
-                  className="shadow-md" 
-                  onClick={() => onOpenChange(true)}
-                  aria-label="Add New Item"
-                >
-                  <PlusCircle className="h-5 w-5 sm:mr-2" />
-                  <span className="hidden sm:inline">Add New Item</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
-                <DialogHeader>
-                  <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
-                </DialogHeader>
-                <NoteForm
-                  onSave={noteFormProps.onSave}
-                  isLoading={noteFormProps.isLoading}
-                  onFormSubmit={noteFormProps.onFormSubmit}
-                  defaultValues={noteFormProps.defaultValues}
-                  isEditing={noteFormProps.isEditing}
-                />
-              </DialogContent>
-            </Dialog>
-           )}
         </div>
       </div>
     </header>

@@ -5,13 +5,12 @@ import type { Note } from '@/lib/types';
 import type { NoteFormValues } from '@/components/note-form';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { NoteForm } from '@/components/note-form';
 import { NoteList } from '@/components/note-list';
 import { NoteView } from '@/components/note-view';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook, FileText, Loader2, KeyRound, Music } from 'lucide-react';
+import { Notebook, FileText, Loader2 } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -95,9 +94,6 @@ export default function NotesContentPage() {
     return (
        <div className="flex flex-col min-h-screen">
         <AppBar
-          isFormOpen={false}
-          onOpenChange={() => {}}
-          noteFormProps={{ onSave: () => {}, isLoading: false, onFormSubmit: () => {} }}
           activeView={activeView}
           onViewChange={setActiveView}
         />
@@ -272,9 +268,6 @@ export default function NotesContentPage() {
     return (
       <div className="flex flex-col min-h-screen">
         <AppBar
-          isFormOpen={isFormOpen}
-          onOpenChange={handleDialogValidOpenChange}
-          noteFormProps={noteFormProps}
           activeView={activeView}
           onViewChange={setActiveView}
         />
@@ -302,6 +295,9 @@ export default function NotesContentPage() {
           onDeleteNote={handleDeleteNote}
           sortType={sortType}
           onSortChange={setSortType}
+          isFormOpen={isFormOpen}
+          onFormOpenChange={handleDialogValidOpenChange}
+          noteFormProps={noteFormProps}
         />
       </section>
 
@@ -353,9 +349,6 @@ export default function NotesContentPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <AppBar
-        isFormOpen={isFormOpen}
-        onOpenChange={handleDialogValidOpenChange}
-        noteFormProps={noteFormProps}
         activeView={activeView}
         onViewChange={setActiveView}
       />
