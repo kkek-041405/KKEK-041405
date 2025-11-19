@@ -1,15 +1,69 @@
 
-// This file is no longer used for the primary refresh flow,
-// as token management is now handled directly in the `useSpotify` hook
-// and through direct Firestore interactions.
-// It is kept for potential future use or for other server-side scenarios.
+/**
+ * Spotify Token Refresh API Route
+ *
+ * POST /api/spotify/refresh
+ * Securely refreshes the Spotify access token using the refresh token stored in Firestore.
+ *
+ * @module api/spotify/refresh
+ */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { createSpotifyService } from "@/services/spotify-service";
+import {
+  getTokensFromFirestore,
+  saveTokensToFirestore,
+  type SpotifyTokenData
+} from "@/services/spotify-token-service";
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-    return NextResponse.json({ message: "This endpoint is not actively used. Token refresh is handled via the useSpotify hook." }, { status: 404 });
-}
+/**
+ * POST handler - Refreshes the Spotify access token.
+ *
+ * @returns A JSON response indicating success or failure.
+ */
+export async function POST(): Promise<NextResponse> {
+  try {
+    const currentTokens = await getTokensFromFirestore();
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
-    return NextResponse.json({ message: "This endpoint is not actively used. Token refresh is handled via the useSpotify hook." }, { status: 404 });
+    if (!currentTokens?.refreshToken) {
+      return NextResponse.json(
+        { error: "Not authenticated. No refresh token found." },
+        { status: 401 }
+      );
+    }
+
+    const spotifyService = createSpotifyService();
+    const refreshedTokens = await spotifyService.refreshAccessToken(
+      currentTokens.refreshToken
+    );
+
+    const newTokens: SpotifyTokenData = {
+      accessToken: refreshedTokens.accessToken,
+      refreshToken: refreshedTokens.refreshToken, // Spotify might return a new refresh token
+      expiresAt: refreshedTokens.expiresAt,
+    };
+
+    await saveTokensToFirestore(newTokens);
+
+    return NextResponse.json({
+      success: true,
+      message: "Token refreshed successfully.",
+      tokens: newTokens, // Send back the new tokens so the client can update its state
+    });
+
+  } catch (error) {
+    console.error("Error in /api/spotify/refresh:", error);
+    // If refresh fails, it's a critical auth issue.
+    // We could also delete the tokens from Firestore here to force a re-login.
+    await deleteTokensFromFirestore();
+
+    return NextResponse.json(
+      {
+        error: "Failed to refresh token",
+        message:
+          error instanceof Error ? error.message : "Session expired or invalid.",
+      },
+      { status: 500 }
+    );
+  }
 }
