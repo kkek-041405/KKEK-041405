@@ -25,6 +25,8 @@ import { Countdown } from './countdown';
 import { useToast } from "@/hooks/use-toast";
 import { SpotifyPlayer } from "./spotify-player";
 import { usePlayer } from "@/hooks/usePlayer";
+import { getPlaylistsFromFirestore, savePlaylistsToFirestore } from "@/services/spotify-playlist-service";
+
 
 // Login View
 function SpotifyLogin({
@@ -77,11 +79,12 @@ function TokenInfoPopover() {
       toast({ title: "Copy Failed", description: `Could not copy the ${label.toLowerCase()}.`, variant: 'destructive'});
     });
   };
-
+  
   const handleReauthenticate = () => {
     const authUrl = `${window.location.origin}/api/spotify/auth`;
     handleCopy(authUrl, 'Auth URL');
   }
+
 
   return (
     <Popover>
@@ -132,12 +135,12 @@ function TokenInfoPopover() {
               )}
               Refresh Token
             </Button>
-            <Button variant="secondary" onClick={handleReauthenticate} className="w-full" disabled={authState.isLoading}>
+             <Button variant="secondary" onClick={handleReauthenticate} className="w-full" disabled={authState.isLoading}>
                 {copiedToken === 'Auth URL' ? <Check className="mr-2 h-4 w-4 text-green-500" /> : <LinkIcon className="mr-2 h-4 w-4" />}
                 Re-authenticate
             </Button>
           </div>
-            <Button variant="destructive" onClick={logout} className="w-full" disabled={authState.isLoading}>
+           <Button variant="destructive" onClick={logout} className="w-full" disabled={authState.isLoading}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
             </Button>
@@ -153,44 +156,85 @@ function AuthenticatedSpotifyView() {
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState<SpotifyPlaylistTrack[] | null>(null);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingTracks, setIsLoadingTracks] = useState(false);
   const [isRefreshingPlaylists, setIsRefreshingPlaylists] = useState(false);
+  const { toast } = useToast();
 
-  const { play, playerState } = usePlayer();
+  const { playerState, play } = usePlayer();
 
-  const fetchPlaylists = useCallback(async () => {
+  useEffect(() => {
+    // On initial load, try to get playlists from Firestore
+    async function loadInitialPlaylists() {
+      setIsRefreshingPlaylists(true);
+      const cachedPlaylists = await getPlaylistsFromFirestore();
+      if (cachedPlaylists) {
+        setPlaylists(cachedPlaylists);
+      }
+      setIsRefreshingPlaylists(false);
+    }
+    loadInitialPlaylists();
+  }, []);
+
+  const fetchPlaylistsFromSpotify = useCallback(async () => {
     setIsRefreshingPlaylists(true);
     try {
-      const response = await fetch('/api/spotify/me/playlists');
+      const response = await fetch('/api/spotify/me/playlists?limit=50');
       if (response.ok) {
         const data = await response.json();
         setPlaylists(data.items);
+        await savePlaylistsToFirestore(data.items); // Save to Firestore
+        toast({
+          title: "Playlists Refreshed",
+          description: "Your playlists have been updated from Spotify and saved.",
+        });
       } else {
-        console.error("Failed to fetch playlists", await response.text());
+        const errorText = await response.text();
+        console.error("Failed to fetch playlists", errorText);
+        toast({
+          title: "Error Refreshing Playlists",
+          description: "Could not fetch playlists from Spotify.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Error fetching playlists:", error);
+       toast({
+          title: "Network Error",
+          description: "A network error occurred while fetching playlists.",
+          variant: "destructive",
+        });
     } finally {
       setIsRefreshingPlaylists(false);
     }
-  }, []);
+  }, [toast]);
 
   const fetchPlaylistTracks = useCallback(async (playlistId: string) => {
-    setIsLoading(true);
+    setIsLoadingTracks(true);
     setSelectedPlaylistId(playlistId);
     try {
       const response = await fetch(`/api/spotify/playlists/${playlistId}`);
       if (response.ok) {
         const data = await response.json();
         setSelectedPlaylist(data.tracks.items);
+      } else {
+         toast({
+          title: "Error Loading Tracks",
+          description: "Could not load tracks for the selected playlist.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Failed to fetch playlist tracks", error);
+       toast({
+          title: "Network Error",
+          description: "A network error occurred while fetching tracks.",
+          variant: "destructive",
+        });
       setSelectedPlaylist(null);
     } finally {
-      setIsLoading(false);
+      setIsLoadingTracks(false);
     }
-  }, []);
+  }, [toast]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-65px)]">
@@ -202,33 +246,44 @@ function AuthenticatedSpotifyView() {
               <Button
                   variant="ghost"
                   size="icon"
-                  onClick={fetchPlaylists}
+                  onClick={fetchPlaylistsFromSpotify}
                   disabled={isRefreshingPlaylists}
-                  aria-label="Refresh Playlists"
+                  aria-label="Refresh Playlists from Spotify"
+                  title="Refresh Playlists from Spotify"
               >
                   <RefreshCw className={cn("h-4 w-4", isRefreshingPlaylists && "animate-spin")} />
               </Button>
           </div>
           <ScrollArea className="flex-1">
-            <div className="space-y-2">
-              {playlists.map(p => (
-                <div 
-                  key={p.id}
-                  onClick={() => fetchPlaylistTracks(p.id)}
-                  className={cn(
-                    "p-2 rounded-md flex items-center gap-3 cursor-pointer hover:bg-accent",
-                    selectedPlaylistId === p.id && "bg-primary/10 text-primary"
-                  )}
-                >
-                  {p.images[0] ? (
-                    <Image src={p.images[0].url} alt={p.name} width={40} height={40} className="rounded-sm"/>
-                  ) : (
-                    <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
-                  )}
-                  <span className="truncate font-medium">{p.name}</span>
+            {isRefreshingPlaylists && playlists.length === 0 ? (
+                 <div className="flex items-center justify-center h-full">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                 </div>
+            ) : playlists.length > 0 ? (
+              <div className="space-y-2">
+                {playlists.map(p => (
+                  <div 
+                    key={p.id}
+                    onClick={() => fetchPlaylistTracks(p.id)}
+                    className={cn(
+                      "p-2 rounded-md flex items-center gap-3 cursor-pointer hover:bg-accent",
+                      selectedPlaylistId === p.id && "bg-primary/10 text-primary"
+                    )}
+                  >
+                    {p.images[0] ? (
+                      <Image src={p.images[0].url} alt={p.name} width={40} height={40} className="rounded-sm"/>
+                    ) : (
+                      <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
+                    )}
+                    <span className="truncate font-medium">{p.name}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+               <div className="text-center text-muted-foreground text-sm p-4">
+                  No playlists found. Click the refresh icon to fetch them from Spotify.
                 </div>
-              ))}
-            </div>
+            )}
           </ScrollArea>
         </aside>
 
@@ -238,7 +293,7 @@ function AuthenticatedSpotifyView() {
             <TokenInfoPopover />
           </div>
           <main className="flex-1 p-6 pt-0 overflow-y-auto">
-            {isLoading ? (
+            {isLoadingTracks ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
               </div>
@@ -250,7 +305,8 @@ function AuthenticatedSpotifyView() {
                     key={`${track.id}-${index}`}
                     onDoubleClick={() => play({ uris: [track.uri]})}
                     className={cn(
-                      "p-3 rounded-md flex items-center gap-4 hover:bg-accent cursor-pointer"
+                      "p-3 rounded-md flex items-center gap-4 hover:bg-accent cursor-pointer",
+                       playerState?.item?.id === track.id && "bg-primary/10 text-primary"
                     )}
                   >
                     <span className="w-6 text-muted-foreground">{index + 1}</span>
@@ -309,5 +365,3 @@ export default function SpotifyView() {
     <SpotifyLogin login={() => window.location.href = "/api/spotify/auth"} error={authState.error} />
   );
 }
-
-    
