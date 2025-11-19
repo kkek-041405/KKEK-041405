@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, Music, Power, RefreshCw, Eye, Timer } from "lucide-react";
+import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
 import { ScrollArea } from "./ui/scroll-area";
@@ -63,9 +63,13 @@ function SpotifyLogin({
 function TokenInfoPopover() {
   const { authState, refreshToken } = useSpotify();
   const { toast } = useToast();
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
-  const handleCopy = (textToCopy: string, label: string) => {
+  const handleCopy = (textToCopy: string | null, label: 'Access Token' | 'Refresh Token') => {
+    if (!textToCopy) return;
     navigator.clipboard.writeText(textToCopy).then(() => {
+      setCopiedToken(label);
+      setTimeout(() => setCopiedToken(null), 2000); // Reset after 2 seconds
       toast({ title: `${label} Copied!`, description: `The ${label.toLowerCase()} has been copied.` });
     }).catch(err => {
       toast({ title: "Copy Failed", description: `Could not copy the ${label.toLowerCase()}.`, variant: 'destructive'});
@@ -82,31 +86,35 @@ function TokenInfoPopover() {
       <PopoverContent className="w-96 mr-4" align="end">
         <div className="space-y-4">
           <h4 className="font-medium leading-none">Token Status</h4>
-          <div className="text-sm space-y-2">
-            <p className="flex items-center justify-between">
+          <div className="text-sm space-y-3">
+            <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Access Token:</span>
-              <span 
-                className="font-mono text-xs truncate cursor-pointer"
-                onClick={() => handleCopy(authState.tokens?.accessToken ?? '', 'Access Token')}
-              >
-                {authState.tokens?.accessToken.slice(0, 20)}...
-              </span>
-            </p>
-            <p className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs truncate">
+                  {authState.tokens?.accessToken ? `${authState.tokens.accessToken.slice(0, 20)}...` : 'N/A'}
+                </span>
+                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(authState.tokens?.accessToken ?? null, 'Access Token')}>
+                  {copiedToken === 'Access Token' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Refresh Token:</span>
-              <span 
-                className="font-mono text-xs truncate cursor-pointer"
-                onClick={() => handleCopy(authState.tokens?.refreshToken ?? '', 'Refresh Token')}
-              >
-                {authState.tokens?.refreshToken.slice(0, 20)}...
-              </span>
-            </p>
-            <p className="flex items-center justify-between">
+               <div className="flex items-center gap-2">
+                <span className="font-mono text-xs truncate">
+                  {authState.tokens?.refreshToken ? `${authState.tokens.refreshToken.slice(0, 20)}...` : 'N/A'}
+                </span>
+                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(authState.tokens?.refreshToken ?? null, 'Refresh Token')}>
+                  {copiedToken === 'Refresh Token' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
               <span className="text-muted-foreground flex items-center"><Timer className="h-4 w-4 mr-1"/> Time to Refresh:</span>
               <span className="font-mono text-xs">
                 {authState.timeToRefresh > 0 ? <Countdown targetDate={authState.timeToRefresh} /> : 'N/A'}
               </span>
-            </p>
+            </div>
           </div>
           <Button onClick={refreshToken} className="w-full" disabled={authState.isLoading}>
             {authState.isLoading ? (
@@ -282,3 +290,5 @@ export default function SpotifyView() {
     <SpotifyLogin login={() => window.location.href = "/api/spotify/auth"} error={authState.error} />
   );
 }
+
+    
