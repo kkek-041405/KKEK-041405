@@ -23,7 +23,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get("code");
-    const state = searchParams.get("state");
     const error = searchParams.get("error");
 
     // Check for OAuth errors
@@ -46,21 +45,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         )
       );
     }
-
-    // Verify state parameter for CSRF protection
-    const storedState = request.cookies.get("spotify_auth_state")?.value;
-    if (!state || !storedState || storedState !== state) {
-      console.error("State mismatch - possible CSRF attack", { storedState, state });
-      const response = NextResponse.redirect(
-        new URL(
-          `/notes?error=${encodeURIComponent("Invalid state parameter. Please try logging in again.")}`,
-          request.url
-        )
-      );
-      // Clear the invalid state cookie to allow for a clean retry
-      response.cookies.delete("spotify_auth_state");
-      return response;
-    }
     
     // Exchange code for tokens
     const spotifyService = createSpotifyService();
@@ -78,9 +62,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       new URL("/notes/content?view=spotify", request.url)
     );
 
-    // Clear the auth state cookie AFTER successful token storage
-    response.cookies.delete("spotify_auth_state");
-
     return response;
   } catch (error) {
     console.error("Error in Spotify callback:", error);
@@ -91,8 +72,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             request.url
         )
     );
-    // Also clear the state cookie on failure to prevent it from being stuck
-    response.cookies.delete('spotify_auth_state');
     return response;
   }
 }
