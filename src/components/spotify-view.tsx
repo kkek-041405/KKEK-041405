@@ -89,7 +89,7 @@ function TokenInfoPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="h-9 w-9">
+        <Button variant="ghost" size="icon" className="h-9 w-9">
           <Eye className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
@@ -261,12 +261,13 @@ function AuthenticatedSpotifyView() {
       if (cachedPlaylists && cachedPlaylists.length > 0) {
         setPlaylists([likedSongsPlaylist, ...cachedPlaylists]);
       } else {
-        setPlaylists([likedSongsPlaylist]); // Show liked songs even if no other playlists are cached
+        // If no cache, fetch from spotify
+        fetchPlaylistsFromSpotify();
       }
       setIsRefreshingPlaylists(false);
     }
     loadInitialPlaylists();
-  }, []);
+  }, [fetchPlaylistsFromSpotify]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-65px)]">
@@ -325,9 +326,6 @@ function AuthenticatedSpotifyView() {
 
         {/* Main Content - Tracks */}
         <div className="flex-1 flex flex-col">
-          <div className="flex justify-end p-4 border-b">
-            <TokenInfoPopover />
-          </div>
           <main className="flex-1 p-6 pt-0 overflow-y-auto">
             {isLoadingTracks ? (
               <div className="flex items-center justify-center h-full">
@@ -335,7 +333,10 @@ function AuthenticatedSpotifyView() {
               </div>
             ) : selectedPlaylist ? (
               <div className="space-y-2 pt-6">
-                <h2 className="text-2xl font-bold mb-4">Tracks</h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold">Tracks</h2>
+                    <TokenInfoPopover />
+                </div>
                 {selectedPlaylist.map(({ track }, index) => track && (
                   <div 
                     key={`${track.id}-${index}`}
