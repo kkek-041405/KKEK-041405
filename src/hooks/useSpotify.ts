@@ -4,6 +4,7 @@ import {
   getTokensFromFirestore, 
   type SpotifyTokenData 
 } from "@/services/spotify-token-service";
+import { usePlayer } from "./usePlayer";
 
 
 // ============================================================================
@@ -37,6 +38,7 @@ export function useSpotify(): UseSpotifyReturn {
   });
 
   const isMountedRef = useRef(true);
+  const { playerState } = usePlayer();
 
   // ==========================================================================
   // Core Logic
@@ -75,7 +77,8 @@ export function useSpotify(): UseSpotifyReturn {
     setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       const tokens = await getTokensFromFirestore();
-      if (tokens) {
+      
+      if (tokens && tokens.accessToken) {
         if (Date.now() >= tokens.expiresAt) {
           // Token expired, refresh it
           await refreshToken();
@@ -117,6 +120,8 @@ export function useSpotify(): UseSpotifyReturn {
           error: null,
           tokens: null,
         });
+        // Optionally, you can also clear the player state here
+        // setPlayerState(null);
       }
     } catch (error) {
       console.error("Error during logout:", error);
@@ -136,8 +141,8 @@ export function useSpotify(): UseSpotifyReturn {
 
     // Set up an interval to check token status periodically
     const interval = setInterval(() => {
-        // Only check if the window has focus to avoid unnecessary checks
-        if(document.hasFocus()){
+        // Only check if the window has focus and user is authenticated
+        if(document.hasFocus() && authState.isAuthenticated){
             checkTokenStatus();
         }
     }, 5 * 60 * 1000); // Check every 5 minutes
@@ -146,7 +151,7 @@ export function useSpotify(): UseSpotifyReturn {
       isMountedRef.current = false;
       clearInterval(interval);
     };
-  }, [checkTokenStatus]);
+  }, [checkTokenStatus, authState.isAuthenticated]);
 
 
   // ==========================================================================

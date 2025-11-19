@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSpotifyAccessToken } from "@/lib/spotify-auth";
+import { getSpotifyAccessToken } from "@/lib/spotify-auth-server";
 
 export async function PUT(request: NextRequest) {
   let response: NextResponse;
@@ -12,11 +12,20 @@ export async function PUT(request: NextRequest) {
       return response;
     }
 
+    let body = null;
+    try {
+        body = await request.json();
+    } catch(e) {
+        // No body provided, which is fine for just resuming playback
+    }
+
     const apiResponse = await fetch("https://api.spotify.com/v1/me/player/play", {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
       },
+      body: body ? JSON.stringify(body) : undefined,
     });
 
     if (!apiResponse.ok) {

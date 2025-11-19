@@ -25,7 +25,7 @@ async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export function usePlayer() {
-  const { refreshToken } = useSpotify(); // Get refreshToken function from useSpotify
+  const { authState } = useSpotify();
   const [playerState, setPlayerState] = useState<SpotifyPlayerState | null>(null);
   const [devices, setDevices] = useState<SpotifyDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +35,7 @@ export function usePlayer() {
 
   // Memoized function to fetch the current player state
   const fetchPlayerState = useCallback(async () => {
+    if (!authState.isAuthenticated) return;
     try {
       const state = await fetcher<SpotifyPlayerState>("/api/spotify/player");
       setPlayerState(state);
@@ -42,23 +43,16 @@ export function usePlayer() {
     } catch (e: unknown) {
       const errorMessage = e instanceof Error ? e.message : "Failed to fetch player state";
       console.error("Error fetching player state:", errorMessage);
-      
-      // Enhanced error handling: check for token expiration
-      if (errorMessage.includes("STAT: 401") || errorMessage.toLowerCase().includes("token expired")) {
-        console.log("Spotify token expired or invalid, attempting to refresh...");
-        await refreshToken(); // Attempt to refresh the token
-        // After refresh, the next poll will try again with the new token
-      } else {
-        setError(errorMessage);
-      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  }, [error, refreshToken]);
+  }, [error, authState.isAuthenticated]);
 
 
   // Helper function to execute a command and then refresh state
   const spotifyCommand = useCallback(async (command: () => Promise<any>) => {
+    if (!authState.isAuthenticated) return;
     try {
       await command();
       // Schedule a state fetch shortly after the command to update UI quickly
@@ -68,10 +62,11 @@ export function usePlayer() {
       console.error("Spotify command error:", errorMessage);
       setError(errorMessage);
     }
-  }, [fetchPlayerState]);
+  }, [fetchPlayerState, authState.isAuthenticated]);
 
 
   const getDevices = useCallback(async () => {
+    if (!authState.isAuthenticated) return;
     try {
       const { devices } = await fetcher<{ devices: SpotifyDevice[] }>(
         "/api/spotify/player/devices"
@@ -80,10 +75,18 @@ export function usePlayer() {
     } catch (e) {
       console.error("Failed to fetch devices:", e);
     }
-  }, []);
+  }, [authState.isAuthenticated]);
   
   const controls = {
-    play: () => spotifyCommand(() => fetcher("/api/spotify/player/play", { method: "PUT" })),
+    play: (uri?: string, context_uri?: string[], offset?: number) => {
+      const body = uri ? { uris: [uri] } : {};
+      if (context_uri && offset !== undefined) {
+        body.context_uri = context_uri.join(',');
+        body.offset = { position: offset };
+        delete body.uris;
+      }
+      spotifyCommand(() => fetcher("/api/spotify/player/play", { method: "PUT", body: JSON.stringify(body) }));
+    },
     pause: () => spotifyCommand(() => fetcher("/api/spotify/player/pause", { method: "PUT" })),
     next: () => spotifyCommand(() => fetcher("/api/spotify/player/next", { method: "POST" })),
     previous: () => spotifyCommand(() => fetcher("/api/spotify/player/previous", { method: "POST" })),
@@ -107,22 +110,28 @@ export function usePlayer() {
     toggleMute: () => {
         if (!playerState) return;
         const currentVolume = playerState.device.volume_percent;
-        const newVolume = currentVolume > 0 ? 0 : 50;
+        const newVolume = currentVolume > 0 ? 0 : 50; // Mute or set to 50%
         controls.setVolume(newVolume);
     },
     transferPlayback: (deviceId: string) => spotifyCommand(() => fetcher("/api/spotify/player/transfer", {
       method: "PUT",
-      body: JSON.stringify({ device_id: deviceId }),
+      body: JSON.stringify({ device_ids: [deviceId], play: true }),
     })),
   };
   
   useEffect(() => {
-    // Initial data fetch
-    fetchPlayerState();
-    getDevices();
+    if (authState.isAuthenticated) {
+      // Initial data fetch
+      fetchPlayerState();
+      getDevices();
 
-    // Set up polling
-    intervalRef.current = setInterval(fetchPlayerState, REFRESH_INTERVAL);
+      // Set up polling
+      intervalRef.current = setInterval(fetchPlayerState, REFRESH_INTERVAL);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
 
     // Clean up on unmount
     return () => {
@@ -130,7 +139,7 @@ export function usePlayer() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [fetchPlayerState, getDevices]);
+  }, [fetchPlayerState, getDevices, authState.isAuthenticated]);
 
   return {
     playerState,

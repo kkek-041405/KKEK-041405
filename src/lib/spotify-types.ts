@@ -46,3 +46,23 @@ export interface SpotifyPlayerState {
   progress_ms: number | null;
   item: SpotifyTrack | null;
 }
+
+export interface SpotifyPlaylist {
+    id: string;
+    name: string;
+    description: string;
+    images: SpotifyImage[];
+    owner: {
+        display_name: string;
+    };
+    tracks: {
+        href: string;
+        total: number;
+    };
+    uri: string;
+}
+
+export interface SpotifyPlaylistTrack {
+    added_at: string;
+    track: SpotifyTrack;
+}

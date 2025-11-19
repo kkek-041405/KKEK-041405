@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSpotifyAccessToken } from "@/lib/spotify-auth";
+import { getSpotifyAccessToken } from "@/lib/spotify-auth-server";
 
 export async function PUT(request: NextRequest) {
   let response: NextResponse;
