@@ -8,14 +8,11 @@ const PLAYLISTS_API_ENDPOINT = "https://api.spotify.com/v1/me/playlists";
  * GET handler for fetching the current user's playlists.
  */
 export async function GET(request: NextRequest) {
-  let response: NextResponse;
   try {
-    const { accessToken, applyCookies } = await getSpotifyAccessToken(request);
+    const { accessToken } = await getSpotifyAccessToken(request);
 
     if (!accessToken) {
-      response = NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-      applyCookies(response);
-      return response;
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
     
     const { searchParams } = new URL(request.url);
@@ -30,18 +27,14 @@ export async function GET(request: NextRequest) {
 
     if (!apiResponse.ok) {
       const error = await apiResponse.json();
-      response = NextResponse.json(
+      return NextResponse.json(
         { error: "Failed to fetch playlists", details: error },
         { status: apiResponse.status }
       );
-      applyCookies(response);
-      return response;
     }
 
     const data = await apiResponse.json();
-    response = NextResponse.json(data);
-    applyCookies(response);
-    return response;
+    return NextResponse.json(data);
 
   } catch (error) {
     console.error("Error fetching playlists:", error);

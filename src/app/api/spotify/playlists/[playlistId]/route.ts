@@ -11,19 +11,16 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { playlistId: string } }
 ) {
-  let response: NextResponse;
   try {
     const playlistId = params.playlistId;
     if (!playlistId) {
       return NextResponse.json({ error: "Playlist ID is required" }, { status: 400 });
     }
 
-    const { accessToken, applyCookies } = await getSpotifyAccessToken(request);
+    const { accessToken } = await getSpotifyAccessToken(request);
 
     if (!accessToken) {
-      response = NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-      applyCookies(response);
-      return response;
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const apiResponse = await fetch(`${PLAYLIST_API_ENDPOINT}${playlistId}`, {
@@ -34,18 +31,14 @@ export async function GET(
 
     if (!apiResponse.ok) {
       const error = await apiResponse.json();
-      response = NextResponse.json(
+      return NextResponse.json(
         { error: `Failed to fetch playlist ${playlistId}`, details: error },
         { status: apiResponse.status }
       );
-      applyCookies(response);
-      return response;
     }
 
     const data = await apiResponse.json();
-    response = NextResponse.json(data);
-    applyCookies(response);
-    return response;
+    return NextResponse.json(data);
 
   } catch (error) {
     console.error("Error fetching playlist:", error);

@@ -3,15 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSpotifyAccessToken } from "@/lib/spotify-auth-server";
 
 export async function GET(request: NextRequest) {
-  let response: NextResponse;
   try {
-    console.log("GET /api/spotify/devices");
-    const { accessToken, applyCookies } = await getSpotifyAccessToken(request);
+    const { accessToken } = await getSpotifyAccessToken(request);
 
     if (!accessToken) {
-      response = NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-      applyCookies(response);
-      return response;
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const apiResponse = await fetch("https://api.spotify.com/v1/me/player/devices", {
@@ -20,22 +16,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log("Response:", apiResponse)
-
     if (!apiResponse.ok) {
       const error = await apiResponse.json();
-      response = NextResponse.json(
+      return NextResponse.json(
         { error: "Failed to fetch devices", details: error },
         { status: apiResponse.status }
       );
-      applyCookies(response);
-      return response;
     }
 
     const data = await apiResponse.json();
-    response = NextResponse.json(data);
-    applyCookies(response);
-    return response;
+    return NextResponse.json(data);
 
   } catch (error) {
     return NextResponse.json(

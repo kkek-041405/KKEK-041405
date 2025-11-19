@@ -3,13 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSpotifyAccessToken } from "@/lib/spotify-auth-server";
 
 export async function PUT(request: NextRequest) {
-  let response: NextResponse;
   try {
-    const { accessToken, applyCookies } = await getSpotifyAccessToken(request);
+    const { accessToken } = await getSpotifyAccessToken(request);
     if (!accessToken) {
-      response = NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-      applyCookies(response);
-      return response;
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -28,14 +25,10 @@ export async function PUT(request: NextRequest) {
 
     if (!apiResponse.ok) {
        const error = await apiResponse.text();
-       response = NextResponse.json({ error: "Failed to set shuffle", details: error }, { status: apiResponse.status });
-       applyCookies(response);
-       return response;
+       return NextResponse.json({ error: "Failed to set shuffle", details: error }, { status: apiResponse.status });
     }
 
-    response = new NextResponse(null, { status: 204 });
-    applyCookies(response);
-    return response;
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },
