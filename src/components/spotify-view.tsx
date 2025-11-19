@@ -5,11 +5,12 @@ import { useSpotify } from "@/hooks/useSpotify";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, Music, Power } from "lucide-react";
+import { Loader2, Music, Power, RefreshCw } from "lucide-react";
 import { SpotifyPlayer } from "./spotify-player";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
@@ -59,10 +60,12 @@ function AuthenticatedSpotifyView() {
   const [selectedPlaylist, setSelectedPlaylist] = useState<SpotifyPlaylistTrack[] | null>(null);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshingPlaylists, setIsRefreshingPlaylists] = useState(false);
 
   const { controls, playerState } = usePlayer();
 
   const fetchPlaylists = useCallback(async () => {
+    setIsRefreshingPlaylists(true);
     try {
       const response = await fetch('/api/spotify/me/playlists');
       if (response.ok) {
@@ -71,6 +74,8 @@ function AuthenticatedSpotifyView() {
       }
     } catch (error) {
       console.error("Failed to fetch playlists", error);
+    } finally {
+      setIsRefreshingPlaylists(false);
     }
   }, []);
 
@@ -100,8 +105,19 @@ function AuthenticatedSpotifyView() {
   return (
     <div className="flex h-[calc(100vh-65px)]">
       {/* Playlist Sidebar */}
-      <aside className="w-1/4 min-w-[250px] bg-card border-r p-4">
-        <h2 className="text-xl font-bold mb-4">Playlists</h2>
+      <aside className="w-1/4 min-w-[250px] bg-card border-r p-4 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Playlists</h2>
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={fetchPlaylists}
+                disabled={isRefreshingPlaylists}
+                aria-label="Refresh Playlists"
+            >
+                <RefreshCw className={cn("h-4 w-4", isRefreshingPlaylists && "animate-spin")} />
+            </Button>
+        </div>
         <ScrollArea className="h-[calc(100%-40px)]">
           <div className="space-y-2">
             {playlists.map(p => (
