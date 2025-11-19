@@ -45,22 +45,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // // Verify state parameter for CSRF protection
-    // const storedState = request.cookies.get("spotify_auth_state")?.value;
-    // if (!storedState || storedState !== state) {
-    //   console.error("State mismatch - possible CSRF attack");
-    //   return NextResponse.redirect(
-    //     new URL(
-    //       `/auth/error?message=${encodeURIComponent("Invalid state parameter")}`,
-    //       request.url
-    //     )
-    //   );
-    // }
-    console.log("Spotify callback received code and state")
+    // Verify state parameter for CSRF protection
+    const storedState = request.cookies.get("spotify_auth_state")?.value;
+    if (!state || !storedState || storedState !== state) {
+      console.error("State mismatch - possible CSRF attack", { storedState, state });
+      return NextResponse.redirect(
+        new URL(
+          `/auth/error?message=${encodeURIComponent("Invalid state parameter. Please try logging in again.")}`,
+          request.url
+        )
+      );
+    }
+    
     // Exchange code for tokens
     const spotifyService = createSpotifyService();
     const tokenData = await spotifyService.exchangeCodeForToken(code);
-    console.log("Spotify callback exchanged code for tokens")
+    
     // Create response with redirect to the notes content page
     const response = NextResponse.redirect(
       new URL("/notes/content", request.url)
