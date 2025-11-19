@@ -64,6 +64,23 @@ export function useSpotify(): UseSpotifyReturn {
   };
 
 
+  const logout = useCallback(async (): Promise<void> => {
+    if (!isMountedRef.current) return;
+    setAuthState(prev => ({...prev, isLoading: true}));
+    try {
+      // Call the server-side endpoint to securely clear tokens
+      await fetch('/api/spotify/logout', { method: 'POST' });
+      if (isMountedRef.current) {
+        updateAuthState(null);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+      if (isMountedRef.current) {
+        setAuthState(prev => ({...prev, isLoading: false, error: "Logout failed."}));
+      }
+    }
+  }, []);
+
   const refreshToken = useCallback(async () => {
     if (!isMountedRef.current) return;
     setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
@@ -90,7 +107,7 @@ export function useSpotify(): UseSpotifyReturn {
             setAuthState(prev => ({ ...prev, isAuthenticated: false, isLoading: false, error: "Session expired. Please log in again.", tokens: null, timeToRefresh: 0 }));
         }
     }
-  }, []); // Added `logout` to dependency array
+  }, [logout]); 
 
   const checkTokenStatus = useCallback(async () => {
     if (!isMountedRef.current) return;
@@ -125,23 +142,6 @@ export function useSpotify(): UseSpotifyReturn {
 
   const login = useCallback((): void => {
     window.location.href = "/api/spotify/auth";
-  }, []);
-
-  const logout = useCallback(async (): Promise<void> => {
-    if (!isMountedRef.current) return;
-    setAuthState(prev => ({...prev, isLoading: true}));
-    try {
-      // Call the server-side endpoint to securely clear tokens
-      await fetch('/api/spotify/logout', { method: 'POST' });
-      if (isMountedRef.current) {
-        updateAuthState(null);
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-      if (isMountedRef.current) {
-        setAuthState(prev => ({...prev, isLoading: false, error: "Logout failed."}));
-      }
-    }
   }, []);
 
   // ==========================================================================

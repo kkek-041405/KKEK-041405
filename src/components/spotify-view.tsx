@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check } from "lucide-react";
+import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check, LogOut } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
 import { ScrollArea } from "./ui/scroll-area";
@@ -61,7 +61,7 @@ function SpotifyLogin({
 
 // Token Info Popover
 function TokenInfoPopover() {
-  const { authState, refreshToken } = useSpotify();
+  const { authState, refreshToken, logout } = useSpotify();
   const { toast } = useToast();
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
@@ -116,14 +116,19 @@ function TokenInfoPopover() {
               </span>
             </div>
           </div>
-          <Button onClick={refreshToken} className="w-full" disabled={authState.isLoading}>
-            {authState.isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            )}
-            Refresh Token
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={refreshToken} className="w-full" disabled={authState.isLoading}>
+              {authState.isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              Refresh Token
+            </Button>
+            <Button variant="destructive" onClick={logout} className="w-full" disabled={authState.isLoading}>
+                <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>
