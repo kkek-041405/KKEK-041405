@@ -16,6 +16,7 @@ import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types"
 import { ScrollArea } from "./ui/scroll-area";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { usePlayer } from "@/hooks/usePlayer";
 
 // Login View
 function SpotifyLogin({
