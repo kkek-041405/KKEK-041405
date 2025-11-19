@@ -136,7 +136,7 @@ export function SpotifyPlayer() {
               {formatDuration(progress_ms ?? 0)}
             </span>
             <Slider
-              value={[(progress_ms ?? 0) / (track?.duration_ms || 1)] * 100}
+              value={[((progress_ms ?? 0) / (track?.duration_ms || 1)) * 100]}
               onValueChange={(value) => seek(value[0])}
               className="flex-1"
             />

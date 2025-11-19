@@ -192,10 +192,6 @@ function AuthenticatedSpotifyView() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchPlaylists();
-  }, [fetchPlaylists]);
-
   return (
     <div className="flex flex-col h-[calc(100vh-65px)]">
       <div className="flex flex-1 overflow-hidden">

@@ -152,19 +152,11 @@ export function useSpotify(): UseSpotifyReturn {
     isMountedRef.current = true;
     checkTokenStatus();
 
-    // Set up an interval to check token status periodically
-    const interval = setInterval(() => {
-        // Only check if the window has focus and user is authenticated
-        if(document.hasFocus() && authState.isAuthenticated){
-            checkTokenStatus();
-        }
-    }, 5 * 60 * 1000); // Check every 5 minutes
-
     return () => {
       isMountedRef.current = false;
-      clearInterval(interval);
     };
-  }, [checkTokenStatus, authState.isAuthenticated]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   // ==========================================================================
