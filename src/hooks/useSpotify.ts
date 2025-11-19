@@ -160,57 +160,10 @@ export function useSpotify(): UseSpotifyReturn {
    * Checks token status and refreshes if needed
    */
   const checkTokenStatus = useCallback(async (): Promise<void> => {
-    try {
-      const response = await fetch("/api/spotify/refresh", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Not authenticated
-          if (isMountedRef.current) {
-            setAuthState({
-              isAuthenticated: false,
-              isLoading: false,
-              error: null,
-              expiresAt: null,
-              expiresIn: null,
-            });
-          }
-          return;
-        }
-
-        throw new Error("Failed to check token status");
-      }
-
-      const data = await response.json();
-
-      if (isMountedRef.current) {
-        setAuthState({
-          isAuthenticated: data.authenticated || false,
-          isLoading: false,
-          error: null,
-          expiresAt: data.expiresAt || null,
-          expiresIn: data.expiresIn || null,
-        });
-      }
-    } catch (error) {
-      console.error("Error checking token status:", error);
-      if (isMountedRef.current) {
-        setAuthState({
-          isAuthenticated: false,
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to check authentication status",
-          expiresAt: null,
-          expiresIn: null,
-        });
-      }
-    }
-  }, []);
+    // This function now uses the refreshToken POST method, which is more reliable
+    // as it depends on the longer-lived refresh token cookie.
+    await refreshToken();
+  }, [refreshToken]);
 
   /**
    * Schedules automatic token refresh
@@ -250,10 +203,6 @@ export function useSpotify(): UseSpotifyReturn {
    * Logs out and clears tokens
    */
   const logout = useCallback(async (): Promise<void> => {
-    // This function will now be much simpler. The server will handle cookie clearing
-    // on the next failed request, but we can also provide a dedicated logout endpoint if needed.
-    // For now, we just clear the client-side state and reload.
-    
     try {
       // Clear refresh timer
       if (refreshTimerRef.current) {
@@ -261,6 +210,9 @@ export function useSpotify(): UseSpotifyReturn {
         refreshTimerRef.current = null;
       }
       
+      // Make API call to server-side logout endpoint to clear httpOnly cookies
+      await fetch('/api/spotify/logout', { method: 'POST' });
+
       // Clear local state
       if (isMountedRef.current) {
         setAuthState({
@@ -271,11 +223,8 @@ export function useSpotify(): UseSpotifyReturn {
           expiresIn: null,
         });
       }
-
-      // Reload to ensure all auth state is cleared from the app.
-      // The httpOnly cookies will remain, but they will be invalid on the next API call,
-      // which will then fail, and the user will be prompted to log in again.
-      // This is a safe approach as client-side code can't delete httpOnly cookies.
+      
+      // Reload to ensure all state is cleared and user is back on the login page
       window.location.reload();
     } catch (error) {
       console.error("Error during logout:", error);
