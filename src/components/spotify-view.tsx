@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check, LogOut, Link as LinkIcon } from "lucide-react";
+import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check, LogOut, Link as LinkIcon, Heart } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
 import { ScrollArea } from "./ui/scroll-area";
@@ -150,6 +150,15 @@ function TokenInfoPopover() {
   );
 }
 
+const likedSongsPlaylist: SpotifyPlaylist = {
+  id: 'liked-songs',
+  name: 'Liked Songs',
+  description: 'Your saved tracks',
+  images: [{ url: 'https://t.scdn.co/images/3099b3803ad9496896c43f2210d61f60.png', height: 640, width: 640 }],
+  owner: { display_name: 'Spotify' },
+  tracks: { href: '', total: 0 }, // Total can be updated dynamically if needed
+  uri: 'spotify:user:spotify:collection',
+};
 
 // Authenticated View
 function AuthenticatedSpotifyView() {
@@ -167,8 +176,10 @@ function AuthenticatedSpotifyView() {
     async function loadInitialPlaylists() {
       setIsRefreshingPlaylists(true);
       const cachedPlaylists = await getPlaylistsFromFirestore();
-      if (cachedPlaylists) {
-        setPlaylists(cachedPlaylists);
+      if (cachedPlaylists && cachedPlaylists.length > 0) {
+        setPlaylists([likedSongsPlaylist, ...cachedPlaylists]);
+      } else {
+        setPlaylists([likedSongsPlaylist]); // Show liked songs even if no other playlists are cached
       }
       setIsRefreshingPlaylists(false);
     }
@@ -181,7 +192,7 @@ function AuthenticatedSpotifyView() {
       const response = await fetch('/api/spotify/me/playlists?limit=50');
       if (response.ok) {
         const data = await response.json();
-        setPlaylists(data.items);
+        setPlaylists([likedSongsPlaylist, ...data.items]);
         await savePlaylistsToFirestore(data.items); // Save to Firestore
         toast({
           title: "Playlists Refreshed",
@@ -212,26 +223,29 @@ function AuthenticatedSpotifyView() {
     setIsLoadingTracks(true);
     setSelectedPlaylistId(playlistId);
     try {
-      // 1. Try to get from Firestore first
       const cachedTracks = await getTracksFromFirestore(playlistId);
       if (cachedTracks) {
         setSelectedPlaylist(cachedTracks);
         setIsLoadingTracks(false);
         return;
       }
+      
+      let apiUrl = `/api/spotify/playlists/${playlistId}`;
+      if (playlistId === 'liked-songs') {
+          apiUrl = '/api/spotify/me/tracks?limit=50';
+      }
 
-      // 2. If not in cache, fetch from Spotify API
-      const response = await fetch(`/api/spotify/playlists/${playlistId}`);
+      const response = await fetch(apiUrl);
       if (response.ok) {
         const data = await response.json();
-        const tracks = data.tracks.items as SpotifyPlaylistTrack[];
+        const tracks = playlistId === 'liked-songs' ? data.items : data.tracks.items;
+
         setSelectedPlaylist(tracks);
-        // 3. Save to Firestore for next time
         await saveTracksToFirestore(playlistId, tracks);
       } else {
          toast({
           title: "Error Loading Tracks",
-          description: "Could not load tracks for the selected playlist.",
+          description: `Could not load tracks for the selected ${playlistId === 'liked-songs' ? 'collection' : 'playlist'}.`,
           variant: "destructive",
         });
       }
@@ -267,7 +281,7 @@ function AuthenticatedSpotifyView() {
               </Button>
           </div>
           <ScrollArea className="flex-1">
-            {isRefreshingPlaylists && playlists.length === 0 ? (
+            {isRefreshingPlaylists && playlists.length <= 1 ? (
                  <div className="flex items-center justify-center h-full">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
                  </div>
@@ -282,7 +296,11 @@ function AuthenticatedSpotifyView() {
                       selectedPlaylistId === p.id && "bg-primary/10 text-primary"
                     )}
                   >
-                    {p.images[0] ? (
+                    {p.id === 'liked-songs' ? (
+                       <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-sm flex items-center justify-center">
+                          <Heart className="h-5 w-5 text-white" />
+                       </div>
+                    ) : p.images[0] ? (
                       <Image src={p.images[0].url} alt={p.name} width={40} height={40} className="rounded-sm"/>
                     ) : (
                       <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
