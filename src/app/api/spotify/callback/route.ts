@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       console.error("Spotify OAuth error:", error);
       return NextResponse.redirect(
         new URL(
-          `/auth/error?message=${encodeURIComponent("Spotify authentication was denied or failed")}`,
+          `/notes?error=${encodeURIComponent("Spotify authentication was denied or failed")}`,
           request.url
         )
       );
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!code) {
       return NextResponse.redirect(
         new URL(
-          `/auth/error?message=${encodeURIComponent("No authorization code received")}`,
+          `/notes?error=${encodeURIComponent("No authorization code received")}`,
           request.url
         )
       );
@@ -51,12 +51,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const storedState = request.cookies.get("spotify_auth_state")?.value;
     if (!state || !storedState || storedState !== state) {
       console.error("State mismatch - possible CSRF attack", { storedState, state });
-      return NextResponse.redirect(
+      const response = NextResponse.redirect(
         new URL(
-          `/auth/error?message=${encodeURIComponent("Invalid state parameter. Please try logging in again.")}`,
+          `/notes?error=${encodeURIComponent("Invalid state parameter. Please try logging in again.")}`,
           request.url
         )
       );
+      // Clear the invalid state cookie to allow for a clean retry
+      response.cookies.delete("spotify_auth_state");
+      return response;
     }
     
     // Exchange code for tokens
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const response = NextResponse.redirect(
         new URL(
-            `/auth/error?message=${encodeURIComponent("Failed to complete authentication")}`,
+            `/notes?error=${encodeURIComponent("Failed to complete authentication")}`,
             request.url
         )
     );
