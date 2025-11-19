@@ -171,68 +171,22 @@ function AuthenticatedSpotifyView() {
 
   const { playerState, play } = usePlayer();
 
-  useEffect(() => {
-    // On initial load, try to get playlists from Firestore
-    async function loadInitialPlaylists() {
-      setIsRefreshingPlaylists(true);
-      const cachedPlaylists = await getPlaylistsFromFirestore();
-      if (cachedPlaylists && cachedPlaylists.length > 0) {
-        setPlaylists([likedSongsPlaylist, ...cachedPlaylists]);
-      } else {
-        setPlaylists([likedSongsPlaylist]); // Show liked songs even if no other playlists are cached
-      }
-      setIsRefreshingPlaylists(false);
-    }
-    loadInitialPlaylists();
-  }, []);
-
-  const fetchPlaylistsFromSpotify = useCallback(async () => {
-    setIsRefreshingPlaylists(true);
-    try {
-      const response = await fetch('/api/spotify/me/playlists?limit=50');
-      if (response.ok) {
-        const data = await response.json();
-        setPlaylists([likedSongsPlaylist, ...data.items]);
-        await savePlaylistsToFirestore(data.items); // Save to Firestore
-        toast({
-          title: "Playlists Refreshed",
-          description: "Your playlists have been updated from Spotify and saved.",
-        });
-      } else {
-        const errorText = await response.text();
-        console.error("Failed to fetch playlists", errorText);
-        toast({
-          title: "Error Refreshing Playlists",
-          description: "Could not fetch playlists from Spotify.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching playlists:", error);
-       toast({
-          title: "Network Error",
-          description: "A network error occurred while fetching playlists.",
-          variant: "destructive",
-        });
-    } finally {
-      setIsRefreshingPlaylists(false);
-    }
-  }, [toast]);
-
-  const fetchPlaylistTracks = useCallback(async (playlistId: string) => {
+  const fetchPlaylistTracks = useCallback(async (playlistId: string, forceRefresh: boolean = false) => {
     setIsLoadingTracks(true);
     setSelectedPlaylistId(playlistId);
     try {
-      const cachedTracks = await getTracksFromFirestore(playlistId);
-      if (cachedTracks) {
-        setSelectedPlaylist(cachedTracks);
-        setIsLoadingTracks(false);
-        return;
+      if (!forceRefresh) {
+        const cachedTracks = await getTracksFromFirestore(playlistId);
+        if (cachedTracks) {
+          setSelectedPlaylist(cachedTracks);
+          setIsLoadingTracks(false);
+          return;
+        }
       }
       
       let apiUrl = `/api/spotify/playlists/${playlistId}`;
       if (playlistId === 'liked-songs') {
-          apiUrl = '/api/spotify/me/tracks?limit=50';
+          apiUrl = '/api/spotify/me/tracks';
       }
 
       const response = await fetch(apiUrl);
@@ -261,6 +215,58 @@ function AuthenticatedSpotifyView() {
       setIsLoadingTracks(false);
     }
   }, [toast]);
+
+  const fetchPlaylistsFromSpotify = useCallback(async () => {
+    setIsRefreshingPlaylists(true);
+    try {
+      const response = await fetch('/api/spotify/me/playlists?limit=50');
+      if (response.ok) {
+        const data = await response.json();
+        setPlaylists([likedSongsPlaylist, ...data.items]);
+        await savePlaylistsToFirestore(data.items); // Save to Firestore
+        toast({
+          title: "Playlists Refreshed",
+          description: "Your playlists have been updated from Spotify and saved.",
+        });
+        if (selectedPlaylistId) {
+            await fetchPlaylistTracks(selectedPlaylistId, true);
+        }
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to fetch playlists", errorText);
+        toast({
+          title: "Error Refreshing Playlists",
+          description: "Could not fetch playlists from Spotify.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+       toast({
+          title: "Network Error",
+          description: "A network error occurred while fetching playlists.",
+          variant: "destructive",
+        });
+    } finally {
+      setIsRefreshingPlaylists(false);
+    }
+  }, [toast, selectedPlaylistId, fetchPlaylistTracks]);
+
+
+  useEffect(() => {
+    // On initial load, try to get playlists from Firestore
+    async function loadInitialPlaylists() {
+      setIsRefreshingPlaylists(true);
+      const cachedPlaylists = await getPlaylistsFromFirestore();
+      if (cachedPlaylists && cachedPlaylists.length > 0) {
+        setPlaylists([likedSongsPlaylist, ...cachedPlaylists]);
+      } else {
+        setPlaylists([likedSongsPlaylist]); // Show liked songs even if no other playlists are cached
+      }
+      setIsRefreshingPlaylists(false);
+    }
+    loadInitialPlaylists();
+  }, []);
 
   return (
     <div className="flex flex-col h-[calc(100vh-65px)]">
@@ -395,3 +401,5 @@ export default function SpotifyView() {
     <SpotifyLogin login={() => window.location.href = "/api/spotify/auth"} error={authState.error} />
   );
 }
+
+    
