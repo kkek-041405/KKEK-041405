@@ -16,13 +16,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Loader2, Music, Power, RefreshCw, Eye, Timer } from "lucide-react";
-import { SpotifyPlayer } from "./spotify-player";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
 import { ScrollArea } from "./ui/scroll-area";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { usePlayer } from "@/hooks/usePlayer";
 import { Countdown } from './countdown';
 import { useToast } from "@/hooks/use-toast";
 
@@ -133,7 +131,6 @@ function AuthenticatedSpotifyView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshingPlaylists, setIsRefreshingPlaylists] = useState(false);
 
-  const { controls, playerState } = usePlayer();
 
   const fetchPlaylists = useCallback(async () => {
     setIsRefreshingPlaylists(true);
@@ -170,8 +167,6 @@ function AuthenticatedSpotifyView() {
   useEffect(() => {
     fetchPlaylists();
   }, [fetchPlaylists]);
-
-  const currentlyPlayingId = playerState?.item?.id;
 
   return (
     <div className="flex h-[calc(100vh-65px)]">
@@ -217,7 +212,7 @@ function AuthenticatedSpotifyView() {
         <div className="flex justify-end p-4">
           <TokenInfoPopover />
         </div>
-        <main className="flex-1 p-6 pt-0 pb-[90px] overflow-y-auto">
+        <main className="flex-1 p-6 pt-0 overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -229,10 +224,8 @@ function AuthenticatedSpotifyView() {
                 <div 
                   key={`${track.id}-${index}`}
                   className={cn(
-                    "p-3 rounded-md flex items-center gap-4 hover:bg-accent",
-                    currentlyPlayingId === track.id && "bg-primary/20 text-primary"
+                    "p-3 rounded-md flex items-center gap-4 hover:bg-accent"
                   )}
-                  onDoubleClick={() => controls.play(track.uri, selectedPlaylist.map(t => t.track.uri), index)}
                 >
                   <span className="w-6 text-muted-foreground">{index + 1}</span>
                   {track.album.images[0] ? (
@@ -241,7 +234,7 @@ function AuthenticatedSpotifyView() {
                     <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
                   )}
                   <div className="flex-1 truncate">
-                    <p className={cn("font-semibold truncate", currentlyPlayingId === track.id && "text-primary")}>{track.name}</p>
+                    <p className="font-semibold truncate">{track.name}</p>
                     <p className="text-sm text-muted-foreground truncate">{track.artists.map(a => a.name).join(', ')}</p>
                   </div>
                   <span className="text-sm text-muted-foreground">{formatDuration(track.duration_ms)}</span>
@@ -256,7 +249,6 @@ function AuthenticatedSpotifyView() {
         </main>
       </div>
 
-      <SpotifyPlayer />
     </div>
   );
 }
