@@ -1,3 +1,4 @@
+
 /**
  * Spotify OAuth Callback API Route
  *
@@ -95,18 +96,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }
     );
 
-    // Clear the auth state cookie
+    // Clear the auth state cookie AFTER setting the new cookies
     response.cookies.delete("spotify_auth_state");
 
     return response;
   } catch (error) {
     console.error("Error in Spotify callback:", error);
 
-    return NextResponse.redirect(
-      new URL(
-        `/auth/error?message=${encodeURIComponent("Failed to complete authentication")}`,
-        request.url
-      )
+    const response = NextResponse.redirect(
+        new URL(
+            `/auth/error?message=${encodeURIComponent("Failed to complete authentication")}`,
+            request.url
+        )
     );
+    // Also clear the state cookie on failure to prevent it from being stuck
+    response.cookies.delete('spotify_auth_state');
+    return response;
   }
 }
