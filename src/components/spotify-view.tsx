@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -24,12 +25,15 @@ import {
   Laptop2,
   Volume2,
   VolumeX,
+  RefreshCw,
+  Clock,
 } from "lucide-react";
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Slider } from "./ui/slider";
 import { usePlayer } from "@/hooks/usePlayer";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 // Login View
 function SpotifyLogin({
@@ -68,20 +72,92 @@ function SpotifyLogin({
   );
 }
 
-// Player View
-function SpotifyPlayer({
-  logout,
+// Token Info View
+function TokenInfo({
+  expiresAt,
+  expiresIn,
+  onRefresh,
+  isLoading,
 }: {
-  logout: () => void;
+  expiresAt: number | null;
+  expiresIn: number | null;
+  onRefresh: () => void;
+  isLoading: boolean;
 }) {
+  const [timeLeft, setTimeLeft] = useState(expiresIn);
+
+  useEffect(() => {
+    setTimeLeft(expiresIn);
+    if (expiresIn === null) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiresIn]);
+
+  const formatTime = (seconds: number | null) => {
+    if (seconds === null || seconds < 0) return "N/A";
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
+
+  return (
+    <Card className="w-full max-w-sm rounded-xl shadow-lg border">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <RefreshCw className="h-5 w-5 text-primary" />
+          Token Information
+        </CardTitle>
+        <CardDescription>
+          Your session tokens are refreshed automatically.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Time until next refresh:
+          </span>
+          <span className="font-mono text-foreground">
+            {formatTime(timeLeft)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground">Expires at:</span>
+          <span className="font-mono text-sm text-foreground">
+            {expiresAt ? new Date(expiresAt).toLocaleTimeString() : "N/A"}
+          </span>
+        </div>
+        <div className="text-xs text-muted-foreground pt-2">
+          Access and refresh tokens are stored securely in httpOnly cookies and are not displayed for security.
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button onClick={onRefresh} disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="mr-2 h-4 w-4" />
+          )}
+          Refresh Now
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+
+// Player View
+function SpotifyPlayer() {
   const {
     playerState,
     devices,
     controls,
     isLoading,
     error,
-    activeDevice,
-    setActiveDevice,
   } = usePlayer();
 
   const formatDuration = (ms: number) => {
@@ -93,7 +169,7 @@ function SpotifyPlayer({
 
   if (isLoading && !playerState) {
     return (
-      <div className="flex items-center text-muted-foreground">
+      <div className="flex items-center justify-center text-muted-foreground h-48">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
         <span>Loading player...</span>
       </div>
@@ -102,15 +178,12 @@ function SpotifyPlayer({
 
   if (error && !playerState) {
     return (
-       <Card className="w-full max-w-md shadow-xl text-center">
+       <Card className="w-full max-w-md shadow-xl text-center border-destructive">
          <CardHeader>
-            <CardTitle>Error Loading Player</CardTitle>
+            <CardTitle className="text-destructive">Error Loading Player</CardTitle>
          </CardHeader>
          <CardContent>
-            <p className="text-destructive mb-4">{error}</p>
-            <Button onClick={logout} variant="destructive">
-                <PowerOff className="mr-2 h-4 w-4" /> Disconnect
-            </Button>
+            <p className="text-destructive-foreground mb-4">{error}</p>
          </CardContent>
        </Card>
     );
@@ -118,18 +191,15 @@ function SpotifyPlayer({
 
   if (!playerState || !playerState.item) {
     return (
-       <Card className="w-full max-w-md shadow-xl text-center">
+       <Card className="w-full max-w-sm shadow-xl text-center">
          <CardHeader>
             <CardTitle>Nothing Playing</CardTitle>
             <CardDescription>Open Spotify on one of your devices and start playing a track.</CardDescription>
          </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-muted-foreground">
                 Connected to Spotify ✓
             </p>
-            <Button onClick={logout} variant="destructive">
-                <PowerOff className="mr-2 h-4 w-4" /> Disconnect
-            </Button>
           </CardContent>
        </Card>
     );
@@ -230,7 +300,7 @@ function SpotifyPlayer({
                     variant="ghost"
                     size="sm"
                     className="w-full justify-start gap-2"
-                    onClick={() => setActiveDevice(d.id)}
+                    onClick={() => controls.transferPlayback(d.id)}
                     disabled={d.is_active}
                   >
                     <Laptop2 className="h-4 w-4" />
@@ -263,18 +333,50 @@ function SpotifyPlayer({
             />
           </div>
         </div>
-        <Button variant="outline" onClick={logout} className="w-full mt-4">
-          <PowerOff className="mr-2 h-4 w-4" />
-          Disconnect
-        </Button>
       </CardContent>
     </Card>
   );
 }
 
+// Authenticated View
+function AuthenticatedSpotifyView({
+  logout,
+  authState,
+  refreshToken,
+}: {
+  logout: () => void;
+  authState: ReturnType<typeof useSpotify>["authState"];
+  refreshToken: () => void;
+}) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshToken();
+    setIsRefreshing(false);
+  };
+
+  return (
+    <div className="space-y-8 flex flex-col items-center">
+      <SpotifyPlayer />
+      <TokenInfo
+        expiresAt={authState.expiresAt}
+        expiresIn={authState.expiresIn}
+        onRefresh={handleRefresh}
+        isLoading={isRefreshing}
+      />
+      <Button variant="outline" onClick={logout} className="w-full max-w-sm mt-4">
+        <PowerOff className="mr-2 h-4 w-4" />
+        Disconnect from Spotify
+      </Button>
+    </div>
+  );
+}
+
+
 // Main View Component
 export default function SpotifyView() {
-  const { authState, login, logout } = useSpotify();
+  const { authState, login, logout, refreshToken } = useSpotify();
 
   return (
     <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
@@ -284,7 +386,11 @@ export default function SpotifyView() {
           <span>Checking connection...</span>
         </div>
       ) : authState.isAuthenticated ? (
-        <SpotifyPlayer logout={logout} />
+        <AuthenticatedSpotifyView
+          logout={logout}
+          authState={authState}
+          refreshToken={refreshToken}
+        />
       ) : (
         <SpotifyLogin login={login} error={authState.error} />
       )}

@@ -13,9 +13,8 @@ async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(url, { ...options, credentials: "include" });
   if (!res.ok) {
     const errorBody = await res.json().catch(() => ({}));
-    throw new Error(
-      `API call failed: ${res.status} - ${JSON.stringify(errorBody)}`
-    );
+    const errorMessage = errorBody.error?.message || res.statusText || "API call failed";
+    throw new Error(`${res.status}: ${errorMessage}`);
   }
   // For 204 No Content responses
   if (res.status === 204) {
@@ -38,7 +37,7 @@ export function usePlayer() {
     try {
       const state = await fetcher<SpotifyPlayerState>("/api/spotify/player");
       setPlayerState(state);
-      setError(null);
+      if (error) setError(null);
     } catch (e) {
       console.error("Failed to fetch player state:", e);
       setError(
@@ -47,7 +46,7 @@ export function usePlayer() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [error]);
 
   const getDevices = useCallback(async () => {
     try {
@@ -59,21 +58,6 @@ export function usePlayer() {
       console.error("Failed to fetch devices:", e);
     }
   }, []);
-
-  const setActiveDevice = useCallback(
-    async (deviceId: string) => {
-      try {
-        await fetcher("/api/spotify/player/transfer", {
-          method: "PUT",
-          body: JSON.stringify({ device_id: deviceId }),
-        });
-        await getPlayerState(); // Refresh state after transfer
-      } catch (e) {
-        console.error("Failed to transfer playback:", e);
-      }
-    },
-    [getPlayerState]
-  );
 
   const controls = {
     play: async () => {
@@ -131,7 +115,18 @@ export function usePlayer() {
         const currentVolume = playerState.device.volume_percent;
         const newVolume = currentVolume > 0 ? 0 : 50; // Mute or set to 50%
         await controls.setVolume(newVolume);
-    }
+    },
+    transferPlayback: async (deviceId: string) => {
+      try {
+        await fetcher("/api/spotify/player/transfer", {
+          method: "PUT",
+          body: JSON.stringify({ device_id: deviceId }),
+        });
+        await getPlayerState(); // Refresh state after transfer
+      } catch (e) {
+        console.error("Failed to transfer playback:", e);
+      }
+    },
   };
 
   useEffect(() => {
@@ -142,7 +137,6 @@ export function usePlayer() {
     // Set up polling
     intervalRef.current = setInterval(() => {
       getPlayerState();
-      getDevices();
     }, REFRESH_INTERVAL);
 
     // Clean up on unmount
@@ -153,13 +147,9 @@ export function usePlayer() {
     };
   }, [getPlayerState, getDevices]);
 
-  const activeDevice = devices.find((d) => d.is_active);
-
   return {
     playerState,
     devices,
-    activeDevice,
-    setActiveDevice,
     controls,
     isLoading,
     error,
