@@ -1,265 +1,147 @@
 
-/**
- * useSpotify Hook
- *
- * Custom React hook for managing Spotify authentication and token lifecycle.
- * Automatically handles token refresh and provides authentication state.
- *
- * @module hooks/useSpotify
- */
-
 import { useEffect, useState, useCallback, useRef } from "react";
+import { 
+  getTokensFromFirestore, 
+  saveTokensToFirestore,
+  deleteTokensFromFirestore,
+  type SpotifyTokenData 
+} from "@/services/spotify-token-service";
+import { createSpotifyService } from "@/services/spotify-service";
+
 
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
 
-/**
- * Spotify authentication state
- */
 export interface SpotifyAuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  expiresAt: number | null;
-  expiresIn: number | null;
+  tokens: SpotifyTokenData | null;
 }
 
-/**
- * Spotify hook return type
- */
 export interface UseSpotifyReturn {
-  /** Current authentication state */
   authState: SpotifyAuthState;
-  /** Initiates Spotify login flow */
   login: () => void;
-  /** Logs out and clears tokens */
   logout: () => Promise<void>;
-  /** Manually refreshes the access token */
   refreshToken: () => Promise<void>;
-  /** Gets the current access token (refreshes if needed) */
-  getAccessToken: () => Promise<string | null>;
-  /** Checks if user is authenticated */
-  isAuthenticated: boolean;
 }
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000; // Check every 50 minutes
-const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // Refresh 5 minutes before expiry
 
 // ============================================================================
 // Main Hook
 // ============================================================================
 
-/**
- * useSpotify Hook
- *
- * Manages Spotify authentication state and provides methods for login,
- * logout, and token refresh. Automatically refreshes tokens before expiration.
- *
- * @example
- * ```typescript
- * function MyComponent() {
- *   const { authState, login, logout, getAccessToken } = useSpotify();
- *
- *   const handlePlay = async () => {
- *     const token = await getAccessToken();
- *     if (token) {
- *       // Use token to make Spotify API calls
- *     }
- *   };
- *
- *   return (
- *     <div>
- *       {authState.isAuthenticated ? (
- *         <button onClick={logout}>Logout</button>
- *       ) : (
- *         <button onClick={login}>Login with Spotify</button>
- *       )}
- *     </div>
- *   );
- * }
- * ```
- *
- * @returns Spotify authentication state and methods
- */
 export function useSpotify(): UseSpotifyReturn {
   const [authState, setAuthState] = useState<SpotifyAuthState>({
     isAuthenticated: false,
     isLoading: true,
     error: null,
-    expiresAt: null,
-    expiresIn: null,
+    tokens: null,
   });
 
-  const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
 
   // ==========================================================================
-  // Token Refresh Logic
+  // Core Logic
   // ==========================================================================
 
-  /**
-   * Refreshes the access token
-   */
-  const refreshToken = useCallback(async (): Promise<void> => {
+  const checkTokenStatus = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    setAuthState(prev => ({ ...prev, isLoading: true }));
     try {
-      const response = await fetch("/api/spotify/refresh", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          // No valid refresh token, user needs to re-authenticate
+      const tokens = await getTokensFromFirestore();
+      if (tokens) {
+        if (Date.now() >= tokens.expiresAt) {
+          // Token expired, refresh it
+          const spotifyService = createSpotifyService();
+          const refreshedTokens = await spotifyService.refreshAccessToken(tokens.refreshToken);
+          const newTokens: SpotifyTokenData = {
+            accessToken: refreshedTokens.accessToken,
+            refreshToken: refreshedTokens.refreshToken,
+            expiresAt: refreshedTokens.expiresAt,
+          };
+          await saveTokensToFirestore(newTokens);
           if (isMountedRef.current) {
-            setAuthState({
-              isAuthenticated: false,
-              isLoading: false,
-              error: "Session expired. Please login again.",
-              expiresAt: null,
-              expiresIn: null,
-            });
+            setAuthState({ isAuthenticated: true, isLoading: false, error: null, tokens: newTokens });
           }
-          return;
+        } else {
+          // Token is valid
+          if (isMountedRef.current) {
+            setAuthState({ isAuthenticated: true, isLoading: false, error: null, tokens });
+          }
         }
-
-        throw new Error("Failed to refresh token");
-      }
-
-      const data = await response.json();
-
-      if (isMountedRef.current) {
-        setAuthState({
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-          expiresAt: data.expiresAt,
-          expiresIn: data.expiresIn,
-        });
+      } else {
+        // No tokens found
+        if (isMountedRef.current) {
+          setAuthState({ isAuthenticated: false, isLoading: false, error: null, tokens: null });
+        }
       }
     } catch (error) {
-      console.error("Error refreshing token:", error);
+      console.error("Error checking token status:", error);
       if (isMountedRef.current) {
-        setAuthState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to refresh token",
-        }));
+        setAuthState({ isAuthenticated: false, isLoading: false, error: "Failed to verify session.", tokens: null });
       }
     }
   }, []);
 
-  /**
-   * Checks token status and refreshes if needed
-   */
-  const checkTokenStatus = useCallback(async (): Promise<void> => {
-    // This function now uses the refreshToken POST method, which is more reliable
-    // as it depends on the longer-lived refresh token cookie.
-    await refreshToken();
-  }, [refreshToken]);
-
-  /**
-   * Schedules automatic token refresh
-   */
-  const scheduleTokenRefresh = useCallback(() => {
-    // Clear existing timer
-    if (refreshTimerRef.current) {
-      clearInterval(refreshTimerRef.current);
-    }
-
-    // Set up periodic check and refresh
-    refreshTimerRef.current = setInterval(() => {
-      if (authState.expiresAt) {
-        const timeUntilExpiry = authState.expiresAt - Date.now();
-        if (timeUntilExpiry <= TOKEN_REFRESH_BUFFER) {
-          refreshToken();
+  const refreshToken = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    setAuthState(prev => ({ ...prev, isLoading: true }));
+    try {
+        const currentTokens = await getTokensFromFirestore();
+        if (!currentTokens) {
+            throw new Error("Not authenticated. Cannot refresh token.");
         }
-      } else {
-        checkTokenStatus();
-      }
-    }, TOKEN_REFRESH_INTERVAL);
-  }, [authState.expiresAt, refreshToken, checkTokenStatus]);
 
-  // ==========================================================================
-  // Authentication Methods
-  // ==========================================================================
+        const spotifyService = createSpotifyService();
+        const refreshedTokens = await spotifyService.refreshAccessToken(currentTokens.refreshToken);
+        const newTokens: SpotifyTokenData = {
+            accessToken: refreshedTokens.accessToken,
+            refreshToken: refreshedTokens.refreshToken,
+            expiresAt: refreshedTokens.expiresAt,
+        };
 
-  /**
-   * Initiates Spotify login flow
-   */
+        await saveTokensToFirestore(newTokens);
+
+        if (isMountedRef.current) {
+            setAuthState({ isAuthenticated: true, isLoading: false, error: null, tokens: newTokens });
+        }
+    } catch (error) {
+        console.error("Error refreshing token:", error);
+        if (isMountedRef.current) {
+            setAuthState({ isAuthenticated: false, isLoading: false, error: "Session expired. Please log in again.", tokens: null });
+        }
+    }
+  }, []);
+
   const login = useCallback((): void => {
-    // Redirect to Spotify auth endpoint
     window.location.href = "/api/spotify/auth";
   }, []);
 
-  /**
-   * Logs out and clears tokens
-   */
   const logout = useCallback(async (): Promise<void> => {
+    if (!isMountedRef.current) return;
     try {
-      // Clear refresh timer
-      if (refreshTimerRef.current) {
-        clearInterval(refreshTimerRef.current);
-        refreshTimerRef.current = null;
-      }
-      
-      // Make API call to server-side logout endpoint to clear httpOnly cookies
-      await fetch('/api/spotify/logout', { method: 'POST' });
-
-      // Clear local state
+      await deleteTokensFromFirestore();
       if (isMountedRef.current) {
         setAuthState({
           isAuthenticated: false,
           isLoading: false,
           error: null,
-          expiresAt: null,
-          expiresIn: null,
+          tokens: null,
         });
       }
-      
-      // Reload to ensure all state is cleared and user is back on the login page
-      window.location.reload();
     } catch (error) {
       console.error("Error during logout:", error);
+      if (isMountedRef.current) {
+        setAuthState(prev => ({...prev, error: "Logout failed."}));
+      }
     }
   }, []);
-
-  /**
-   * Gets the current access token, refreshing if needed
-   */
-  const getAccessToken = useCallback(async (): Promise<string | null> => {
-    if (!authState.isAuthenticated) {
-      return null;
-    }
-
-    // Check if token needs refresh
-    if (
-      authState.expiresAt &&
-      Date.now() >= authState.expiresAt - TOKEN_REFRESH_BUFFER
-    ) {
-      await refreshToken();
-    }
-
-    // Token is stored in HTTP-only cookie, so we can't access it directly
-    // The API routes will handle sending it to Spotify
-    // Return a flag indicating authentication status
-    return authState.isAuthenticated ? "authenticated" : null;
-  }, [authState.isAuthenticated, authState.expiresAt, refreshToken]);
 
   // ==========================================================================
   // Effects
   // ==========================================================================
 
-  /**
-   * Check authentication status on mount
-   */
   useEffect(() => {
     isMountedRef.current = true;
     checkTokenStatus();
@@ -269,21 +151,6 @@ export function useSpotify(): UseSpotifyReturn {
     };
   }, [checkTokenStatus]);
 
-  /**
-   * Set up automatic token refresh when authenticated
-   */
-  useEffect(() => {
-    if (authState.isAuthenticated && authState.expiresAt) {
-      scheduleTokenRefresh();
-    }
-
-    return () => {
-      if (refreshTimerRef.current) {
-        clearInterval(refreshTimerRef.current);
-        refreshTimerRef.current = null;
-      }
-    };
-  }, [authState.isAuthenticated, authState.expiresAt, scheduleTokenRefresh]);
 
   // ==========================================================================
   // Return
@@ -294,8 +161,6 @@ export function useSpotify(): UseSpotifyReturn {
     login,
     logout,
     refreshToken,
-    getAccessToken,
-    isAuthenticated: authState.isAuthenticated,
   };
 }
 

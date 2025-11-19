@@ -4,13 +4,14 @@
  *
  * GET /api/spotify/callback
  * Handles the OAuth callback from Spotify, exchanges code for tokens,
- * and stores them securely
+ * and stores them securely in Firestore.
  *
  * @module api/spotify/callback
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { createSpotifyService } from "@/services/spotify-service";
+import { saveTokensToFirestore } from "@/services/spotify-token-service";
 
 /**
  * GET handler - Processes Spotify OAuth callback
@@ -62,41 +63,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const spotifyService = createSpotifyService();
     const tokenData = await spotifyService.exchangeCodeForToken(code);
     
+    // Save tokens to Firestore
+    await saveTokensToFirestore({
+        accessToken: tokenData.accessToken,
+        refreshToken: tokenData.refreshToken,
+        expiresAt: tokenData.expiresAt,
+    });
+    
     // Create response with redirect to the notes content page
     const response = NextResponse.redirect(
-      new URL("/notes/content", request.url)
+      new URL("/notes/content?view=spotify", request.url)
     );
 
-    // Store tokens in secure HTTP-only cookies
-    response.cookies.set("spotify_access_token", tokenData.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60, // 1 hour
-      path: "/",
-    });
-
-    response.cookies.set("spotify_refresh_token", tokenData.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-      path: "/",
-    });
-
-    response.cookies.set(
-      "spotify_token_expires_at",
-      tokenData.expiresAt.toString(),
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60, // 1 hour
-        path: "/",
-      }
-    );
-
-    // Clear the auth state cookie AFTER setting the new cookies
+    // Clear the auth state cookie AFTER successful token storage
     response.cookies.delete("spotify_auth_state");
 
     return response;
