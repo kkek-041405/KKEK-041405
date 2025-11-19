@@ -17,7 +17,13 @@ export async function POST(request: NextRequest) {
     });
 
     if (!apiResponse.ok) {
-       const error = await apiResponse.text();
+       const errorText = await apiResponse.text();
+       let error = { message: errorText };
+       try {
+         error = JSON.parse(errorText);
+       } catch (e) {
+         // Not a JSON response
+       }
        return NextResponse.json({ error: "Failed to skip to previous track", details: error }, { status: apiResponse.status });
     }
     

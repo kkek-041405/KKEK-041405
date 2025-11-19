@@ -23,6 +23,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Countdown } from './countdown';
 import { useToast } from "@/hooks/use-toast";
+import { SpotifyPlayer } from "./spotify-player";
+import { usePlayer } from "@/hooks/usePlayer";
 
 // Login View
 function SpotifyLogin({
@@ -61,7 +63,7 @@ function SpotifyLogin({
 
 // Token Info Popover
 function TokenInfoPopover() {
-  const { authState, refreshToken } = useSpotify();
+  const { authState, refreshToken, logout } = useSpotify();
   const { toast } = useToast();
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
@@ -135,6 +137,10 @@ function TokenInfoPopover() {
                 Re-authenticate
             </Button>
           </div>
+            <Button variant="destructive" onClick={logout} className="w-full" disabled={authState.isLoading}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+            </Button>
         </div>
       </PopoverContent>
     </Popover>
@@ -150,6 +156,7 @@ function AuthenticatedSpotifyView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshingPlaylists, setIsRefreshingPlaylists] = useState(false);
 
+  const { play } = usePlayer();
 
   const fetchPlaylists = useCallback(async () => {
     setIsRefreshingPlaylists(true);
@@ -190,86 +197,89 @@ function AuthenticatedSpotifyView() {
   }, [fetchPlaylists]);
 
   return (
-    <div className="flex h-[calc(100vh-65px)]">
-      {/* Playlist Sidebar */}
-      <aside className="w-1/4 min-w-[250px] bg-card border-r p-4 flex flex-col">
-        <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Playlists</h2>
-            <Button
-                variant="ghost"
-                size="icon"
-                onClick={fetchPlaylists}
-                disabled={isRefreshingPlaylists}
-                aria-label="Refresh Playlists"
-            >
-                <RefreshCw className={cn("h-4 w-4", isRefreshingPlaylists && "animate-spin")} />
-            </Button>
-        </div>
-        <ScrollArea className="h-[calc(100%-40px)]">
-          <div className="space-y-2">
-            {playlists.map(p => (
-              <div 
-                key={p.id}
-                onClick={() => fetchPlaylistTracks(p.id)}
-                className={cn(
-                  "p-2 rounded-md flex items-center gap-3 cursor-pointer hover:bg-accent",
-                  selectedPlaylistId === p.id && "bg-primary/10 text-primary"
-                )}
+    <div className="flex flex-col h-[calc(100vh-65px)]">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Playlist Sidebar */}
+        <aside className="w-1/4 min-w-[250px] bg-card border-r p-4 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Playlists</h2>
+              <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={fetchPlaylists}
+                  disabled={isRefreshingPlaylists}
+                  aria-label="Refresh Playlists"
               >
-                {p.images[0] ? (
-                  <Image src={p.images[0].url} alt={p.name} width={40} height={40} className="rounded-sm"/>
-                ) : (
-                  <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
-                )}
-                <span className="truncate font-medium">{p.name}</span>
-              </div>
-            ))}
+                  <RefreshCw className={cn("h-4 w-4", isRefreshingPlaylists && "animate-spin")} />
+              </Button>
           </div>
-        </ScrollArea>
-      </aside>
-
-      {/* Main Content - Tracks */}
-       <div className="flex-1 flex flex-col">
-        <div className="flex justify-end p-4">
-          <TokenInfoPopover />
-        </div>
-        <main className="flex-1 p-6 pt-0 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
-          ) : selectedPlaylist ? (
+          <ScrollArea className="flex-1">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold mb-4">Tracks</h2>
-              {selectedPlaylist.map(({ track }, index) => track && (
+              {playlists.map(p => (
                 <div 
-                  key={`${track.id}-${index}`}
+                  key={p.id}
+                  onClick={() => fetchPlaylistTracks(p.id)}
                   className={cn(
-                    "p-3 rounded-md flex items-center gap-4 hover:bg-accent"
+                    "p-2 rounded-md flex items-center gap-3 cursor-pointer hover:bg-accent",
+                    selectedPlaylistId === p.id && "bg-primary/10 text-primary"
                   )}
                 >
-                  <span className="w-6 text-muted-foreground">{index + 1}</span>
-                  {track.album.images[0] ? (
-                    <Image src={track.album.images[0].url} alt={track.name} width={40} height={40} className="rounded-sm"/>
+                  {p.images[0] ? (
+                    <Image src={p.images[0].url} alt={p.name} width={40} height={40} className="rounded-sm"/>
                   ) : (
                     <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
                   )}
-                  <div className="flex-1 truncate">
-                    <p className="font-semibold truncate">{track.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">{track.artists.map(a => a.name).join(', ')}</p>
-                  </div>
-                  <span className="text-sm text-muted-foreground">{formatDuration(track.duration_ms)}</span>
+                  <span className="truncate font-medium">{p.name}</span>
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              Select a playlist to see its tracks.
-            </div>
-          )}
-        </main>
-      </div>
+          </ScrollArea>
+        </aside>
 
+        {/* Main Content - Tracks */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex justify-end p-4 border-b">
+            <TokenInfoPopover />
+          </div>
+          <main className="flex-1 p-6 pt-0 overflow-y-auto">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              </div>
+            ) : selectedPlaylist ? (
+              <div className="space-y-2 pt-6">
+                <h2 className="text-2xl font-bold mb-4">Tracks</h2>
+                {selectedPlaylist.map(({ track }, index) => track && (
+                  <div 
+                    key={`${track.id}-${index}`}
+                    onDoubleClick={() => play({ uris: [track.uri]})}
+                    className={cn(
+                      "p-3 rounded-md flex items-center gap-4 hover:bg-accent cursor-pointer"
+                    )}
+                  >
+                    <span className="w-6 text-muted-foreground">{index + 1}</span>
+                    {track.album.images[0] ? (
+                      <Image src={track.album.images[0].url} alt={track.name} width={40} height={40} className="rounded-sm"/>
+                    ) : (
+                      <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
+                    )}
+                    <div className="flex-1 truncate">
+                      <p className="font-semibold truncate">{track.name}</p>
+                      <p className="text-sm text-muted-foreground truncate">{track.artists.map(a => a.name).join(', ')}</p>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{formatDuration(track.duration_ms)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                Select a playlist to see its tracks.
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+      <SpotifyPlayer />
     </div>
   );
 }
@@ -303,5 +313,3 @@ export default function SpotifyView() {
     <SpotifyLogin login={() => window.location.href = "/api/spotify/auth"} error={authState.error} />
   );
 }
-
-    

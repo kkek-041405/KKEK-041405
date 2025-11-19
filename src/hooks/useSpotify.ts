@@ -178,5 +178,3 @@ export function useSpotify(): UseSpotifyReturn {
     refreshToken,
   };
 }
-
-export default useSpotify;

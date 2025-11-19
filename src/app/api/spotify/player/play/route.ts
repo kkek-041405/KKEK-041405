@@ -26,7 +26,13 @@ export async function PUT(request: NextRequest) {
     });
 
     if (!apiResponse.ok) {
-        const error = await apiResponse.text();
+        const errorText = await apiResponse.text();
+        let error = { message: errorText };
+        try {
+            error = JSON.parse(errorText);
+        } catch (e) {
+            // Not a JSON response
+        }
         return NextResponse.json({ error: "Failed to start playback", details: error }, { status: apiResponse.status });
     }
 
