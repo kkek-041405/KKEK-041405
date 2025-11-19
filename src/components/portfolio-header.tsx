@@ -33,6 +33,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggleButton } from "./theme-toggle-button";
 import { NoteAuthForm, type NoteAuthFormValues } from "@/components/note-auth-form";
 import { useToast } from "@/hooks/use-toast";
+import { getAccessCodeFromFirestore } from "@/services/config-service";
 
 export function PortfolioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -77,9 +78,11 @@ export function PortfolioHeader() {
     return pathname === href;
   };
 
-  const handleAuthSubmit = (data: NoteAuthFormValues) => {
+  const handleAuthSubmit = async (data: NoteAuthFormValues) => {
     setIsAuthLoading(true);
-    if (data.accessCode === process.env.NEXT_PUBLIC_NOTES_ACCESS_CODE) {
+    const correctAccessCode = await getAccessCodeFromFirestore();
+
+    if (correctAccessCode && data.accessCode === correctAccessCode) {
       if (typeof window !== "undefined") {
         sessionStorage.setItem("notesAuthenticated", "true");
       }

@@ -11,6 +11,7 @@ import { PortfolioHeader } from '@/components/portfolio-header';
 import { PortfolioFooter } from '@/components/portfolio-footer';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getAccessCodeFromFirestore } from '@/services/config-service';
 
 export default function NotesAuthPage() {
   const router = useRouter();
@@ -27,9 +28,11 @@ export default function NotesAuthPage() {
     }
   }, [router]);
 
-  const handleAuthenticate = (data: NoteAuthFormValues) => {
+  const handleAuthenticate = async (data: NoteAuthFormValues) => {
     setIsLoading(true);
-    if (data.accessCode === process.env.NEXT_PUBLIC_NOTES_ACCESS_CODE) {
+    const correctAccessCode = await getAccessCodeFromFirestore();
+
+    if (correctAccessCode && data.accessCode === correctAccessCode) {
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('notesAuthenticated', 'true');
       }
