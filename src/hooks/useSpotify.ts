@@ -4,7 +4,6 @@ import {
   getTokensFromFirestore, 
   type SpotifyTokenData 
 } from "@/services/spotify-token-service";
-import { usePlayer } from "./usePlayer";
 
 
 // ============================================================================
@@ -38,7 +37,6 @@ export function useSpotify(): UseSpotifyReturn {
   });
 
   const isMountedRef = useRef(true);
-  const { playerState } = usePlayer();
 
   // ==========================================================================
   // Core Logic
