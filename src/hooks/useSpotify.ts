@@ -15,6 +15,7 @@ export interface SpotifyAuthState {
   isLoading: boolean;
   error: string | null;
   tokens: SpotifyTokenData | null;
+  timeToRefresh: number;
 }
 
 export interface UseSpotifyReturn {
@@ -34,6 +35,7 @@ export function useSpotify(): UseSpotifyReturn {
     isLoading: true,
     error: null,
     tokens: null,
+    timeToRefresh: 0,
   });
 
   const isMountedRef = useRef(true);
@@ -41,13 +43,33 @@ export function useSpotify(): UseSpotifyReturn {
   // ==========================================================================
   // Core Logic
   // ==========================================================================
+  const updateAuthState = (tokens: SpotifyTokenData | null) => {
+    if (tokens) {
+      setAuthState({
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+        tokens,
+        timeToRefresh: tokens.expiresAt,
+      });
+    } else {
+      setAuthState({
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+        tokens: null,
+        timeToRefresh: 0,
+      });
+    }
+  };
+
 
   const refreshToken = useCallback(async () => {
     if (!isMountedRef.current) return;
     setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
         const response = await fetch('/api/spotify/refresh', {
-            method: 'POST'
+            method: 'POST',
         });
 
         if (!response.ok) {
@@ -58,14 +80,14 @@ export function useSpotify(): UseSpotifyReturn {
         const { tokens: newTokens } = await response.json();
 
         if (isMountedRef.current) {
-            setAuthState({ isAuthenticated: true, isLoading: false, error: null, tokens: newTokens });
+            updateAuthState(newTokens);
         }
     } catch (error) {
         console.error("Error refreshing token:", error);
         // This likely means the refresh token is invalid, so we log the user out
         await logout(); 
         if (isMountedRef.current) {
-            setAuthState({ isAuthenticated: false, isLoading: false, error: "Session expired. Please log in again.", tokens: null });
+            setAuthState(prev => ({ ...prev, isAuthenticated: false, isLoading: false, error: "Session expired. Please log in again.", tokens: null, timeToRefresh: 0 }));
         }
     }
   }, []); // Added `logout` to dependency array
@@ -83,19 +105,19 @@ export function useSpotify(): UseSpotifyReturn {
         } else {
           // Token is valid
           if (isMountedRef.current) {
-            setAuthState({ isAuthenticated: true, isLoading: false, error: null, tokens });
+            updateAuthState(tokens);
           }
         }
       } else {
         // No tokens found
         if (isMountedRef.current) {
-          setAuthState({ isAuthenticated: false, isLoading: false, error: null, tokens: null });
+          updateAuthState(null);
         }
       }
     } catch (error) {
       console.error("Error checking token status:", error);
       if (isMountedRef.current) {
-        setAuthState({ isAuthenticated: false, isLoading: false, error: "Failed to verify session.", tokens: null });
+        setAuthState(prev => ({ ...prev, isAuthenticated: false, isLoading: false, error: "Failed to verify session.", tokens: null, timeToRefresh: 0 }));
       }
     }
   }, [refreshToken]);
@@ -112,14 +134,7 @@ export function useSpotify(): UseSpotifyReturn {
       // Call the server-side endpoint to securely clear tokens
       await fetch('/api/spotify/logout', { method: 'POST' });
       if (isMountedRef.current) {
-        setAuthState({
-          isAuthenticated: false,
-          isLoading: false,
-          error: null,
-          tokens: null,
-        });
-        // Optionally, you can also clear the player state here
-        // setPlayerState(null);
+        updateAuthState(null);
       }
     } catch (error) {
       console.error("Error during logout:", error);

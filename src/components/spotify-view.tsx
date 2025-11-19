@@ -10,7 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, Music, Power, RefreshCw } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Loader2, Music, Power, RefreshCw, Eye, Timer } from "lucide-react";
 import { SpotifyPlayer } from "./spotify-player";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
@@ -18,6 +23,8 @@ import { ScrollArea } from "./ui/scroll-area";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePlayer } from "@/hooks/usePlayer";
+import { Countdown } from './countdown';
+import { useToast } from "@/hooks/use-toast";
 
 // Login View
 function SpotifyLogin({
@@ -53,6 +60,70 @@ function SpotifyLogin({
     </main>
   );
 }
+
+// Token Info Popover
+function TokenInfoPopover() {
+  const { authState, refreshToken } = useSpotify();
+  const { toast } = useToast();
+
+  const handleCopy = (textToCopy: string, label: string) => {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast({ title: `${label} Copied!`, description: `The ${label.toLowerCase()} has been copied.` });
+    }).catch(err => {
+      toast({ title: "Copy Failed", description: `Could not copy the ${label.toLowerCase()}.`, variant: 'destructive'});
+    });
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="icon" className="h-9 w-9">
+          <Eye className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-96 mr-4" align="end">
+        <div className="space-y-4">
+          <h4 className="font-medium leading-none">Token Status</h4>
+          <div className="text-sm space-y-2">
+            <p className="flex items-center justify-between">
+              <span className="text-muted-foreground">Access Token:</span>
+              <span 
+                className="font-mono text-xs truncate cursor-pointer"
+                onClick={() => handleCopy(authState.tokens?.accessToken ?? '', 'Access Token')}
+              >
+                {authState.tokens?.accessToken.slice(0, 20)}...
+              </span>
+            </p>
+            <p className="flex items-center justify-between">
+              <span className="text-muted-foreground">Refresh Token:</span>
+              <span 
+                className="font-mono text-xs truncate cursor-pointer"
+                onClick={() => handleCopy(authState.tokens?.refreshToken ?? '', 'Refresh Token')}
+              >
+                {authState.tokens?.refreshToken.slice(0, 20)}...
+              </span>
+            </p>
+            <p className="flex items-center justify-between">
+              <span className="text-muted-foreground flex items-center"><Timer className="h-4 w-4 mr-1"/> Time to Refresh:</span>
+              <span className="font-mono text-xs">
+                {authState.timeToRefresh > 0 ? <Countdown targetDate={authState.timeToRefresh} /> : 'N/A'}
+              </span>
+            </p>
+          </div>
+          <Button onClick={refreshToken} className="w-full" disabled={authState.isLoading}>
+            {authState.isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            Refresh Token
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 
 // Authenticated View
 function AuthenticatedSpotifyView() {
@@ -142,43 +213,48 @@ function AuthenticatedSpotifyView() {
       </aside>
 
       {/* Main Content - Tracks */}
-      <main className="flex-1 p-6 pb-[90px] overflow-y-auto">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          </div>
-        ) : selectedPlaylist ? (
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold mb-4">Tracks</h2>
-            {selectedPlaylist.map(({ track }, index) => track && (
-              <div 
-                key={`${track.id}-${index}`}
-                className={cn(
-                  "p-3 rounded-md flex items-center gap-4 hover:bg-accent",
-                   currentlyPlayingId === track.id && "bg-primary/20 text-primary"
-                )}
-                onDoubleClick={() => controls.play(track.uri, selectedPlaylist.map(t => t.track.uri), index)}
-              >
-                <span className="w-6 text-muted-foreground">{index + 1}</span>
-                {track.album.images[0] ? (
-                  <Image src={track.album.images[0].url} alt={track.name} width={40} height={40} className="rounded-sm"/>
-                ) : (
-                  <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
-                )}
-                <div className="flex-1 truncate">
-                  <p className={cn("font-semibold truncate", currentlyPlayingId === track.id && "text-primary")}>{track.name}</p>
-                  <p className="text-sm text-muted-foreground truncate">{track.artists.map(a => a.name).join(', ')}</p>
+       <div className="flex-1 flex flex-col">
+        <div className="flex justify-end p-4">
+          <TokenInfoPopover />
+        </div>
+        <main className="flex-1 p-6 pt-0 pb-[90px] overflow-y-auto">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
+          ) : selectedPlaylist ? (
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold mb-4">Tracks</h2>
+              {selectedPlaylist.map(({ track }, index) => track && (
+                <div 
+                  key={`${track.id}-${index}`}
+                  className={cn(
+                    "p-3 rounded-md flex items-center gap-4 hover:bg-accent",
+                    currentlyPlayingId === track.id && "bg-primary/20 text-primary"
+                  )}
+                  onDoubleClick={() => controls.play(track.uri, selectedPlaylist.map(t => t.track.uri), index)}
+                >
+                  <span className="w-6 text-muted-foreground">{index + 1}</span>
+                  {track.album.images[0] ? (
+                    <Image src={track.album.images[0].url} alt={track.name} width={40} height={40} className="rounded-sm"/>
+                  ) : (
+                    <div className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center"><Music /></div>
+                  )}
+                  <div className="flex-1 truncate">
+                    <p className={cn("font-semibold truncate", currentlyPlayingId === track.id && "text-primary")}>{track.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">{track.artists.map(a => a.name).join(', ')}</p>
+                  </div>
+                  <span className="text-sm text-muted-foreground">{formatDuration(track.duration_ms)}</span>
                 </div>
-                <span className="text-sm text-muted-foreground">{formatDuration(track.duration_ms)}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            Select a playlist to see its tracks.
-          </div>
-        )}
-      </main>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              Select a playlist to see its tracks.
+            </div>
+          )}
+        </main>
+      </div>
 
       <SpotifyPlayer />
     </div>
