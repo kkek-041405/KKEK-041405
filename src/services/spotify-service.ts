@@ -1,3 +1,4 @@
+
 /**
  * Spotify Service
  *
@@ -82,13 +83,13 @@ function generateRandomString(length: number): string {
 }
 
 /**
- * Encodes data to Base64 URL-safe format
+ * Encodes data to Base64.
  *
  * @param data - Data to encode
- * @returns Base64 URL-safe encoded string
+ * @returns Base64 encoded string
  */
-function base64UrlEncode(data: string): string {
-  return btoa(data).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+function base64Encode(data: string): string {
+    return Buffer.from(data).toString('base64');
 }
 
 // ============================================================================
@@ -161,7 +162,7 @@ export class SpotifyService {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${base64UrlEncode(`${this.config.clientId}:${this.config.clientSecret}`)}`,
+          Authorization: `Basic ${base64Encode(`${this.config.clientId}:${this.config.clientSecret}`)}`,
         },
         body: body.toString(),
       });
@@ -227,7 +228,7 @@ export class SpotifyService {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${base64UrlEncode(`${this.config.clientId}:${this.config.clientSecret}`)}`,
+          Authorization: `Basic ${base64Encode(`${this.config.clientId}:${this.config.clientSecret}`)}`,
         },
         body: body.toString(),
       });
