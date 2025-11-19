@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check, LogOut } from "lucide-react";
+import { Loader2, Music, Power, RefreshCw, Eye, Timer, Copy, Check, LogOut, Link as LinkIcon } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import type { SpotifyPlaylist, SpotifyPlaylistTrack } from "@/lib/spotify-types";
 import { ScrollArea } from "./ui/scroll-area";
@@ -61,11 +61,11 @@ function SpotifyLogin({
 
 // Token Info Popover
 function TokenInfoPopover() {
-  const { authState, refreshToken, logout } = useSpotify();
+  const { authState, refreshToken } = useSpotify();
   const { toast } = useToast();
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
-  const handleCopy = (textToCopy: string | null, label: 'Access Token' | 'Refresh Token') => {
+  const handleCopy = (textToCopy: string | null, label: 'Access Token' | 'Refresh Token' | 'Auth URL') => {
     if (!textToCopy) return;
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopiedToken(label);
@@ -75,6 +75,11 @@ function TokenInfoPopover() {
       toast({ title: "Copy Failed", description: `Could not copy the ${label.toLowerCase()}.`, variant: 'destructive'});
     });
   };
+
+  const handleReauthenticate = () => {
+    const authUrl = `${window.location.origin}/api/spotify/auth`;
+    handleCopy(authUrl, 'Auth URL');
+  }
 
   return (
     <Popover>
@@ -125,8 +130,9 @@ function TokenInfoPopover() {
               )}
               Refresh Token
             </Button>
-            <Button variant="destructive" onClick={logout} className="w-full" disabled={authState.isLoading}>
-                <LogOut className="mr-2 h-4 w-4" /> Logout
+            <Button variant="secondary" onClick={handleReauthenticate} className="w-full" disabled={authState.isLoading}>
+                {copiedToken === 'Auth URL' ? <Check className="mr-2 h-4 w-4 text-green-500" /> : <LinkIcon className="mr-2 h-4 w-4" />}
+                Re-authenticate
             </Button>
           </div>
         </div>
@@ -152,9 +158,11 @@ function AuthenticatedSpotifyView() {
       if (response.ok) {
         const data = await response.json();
         setPlaylists(data.items);
+      } else {
+        console.error("Failed to fetch playlists", await response.text());
       }
     } catch (error) {
-      console.error("Failed to fetch playlists", error);
+      console.error("Error fetching playlists:", error);
     } finally {
       setIsRefreshingPlaylists(false);
     }
