@@ -31,7 +31,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 10, // 10 minutes
-      path: "/", // Ensure cookie is available on all paths
     });
 
     return response;
