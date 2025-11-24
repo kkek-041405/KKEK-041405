@@ -7,7 +7,7 @@ import type { NextRequest } from 'next/server';
 // available in route handlers, we will accept the file and store as bytes in
 // a Convex mutation via a serverless function (or use Convex HTTP client here).
 
-import { ConvexHttpClient } from 'convex/browser';
+import { ConvexHttpClient } from 'convex/server';
 import { api } from '../../../../../convex/_generated/api';
 // Use deployment from env var
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL;
