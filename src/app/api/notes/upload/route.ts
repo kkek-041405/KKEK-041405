@@ -7,7 +7,7 @@ import type { NextRequest } from 'next/server';
 // available in route handlers, we will accept the file and store as bytes in
 // a Convex mutation via a serverless function (or use Convex HTTP client here).
 
-import { ConvexHttpClient } from 'convex/server';
+import { ConvexHttpClient } from 'convex/browser';
 import { api } from '../../../../../convex/_generated/api';
 // Use deployment from env var
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL;
@@ -16,7 +16,7 @@ const convex = new ConvexHttpClient(convexUrl || 'https://example.convex.cloud')
 export async function POST(req: NextRequest) {
   const contentType = req.headers.get('content-type') || '';
   if (!contentType.includes('multipart/form-data')) {
-  
+
     return NextResponse.json({ error: 'Only multipart/form-data supported' }, { status: 400 });
   }
 
