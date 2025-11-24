@@ -161,9 +161,13 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     setUploadError(null);
 
     if (file) {
-      // If the title field is empty, populate it with the file name
+      // If the title field is empty, populate it with the file name without its extension
       if (!form.getValues('title')) {
-        form.setValue('title', file.name);
+        const fileName = file.name;
+        const lastDotIndex = fileName.lastIndexOf('.');
+        // Check if a dot exists and it's not the first character
+        const nameWithoutExtension = (lastDotIndex > 0) ? fileName.substring(0, lastDotIndex) : fileName;
+        form.setValue('title', nameWithoutExtension);
       }
 
       // Start pre-upload immediately
@@ -348,7 +352,3 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     </div>
   );
 }
-
-    
-
-    
