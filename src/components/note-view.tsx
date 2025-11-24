@@ -5,10 +5,11 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, ExternalLink, FileArchive } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 interface NoteViewProps {
   note: Note;
@@ -76,8 +77,8 @@ export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }:
     }
   };
 
-  const itemTypeDisplay = note.type === 'note' ? 'Note' : 'Key Information';
-  const ItemIcon = note.type === 'note' ? FileText : Info;
+  const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
+  const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
 
   return (
     <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
@@ -131,6 +132,24 @@ export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }:
               </div>
             </div>
           </div>
+        )}
+
+        {note.type === 'document' && (
+             <div className="space-y-4 pt-6">
+                <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">Document Name:</h3>
+                    <p className="text-lg text-foreground break-words">{note.title}</p>
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">File Location:</h3>
+                     <Button asChild variant="outline">
+                        <Link href={note.content} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            View Document
+                        </Link>
+                     </Button>
+                </div>
+            </div>
         )}
         
         {note.summary && note.type === 'note' && (
@@ -188,5 +207,3 @@ export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }:
     </div>
   );
 }
-
-    

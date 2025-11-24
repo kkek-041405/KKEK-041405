@@ -1,9 +1,10 @@
+
 "use client";
 
 import type * as React from 'react';
 import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Trash2, FileText, Info } from 'lucide-react';
+import { Trash2, FileText, Info, FileArchive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NoteListItemProps {
@@ -19,7 +20,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
     onDelete();
   };
 
-  const ItemIcon = note.type === 'note' ? FileText : Info;
+  const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
   
   return (
     <div
@@ -32,16 +33,16 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
         isSelected ? "bg-primary/10 border border-primary" : "border border-transparent"
       )}
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3 overflow-hidden">
         <ItemIcon className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
         <span className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{note.title}</span>
       </div>
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+        className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
         onClick={handleDelete}
-        aria-label={`Delete ${note.type === 'note' ? 'note' : 'key information'} titled ${note.title}`}
+        aria-label={`Delete item titled ${note.title}`}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

@@ -10,7 +10,7 @@ import { NoteView } from '@/components/note-view';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook, FileText, Loader2 } from 'lucide-react';
+import { Notebook, FileText, Loader2, FileArchive } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -49,7 +49,7 @@ export default function NotesContentPage() {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
-  const [sortType, setSortType] = useState<'note' | 'keyInformation'>('note');
+  const [sortType, setSortType] = useState<'note' | 'keyInformation' | 'document'>('note');
 
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [initialFormValues, setInitialFormValues] = useState<NoteFormValues | null>(null);
@@ -119,7 +119,7 @@ export default function NotesContentPage() {
           ).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         );
         toast({
-          title: `${data.type === 'note' ? 'Note' : 'Key Information'} Updated!`,
+          title: `Item Updated!`,
           description: `Your item "${data.title}" has been successfully updated.`,
         });
       } else {
@@ -131,7 +131,7 @@ export default function NotesContentPage() {
           )
         );
         toast({
-          title: `${addedNoteWithClientTimestamp.type === 'note' ? 'Note' : 'Key Information'} Saved!`,
+          title: `Item Saved!`,
           description: `Your item "${addedNoteWithClientTimestamp.title}" has been successfully saved to the cloud.`,
         });
       }
@@ -139,7 +139,7 @@ export default function NotesContentPage() {
       setEditingNote(null);
       setInitialFormValues(null);
     } catch (error) {
-      console.error("Failed to save note:", error);
+      console.error("Failed to save item:", error);
       toast({
         title: `Error ${editingNote ? 'Updating' : 'Saving'} Item`,
         description: `Could not ${editingNote ? 'update' : 'save'} your item. Please try again.`,
@@ -200,8 +200,8 @@ export default function NotesContentPage() {
         setSelectedNoteId(null);
       }
       toast({
-        title: `${itemToDelete.type === 'note' ? 'Note' : 'Key Information'} Deleted`,
-        description: `The item "${itemToDelete.title}" has been removed from the cloud.`,
+        title: `Item Deleted`,
+        description: `The item "${itemToDelete.title}" has been removed.`,
         variant: "destructive"
       });
     } catch (error) {
@@ -281,7 +281,7 @@ export default function NotesContentPage() {
   }
 
   const renderNotesView = () => (
-    <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden">
+    <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden h-[calc(100vh-65px)]">
       <section
         aria-labelledby="items-list-heading"
         className="md:w-1/3 flex flex-col"
@@ -316,7 +316,7 @@ export default function NotesContentPage() {
         </section>
       ) : (
         !isLoadingNotes && allNotesWithDefaults.length > 0 && (
-          <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
             <FileText className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
             <p className="text-muted-foreground">Select an item from the list to view its details.</p>
@@ -324,7 +324,7 @@ export default function NotesContentPage() {
         )
       )}
        { !selectedNote && !isLoadingNotes && allNotesWithDefaults.length === 0 && (
-          <div className="md:w-2/3 flex flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
             <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
             <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
@@ -347,7 +347,7 @@ export default function NotesContentPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <AppBar
         activeView={activeView}
         onViewChange={setActiveView}
@@ -359,5 +359,3 @@ export default function NotesContentPage() {
     </div>
   );
 }
-
-    
