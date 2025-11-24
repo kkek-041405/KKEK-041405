@@ -155,7 +155,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
 
                     const urlToOpen = resolvedServingUrl ?? note.content;
                     console.log('[NoteView] opening URL', urlToOpen);
-                    const opened = window.open(urlToOpen as string, '_blank', 'noopener');
+                    const opened = window.open(urlToOpen as string, '_blank');
                     if (opened) {
                       toast({ title: 'Opening document', description: 'A new tab opened for the document.' });
                     } else {
