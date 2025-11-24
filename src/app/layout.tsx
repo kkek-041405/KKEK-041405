@@ -1,16 +1,19 @@
 
 import type {Metadata} from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+// Geist isn't a Google font; Turbopack can fail resolving it. Use supported
+// Google fonts but keep the same CSS variable names so the rest of the app
+// (tailwind + globals.css) continues to use the same variables.
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; 
 
-const geistSans = Geist({ 
+const geistSans = Inter({ 
   variable: '--font-geist-sans',
   subsets: ['latin'],
   display: 'swap',
 });
 
-const geistMono = Geist_Mono({ 
+const geistMono = JetBrains_Mono({ 
   variable: '--font-geist-mono',
   subsets: ['latin'],
   display: 'swap',

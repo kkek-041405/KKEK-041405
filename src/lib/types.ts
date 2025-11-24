@@ -5,6 +5,14 @@ export interface Note {
     createdAt: string; // ISO Date string
     summary?: string;
     type: 'note' | 'keyInformation' | 'document';
+    // For documents, keep structured metadata about the file stored in Convex
+    documentMetadata?: {
+      convexDocumentId?: string;
+      storageId?: string;
+      fileName?: string;
+      fileType?: string;
+      fileSize?: number;
+    };
   }
   
   

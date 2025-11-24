@@ -2,7 +2,7 @@
 "use client";
 
 import type { Note } from '@/lib/types';
-import type { NoteFormValues } from '@/components/note-form';
+import type { NoteFormValues, NoteFormSubmission } from '@/components/note-form';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,7 @@ interface NoteListProps {
   isFormOpen: boolean;
   onFormOpenChange: (open: boolean) => void;
   noteFormProps: {
-    onSave: (data: NoteFormValues) => void;
+  onSave: (data: NoteFormSubmission) => Promise<void> | void;
     isLoading: boolean;
     onFormSubmit: () => void;
     defaultValues?: NoteFormValues | null;

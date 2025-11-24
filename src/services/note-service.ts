@@ -1,6 +1,6 @@
 
 import type { Note } from '@/lib/types';
-import type { NoteFormValues } from '@/components/note-form';
+import type { NoteFormValues, NoteFormSubmission } from '@/components/note-form';
 import { db } from '@/lib/firebase';
 import {
   collection,
@@ -31,8 +31,15 @@ const formatNoteTimestamps = (noteData: any, id: string): Note => {
 };
 
 export const addNoteToFirestore = async (
-  noteData: NoteFormValues
+  noteData: NoteFormSubmission
 ): Promise<Note> => {
+  console.log('[note-service] addNoteToFirestore payload', {
+    title: noteData.title,
+    type: noteData.type,
+    hasDocumentMetadata: !!noteData.documentMetadata,
+    contentPreview: typeof noteData.content === 'string' ? noteData.content.slice(0, 120) : undefined,
+  });
+
   const docRef = await addDoc(collection(db, NOTES_COLLECTION), {
     ...noteData,
     createdAt: serverTimestamp(), // Use server timestamp
@@ -43,11 +50,15 @@ export const addNoteToFirestore = async (
   const newNote: Note = {
     id: docRef.id,
     title: noteData.title,
-    content: noteData.content,
+    content: noteData.content ?? '',
     type: noteData.type,
     createdAt: new Date().toISOString(), // Placeholder, ideally fetch the doc or use a consistent client-generated timestamp
     summary: '',
   };
+  // Attach optional documentMetadata if present
+  if ((noteData as NoteFormSubmission).documentMetadata) {
+    (newNote as any).documentMetadata = (noteData as NoteFormSubmission).documentMetadata;
+  }
    // To get the actual server timestamp, we'd need to fetch the document again
   // For now, we'll return a client-generated timestamp or a structure that page.tsx can update
   // Or, assume the page.tsx will re-fetch or optimistically update with client-side date

@@ -2,7 +2,7 @@
 "use client";
 
 import type { Note } from '@/lib/types';
-import type { NoteFormValues } from '@/components/note-form';
+import type { NoteFormValues, NoteFormSubmission } from '@/components/note-form';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { NoteList } from '@/components/note-list';
@@ -19,6 +19,7 @@ import {
   deleteNoteFromFirestore 
 } from '@/services/note-service';
 import SpotifyView from '@/components/spotify-view';
+import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
 import OtpView from '@/components/otp-view';
 
 const defaultKeyInfo: Note[] = [
@@ -44,6 +45,8 @@ export default function NotesContentPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  // Map of noteId -> pre-resolved serving URL (null = resolved and not available, undefined = not yet resolved)
+  const [resolvedServingUrls, setResolvedServingUrls] = useState<Record<string, string | null | undefined>>({});
   const [isLoadingNotes, setIsLoadingNotes] = useState(true);
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -107,15 +110,40 @@ export default function NotesContentPage() {
   }
 
 
-  const handleSaveNote = async (data: NoteFormValues) => {
+  const handleSaveNote = async (data: NoteFormSubmission) => {
     setIsSavingNote(true);
     try {
       if (editingNote) {
-        // Update existing note
-        await updateNoteInFirestore(editingNote.id, data);
+        // If editing a document and a new file was provided, upload and update metadata
+        if (data.type === 'document' && data.file) {
+          const uploadResult = await uploadFileToServer(data.file);
+          if (uploadResult) {
+            data.content = `/api/notes/download?storageId=${encodeURIComponent(uploadResult.storageId)}`;
+            data.documentMetadata = uploadResult;
+          }
+        } else if (data.type === 'document' && !data.file) {
+          // User did not upload a new file while editing — preserve existing document
+          // content and metadata instead of accidentally overwriting them with empty values.
+          if (editingNote?.content && (!data.content || String(data.content).trim() === '')) {
+            console.log('[notes page] preserving existing document content for edit', { noteId: editingNote.id });
+            data.content = editingNote.content;
+          }
+          if (!data.documentMetadata && editingNote?.documentMetadata) {
+            console.log('[notes page] preserving existing documentMetadata for edit', { noteId: editingNote.id });
+            data.documentMetadata = editingNote.documentMetadata as any;
+          }
+        }
+
+        // Remove file object before saving to Firestore
+        delete (data as any).file;
+        // Firestore doesn't accept `null` for nested objects where types expect `undefined`.
+        if ((data as any).documentMetadata === null) {
+          delete (data as any).documentMetadata;
+        }
+        await updateNoteInFirestore(editingNote.id, data as Partial<Omit<Note, 'id'|'createdAt'>>);
         setNotes((prevNotes) =>
           prevNotes.map((n) =>
-            n.id === editingNote.id ? { ...n, ...data, createdAt: n.createdAt } : n // Keep original createdAt
+            n.id === editingNote.id ? ({ ...n, ...(data as Partial<Note>), createdAt: n.createdAt } as Note) : n
           ).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         );
         toast({
@@ -123,10 +151,36 @@ export default function NotesContentPage() {
           description: `Your item "${data.title}" has been successfully updated.`,
         });
       } else {
-        // Add new note
-        const addedNoteWithClientTimestamp = await addNoteToFirestore(data);
-        setNotes((prevNotes) => 
-          [addedNoteWithClientTimestamp, ...prevNotes].sort((a,b) => 
+        // New note: if document and a file, upload first
+        if (data.type === 'document') {
+          if (data.file) {
+            const uploadResult = await uploadFileToServer(data.file);
+            if (uploadResult) {
+              data.content = `/api/notes/download?storageId=${encodeURIComponent(uploadResult.storageId)}`;
+              data.documentMetadata = uploadResult;
+            }
+          }
+
+          // If document metadata was already provided by the form (upload happened in the form),
+          // but content URL wasn't populated, ensure we set a download URL using the storageId.
+          if ((data as any).documentMetadata && (!data.content || String(data.content).trim() === '')) {
+            const sid = String((data as any).documentMetadata.storageId || (data as any).documentMetadata?.id || (data as any).documentMetadata?._id || '');
+            if (sid) {
+              console.log('[notes page] attaching content download url from provided documentMetadata', { sid });
+              data.content = `/api/notes/download?storageId=${encodeURIComponent(sid)}`;
+            }
+          }
+        }
+        // Remove file object before saving to Firestore
+        delete (data as any).file;
+        // Ensure we don't send `null` for documentMetadata since our Note type allows only undefined
+        if ((data as any).documentMetadata === null) {
+          delete (data as any).documentMetadata;
+        }
+        console.log('[notes page] saving new note to Firestore', { title: data.title, type: data.type, hasDocumentMetadata: !!(data as any).documentMetadata });
+        const addedNoteWithClientTimestamp = await addNoteToFirestore(data as any);
+        setNotes((prevNotes) =>
+          [addedNoteWithClientTimestamp, ...prevNotes].sort((a,b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
         );
@@ -177,7 +231,46 @@ export default function NotesContentPage() {
 
 
   const handleSelectNote = (id: string) => {
+    // Show the selection immediately
     setSelectedNoteId(id);
+
+    // If this is a document note, pre-resolve the serving URL so View Document
+    // can open a direct URL synchronously when clicked
+    const noteToResolve = notes.find((n) => n.id === id) || defaultKeyInfo.find((n) => n.id === id);
+    if (noteToResolve && noteToResolve.type === 'document') {
+      // if we haven't resolved this one yet (value undefined), start resolving
+      if (resolvedServingUrls[id] === undefined) {
+        // mark as resolving
+        setResolvedServingUrls((prev) => ({ ...prev, [id]: undefined }));
+
+        (async () => {
+          try {
+            let storageId: string | null = null;
+            try {
+              const possibleUrl = new URL(noteToResolve.content, typeof window !== 'undefined' ? window.location.origin : '');
+              storageId = possibleUrl.searchParams.get('storageId');
+            } catch (e) {
+              storageId = null;
+            }
+
+            if (!storageId) {
+              console.log('[notes page] No storageId in selected document content', { id, content: noteToResolve.content });
+              setResolvedServingUrls((prev) => ({ ...prev, [id]: null }));
+              return;
+            }
+
+            console.log('[notes page] pre-resolving serving URL for selected note', { id, storageId });
+            const result = await getFileServingUrl(storageId);
+            console.log('[notes page] pre-resolve result', { id, result });
+            const url = result?.url ?? null;
+            setResolvedServingUrls((prev) => ({ ...prev, [id]: url }));
+          } catch (err) {
+            console.error('[notes page] Error pre-resolving serving URL for note', id, err);
+            setResolvedServingUrls((prev) => ({ ...prev, [id]: null }));
+          }
+        })();
+      }
+    }
   };
 
   const handleDeleteNote = async (id: string) => {
@@ -309,6 +402,7 @@ export default function NotesContentPage() {
           <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
           <NoteView
             note={selectedNote}
+            resolvedServingUrl={selectedNote ? resolvedServingUrls[selectedNote.id] ?? null : null}
             onSummarize={handleSummarizeNote}
             isLoadingSummary={isLoadingSummary}
             onEditRequest={handleRequestEdit}

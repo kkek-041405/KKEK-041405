@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect } from 'react';
+import { uploadFileToServer } from '@/services/file-upload-service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -25,9 +26,10 @@ const keyInformationSchema = z.object({
 });
 
 const documentSchema = z.object({
-    type: z.literal('document'),
-    title: z.string().min(1, { message: "Document name is required." }).max(100, { message: "Document name must be 100 characters or less." }),
-    content: z.string().url({ message: "Please enter a valid URL." }),
+  type: z.literal('document'),
+  title: z.string().min(1, { message: "Document name is required." }).max(100, { message: "Document name must be 100 characters or less." }),
+  // Content will be set after upload; allow empty string or URL
+  content: z.string().optional(),
 });
 
 const noteFormSchema = z.discriminatedUnion("type", [
@@ -37,9 +39,19 @@ const noteFormSchema = z.discriminatedUnion("type", [
 ]);
 
 export type NoteFormValues = z.infer<typeof noteFormSchema>;
+export type NoteFormSubmission = NoteFormValues & {
+  file?: File | null;
+  documentMetadata?: {
+    convexDocumentId?: string;
+    storageId?: string;
+    fileName?: string;
+    fileType?: string;
+    fileSize?: number;
+  };
+};
 
 interface NoteFormProps {
-  onSave: (data: NoteFormValues) => void;
+  onSave: (data: NoteFormSubmission) => Promise<void> | void;
   isLoading?: boolean;
   onFormSubmit?: () => void; // Callback to notify parent after submission
   defaultValues?: NoteFormValues | null;
@@ -62,12 +74,44 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
         type: 'note',
       } as NoteFormValues);
     }
+    // Reset file selection when form values change or on mode change
+    setSelectedFile(null);
   }, [isEditing, defaultValues, form]);
 
   const selectedType = form.watch('type');
 
-  const onSubmit = (data: NoteFormValues) => {
-    onSave(data);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [uploadInProgress, setUploadInProgress] = React.useState(false);
+  const [uploadResult, setUploadResult] = React.useState<NoteFormSubmission['documentMetadata'] | null>(null);
+  const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const uploadPromiseRef = React.useRef<Promise<any> | null>(null);
+
+  const onSubmit = async (data: NoteFormValues) => {
+    // If a background upload is in progress, wait for it to finish
+    if (uploadInProgress && uploadPromiseRef.current) {
+      try {
+        const res = await uploadPromiseRef.current;
+        if (res) setUploadResult(res);
+      } catch (err) {
+        // uploadPromiseRef already sets uploadError; fall through
+      }
+    }
+    // If creating a document, require either a file or a URL content
+    if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '')) {
+      alert('Please select a file to upload or provide a document URL.');
+      return;
+    }
+    const submission: NoteFormSubmission = { ...data, file: selectedFile };
+
+    // If it's a document and we have upload metadata, attach it and set a server-download URL
+    if (data.type === 'document') {
+      if (uploadResult) {
+        submission.documentMetadata = uploadResult;
+        submission.file = null; // don't keep File object in the submission
+        submission.content = `/api/notes/download?storageId=${encodeURIComponent(String(uploadResult.storageId))}`;
+      }
+    }
+    await onSave(submission);
     // form.reset is handled by useEffect or parent closing the dialog
     if (onFormSubmit) {
       onFormSubmit();
@@ -186,8 +230,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
               )}
             />
 
-            {/* TODO: This is where user will implement Convex upload logic */}
-            {/* For now, it's just a text input for the URL */}
+            {/* Document type: prefer file upload but allow URL as fallback */}
             {selectedType === 'document' && (
                 <FormField
                     control={form.control}
@@ -197,11 +240,50 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                         <FormLabel>{getContentLabel()}</FormLabel>
                         <FormControl>
                             <Input
-                            placeholder={getContentPlaceholder()}
+                            placeholder={getContentPlaceholder() + ' (optional - choose a file instead)'}
                             {...field}
                             value={field.value || ''}
+                            disabled={!!selectedFile} // Disable manual URL if a file is selected
                             />
                         </FormControl>
+                        {/* File upload field */}
+                        <div className="mt-2">
+                          <input
+                            type="file"
+                            onChange={(e) => {
+                              const f = e.target.files ? e.target.files[0] : null;
+                              setSelectedFile(f);
+                              setUploadResult(null);
+                              setUploadError(null);
+
+                              if (f) {
+                                // Start pre-upload immediately
+                                setUploadInProgress(true);
+                                const promise = uploadFileToServer(f).then((res) => {
+                                  setUploadResult(res);
+                                  setUploadInProgress(false);
+                                  return res;
+                                }).catch((err) => {
+                                  console.error('Upload failed', err);
+                                  setUploadError((err && err.message) || String(err));
+                                  setUploadInProgress(false);
+                                  return null;
+                                });
+                                uploadPromiseRef.current = promise;
+                              }
+                            }}
+                          />
+                          {selectedFile && <p className="text-sm text-muted-foreground">Selected: {selectedFile.name}</p>}
+                          {uploadInProgress && (
+                            <p className="text-sm text-accent">Uploading… please wait</p>
+                          )}
+                          {uploadResult && !uploadInProgress && (
+                            <p className="text-sm text-success">Uploaded: {uploadResult.fileName ?? selectedFile?.name}</p>
+                          )}
+                          {uploadError && (
+                            <p className="text-sm text-destructive">Upload error: {uploadError}</p>
+                          )}
+                        </div>
                         <FormMessage />
                         </FormItem>
                     )}
@@ -230,8 +312,8 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
             )}
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-                {isLoading ? (isEditing ? 'Updating...' : 'Saving...') : (isEditing ? `Update Item` : `Save Item`)}
+              <Button type="submit" disabled={isLoading || uploadInProgress} className="w-full sm:w-auto">
+                {uploadInProgress ? 'Uploading...' : isLoading ? (isEditing ? 'Updating...' : 'Saving...') : (isEditing ? `Update Item` : `Save Item`)}
               </Button>
             </div>
           </form>

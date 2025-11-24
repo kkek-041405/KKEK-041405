@@ -9,18 +9,20 @@ import { Sparkles, Loader2, FileText, Info, Copy, Pencil, ExternalLink, FileArch
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 interface NoteViewProps {
   note: Note;
+  /** If provided, a pre-resolved short-lived serving URL (from Convex) for the document. */
+  resolvedServingUrl?: string | null | undefined;
   onSummarize: (noteId: string, noteContent: string) => Promise<void>;
   isLoadingSummary: boolean;
   onEditRequest: (note: Note) => void;
 }
 
-export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
+export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
+  // opening is synchronous when using pre-resolved URL; no async spinner needed
   const { toast } = useToast();
   
   const [canCopy, setCanCopy] = useState(false);
@@ -142,12 +144,31 @@ export function NoteView({ note, onSummarize, isLoadingSummary, onEditRequest }:
                 </div>
                 <div className="space-y-2">
                     <h3 className="text-sm font-medium text-muted-foreground">File Location:</h3>
-                     <Button asChild variant="outline">
-                        <Link href={note.content} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            View Document
-                        </Link>
-                     </Button>
+               {note.documentMetadata?.fileName && (
+                <p className="text-muted-foreground">{note.documentMetadata.fileName}</p>
+               )}
+               <div className="flex gap-2">
+                <Button
+                  onClick={() => {
+                    console.log('[NoteView] View Document button clicked', { noteId: note.id });
+                    if (!note.content) return;
+
+                    const urlToOpen = resolvedServingUrl ?? note.content;
+                    console.log('[NoteView] opening URL', urlToOpen);
+                    const opened = window.open(urlToOpen as string, '_blank', 'noopener');
+                    if (opened) {
+                      toast({ title: 'Opening document', description: 'A new tab opened for the document.' });
+                    } else {
+                      console.error('[NoteView] Popup blocked - unable to open tab for', urlToOpen);
+                      toast({ title: 'Blocked', description: 'The browser blocked opening a new tab.', variant: 'destructive' });
+                    }
+                  }}
+                  variant="outline"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Document
+                </Button>
+               </div>
                 </div>
             </div>
         )}
