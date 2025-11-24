@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -161,6 +161,11 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     setUploadError(null);
 
     if (file) {
+      // If the title field is empty, populate it with the file name
+      if (!form.getValues('title')) {
+        form.setValue('title', file.name);
+      }
+
       // Start pre-upload immediately
       setUploadInProgress(true);
       const promise = uploadFileToServer(file).then((res) => {
@@ -343,5 +348,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     </div>
   );
 }
+
+    
 
     
