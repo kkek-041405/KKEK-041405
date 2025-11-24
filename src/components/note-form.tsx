@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PlusCircle, Info, Edit3, FileArchive } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
   type: z.literal('note'),
@@ -97,7 +98,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
       }
     }
     // If creating a document, require either a file or a URL content
-    if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '')) {
+    if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '') && !isEditing) {
       alert('Please select a file to upload or provide a document URL.');
       return;
     }
@@ -278,7 +279,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                             <p className="text-sm text-accent">Uploading… please wait</p>
                           )}
                           {uploadResult && !uploadInProgress && (
-                            <p className="text-sm text-success">Uploaded: {uploadResult.fileName ?? selectedFile?.name}</p>
+                            <p className="text-sm text-green-600">Uploaded: {uploadResult.fileName ?? selectedFile?.name}</p>
                           )}
                           {uploadError && (
                             <p className="text-sm text-destructive">Upload error: {uploadError}</p>
@@ -320,8 +321,4 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
         </Form>
     </div>
   );
-}
-
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
 }
