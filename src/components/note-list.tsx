@@ -6,7 +6,7 @@ import type { NoteFormValues } from '@/components/note-form';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { ListChecks, FileText, Info, PlusCircle, FileArchive, ChevronDown } from 'lucide-react';
+import { ListChecks, FileText, Info, PlusCircle, FileArchive } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { NoteForm } from '@/components/note-form';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 
 interface NoteListProps {
@@ -58,15 +53,20 @@ export function NoteList({
   const displayedNotesList = filteredNotes.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   
   const sortTypeConfig = {
-      note: { label: 'Notes', icon: FileText },
-      keyInformation: { label: 'Key Info', icon: Info },
-      document: { label: 'Docs', icon: FileArchive },
+      note: { label: 'Notes', icon: FileText, next: 'keyInformation' as const },
+      keyInformation: { label: 'Key Info', icon: Info, next: 'document' as const },
+      document: { label: 'Docs', icon: FileArchive, next: 'note' as const },
   }
   
   const CurrentSortIcon = sortTypeConfig[sortType].icon;
 
+  const handleCycleFilter = () => {
+    onSortChange(sortTypeConfig[sortType].next);
+  };
+
 
   return (
+    <TooltipProvider>
     <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
       <div className="p-4 border-b flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 overflow-hidden">
@@ -76,6 +76,20 @@ export function NoteList({
             </h3>
         </div>
         <div className="flex items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={handleCycleFilter}
+                  aria-label={`Filter by ${sortTypeConfig[sortTypeConfig[sortType].next].label}`}
+                  className="h-9 w-9"
+                  title={`Filter by ${sortTypeConfig[sortTypeConfig[sortType].next].label}`}
+                >
+                  <CurrentSortIcon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+            </Tooltip>
              <Dialog open={isFormOpen} onOpenChange={onFormOpenChange}>
               <DialogTrigger asChild>
                 <Button 
@@ -105,34 +119,6 @@ export function NoteList({
 
         </div>
       </div>
-
-       <div className="p-3 border-b">
-         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                    <span className="flex items-center gap-2">
-                        <CurrentSortIcon className="h-4 w-4 text-muted-foreground" />
-                        {sortTypeConfig[sortType].label}
-                    </span>
-                    <ChevronDown className="h-4 w-4 opacity-50" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
-                <DropdownMenuItem onSelect={() => onSortChange('note')}>
-                    <FileText className="mr-2 h-4 w-4"/>
-                    Notes
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => onSortChange('keyInformation')}>
-                    <Info className="mr-2 h-4 w-4"/>
-                    Key Info
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => onSortChange('document')}>
-                    <FileArchive className="mr-2 h-4 w-4"/>
-                    Docs
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-       </div>
       
       {notes.length === 0 ? (
         <div className="p-6 pt-0 flex-1 flex flex-col justify-center items-center">
@@ -158,5 +144,6 @@ export function NoteList({
         </ScrollArea>
       )}
     </div>
+    </TooltipProvider>
   );
 }
