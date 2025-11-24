@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PlusCircle, Info, Edit3, FileArchive } from 'lucide-react';
+import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
@@ -64,6 +64,8 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     resolver: zodResolver(noteFormSchema),
     // Default values are now set via useEffect based on props
   });
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isEditing && defaultValues) {
@@ -127,16 +129,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
         default: return 'Title';
     }
   }
-
-  const getContentLabel = () => {
-    switch (selectedType) {
-        case 'note': return 'Content';
-        case 'keyInformation': return 'Value';
-        case 'document': return 'Document URL';
-        default: return 'Content';
-    }
-  }
-
+  
   const getTitlePlaceholder = () => {
     switch (selectedType) {
         case 'note': return "Enter note title (e.g., Meeting Recap)";
@@ -146,14 +139,43 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     }
   }
   
+  const getContentLabel = () => {
+    switch (selectedType) {
+        case 'note': return 'Content';
+        case 'keyInformation': return 'Value';
+        default: return 'Content';
+    }
+  }
+
   const getContentPlaceholder = () => {
     switch (selectedType) {
         case 'note': return "Write your note here... (e.g., Discussed project timelines...)";
         case 'keyInformation': return "Enter the value for the key information (e.g., MyS3cur3P@ssw0rd!)";
-        case 'document': return "Enter the document URL from your storage provider.";
         default: return "Enter content";
     }
   }
+  
+  const handleFileChange = (file: File | null) => {
+    setSelectedFile(file);
+    setUploadResult(null);
+    setUploadError(null);
+
+    if (file) {
+      // Start pre-upload immediately
+      setUploadInProgress(true);
+      const promise = uploadFileToServer(file).then((res) => {
+        setUploadResult(res);
+        setUploadInProgress(false);
+        return res;
+      }).catch((err) => {
+        console.error('Upload failed', err);
+        setUploadError((err && err.message) || String(err));
+        setUploadInProgress(false);
+        return null;
+      });
+      uploadPromiseRef.current = promise;
+    }
+  };
 
 
   return (
@@ -230,65 +252,64 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                 </FormItem>
               )}
             />
-
-            {/* Document type: prefer file upload but allow URL as fallback */}
+            
             {selectedType === 'document' && (
-                <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>{getContentLabel()}</FormLabel>
-                        <FormControl>
-                            <Input
-                            placeholder={getContentPlaceholder() + ' (optional - choose a file instead)'}
-                            {...field}
-                            value={field.value || ''}
-                            disabled={!!selectedFile} // Disable manual URL if a file is selected
-                            />
-                        </FormControl>
-                        {/* File upload field */}
-                        <div className="mt-2">
-                          <input
-                            type="file"
-                            onChange={(e) => {
-                              const f = e.target.files ? e.target.files[0] : null;
-                              setSelectedFile(f);
-                              setUploadResult(null);
-                              setUploadError(null);
-
-                              if (f) {
-                                // Start pre-upload immediately
-                                setUploadInProgress(true);
-                                const promise = uploadFileToServer(f).then((res) => {
-                                  setUploadResult(res);
-                                  setUploadInProgress(false);
-                                  return res;
-                                }).catch((err) => {
-                                  console.error('Upload failed', err);
-                                  setUploadError((err && err.message) || String(err));
-                                  setUploadInProgress(false);
-                                  return null;
-                                });
-                                uploadPromiseRef.current = promise;
-                              }
-                            }}
-                          />
-                          {selectedFile && <p className="text-sm text-muted-foreground">Selected: {selectedFile.name}</p>}
-                          {uploadInProgress && (
-                            <p className="text-sm text-accent">Uploading… please wait</p>
-                          )}
-                          {uploadResult && !uploadInProgress && (
-                            <p className="text-sm text-green-600">Uploaded: {uploadResult.fileName ?? selectedFile?.name}</p>
-                          )}
-                          {uploadError && (
-                            <p className="text-sm text-destructive">Upload error: {uploadError}</p>
-                          )}
+              <FormItem>
+                <FormLabel>File</FormLabel>
+                <FormControl>
+                  <div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+                      className="hidden"
+                    />
+                    {!selectedFile && !isEditing ? (
+                       <div
+                          className="mt-1 flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-10 cursor-pointer hover:border-primary transition-colors"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <div className="text-center">
+                            <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+                            <div className="mt-4 flex text-sm leading-6 text-muted-foreground">
+                              <p className="pl-1">Click to upload or drag and drop</p>
+                            </div>
+                            <p className="text-xs leading-5 text-muted-foreground/80">PDF, PNG, JPG, etc.</p>
+                          </div>
                         </div>
-                        <FormMessage />
-                        </FormItem>
+                    ) : (
+                      <div className="mt-2 text-sm text-foreground">
+                        <div className="flex items-center justify-between rounded-lg border bg-secondary/30 p-3">
+                           <div className="flex items-center gap-3">
+                              <FileIcon className="h-6 w-6 text-primary" />
+                              <span className="font-medium">{selectedFile ? selectedFile.name : (defaultValues as any)?.documentMetadata?.fileName || 'Existing file'}</span>
+                           </div>
+                           <Button 
+                              type="button" 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                              onClick={() => {
+                                handleFileChange(null);
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                              }}
+                            >
+                             <X className="h-4 w-4"/>
+                           </Button>
+                        </div>
+
+                         {uploadInProgress && <p className="mt-2 text-sm text-accent">Uploading… please wait</p>}
+                         {uploadResult && !uploadInProgress && <p className="mt-2 text-sm text-green-600">Uploaded: {uploadResult.fileName ?? selectedFile?.name}</p>}
+                         {uploadError && <p className="mt-2 text-sm text-destructive">Upload error: {uploadError}</p>}
+                      </div>
                     )}
-                />
+                     <FormDescription className="mt-2">
+                       {isEditing ? "Upload a new file to replace the existing one, or leave empty to keep the current file." : "Select a file for this document."}
+                     </FormDescription>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
             
             {(selectedType === 'note' || selectedType === 'keyInformation') && (
@@ -322,3 +343,5 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     </div>
   );
 }
+
+    
