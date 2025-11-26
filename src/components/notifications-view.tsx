@@ -2,21 +2,20 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, Loader2, ServerCrash, Smartphone } from "lucide-react";
+import { Bell, Loader2, ServerCrash } from "lucide-react";
 import { useNotifications, type Notification } from "@/hooks/use-notifications";
 import { ScrollArea } from "./ui/scroll-area";
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "./ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
 
 function NotificationItem({ notification }: { notification: Notification }) {
-  // Use a map or a function to get an icon based on packageName if desired
-  const AppIcon = Smartphone; 
+  // A placeholder icon. In a real app, you might map packageName to a specific icon.
+  const AppIcon = Bell; 
 
   return (
-    <div className="flex items-start gap-4 p-4 border-b">
-      <div className="bg-muted p-2 rounded-full">
+    <div className="flex items-start gap-4 p-4 border-b last:border-b-0">
+      <div className="bg-muted p-2 rounded-full mt-1">
         <AppIcon className="h-5 w-5 text-muted-foreground" />
       </div>
       <div className="flex-1 space-y-1">
@@ -32,7 +31,6 @@ function NotificationItem({ notification }: { notification: Notification }) {
     </div>
   );
 }
-
 
 export default function NotificationsView() {
   const { toast } = useToast();
@@ -52,7 +50,6 @@ export default function NotificationsView() {
   };
 
   const { notifications, isLoading, error } = useNotifications(handleDataEvent);
-
 
   const renderContent = () => {
     if (isLoading) {
@@ -85,7 +82,7 @@ export default function NotificationsView() {
     }
 
     return (
-      <ScrollArea className="h-[500px]">
+      <ScrollArea className="h-[500px] border rounded-lg">
         {notifications.map((notif) => (
           <NotificationItem key={notif.id} notification={notif} />
         ))}
