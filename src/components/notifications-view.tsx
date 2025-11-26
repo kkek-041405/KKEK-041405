@@ -36,7 +36,7 @@ export default function NotificationsView() {
   const { notifications, isLoading, error } = useNotifications();
 
   const renderContent = () => {
-    if (isLoading && notifications.length === 0 && !error) {
+    if (isLoading) {
       return (
         <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
           <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
