@@ -7,6 +7,8 @@ import { useNotifications, type Notification } from "@/hooks/use-notifications";
 import { ScrollArea } from "./ui/scroll-area";
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "./ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 function NotificationItem({ notification }: { notification: Notification }) {
   // Use a map or a function to get an icon based on packageName if desired
@@ -33,9 +35,35 @@ function NotificationItem({ notification }: { notification: Notification }) {
 
 
 export default function NotificationsView() {
-  const { notifications, error } = useNotifications();
+  const { toast } = useToast();
+
+  const handleDataEvent = (event: { type: 'success' | 'error' | 'empty', message?: string }) => {
+    if (event.type === 'success') {
+      toast({
+        title: "Connected",
+        description: "Live notifications are active.",
+      });
+    } else if (event.type === 'empty') {
+      toast({
+        title: "Connected",
+        description: "No notifications yet. Waiting for new data.",
+      });
+    }
+  };
+
+  const { notifications, isLoading, error } = useNotifications(handleDataEvent);
+
 
   const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+          <Loader2 className="h-10 w-10 mb-4 animate-spin" />
+          <p>Connecting to Realtime Database...</p>
+        </div>
+      );
+    }
+    
     if (error) {
        return (
         <div className="flex flex-col items-center justify-center h-64 text-destructive">

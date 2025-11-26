@@ -13,7 +13,14 @@ export interface Notification {
   timestamp: number;
 }
 
-export function useNotifications() {
+type DataEvent = {
+  type: 'success' | 'error' | 'empty';
+  message?: string;
+};
+
+type DataEventCallback = (event: DataEvent) => void;
+
+export function useNotifications(onDataEvent?: DataEventCallback) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +40,11 @@ export function useNotifications() {
           .sort((a, b) => b.timestamp - a.timestamp); // Sort descending by timestamp
 
         setNotifications(notificationsList);
+        onDataEvent?.({ type: 'success' });
       } else {
         // This is a valid state, it just means there are no notifications yet.
         setNotifications([]);
+        onDataEvent?.({ type: 'empty' });
       }
       setIsLoading(false);
       setError(null);
@@ -43,7 +52,9 @@ export function useNotifications() {
 
     const handleError = (error: Error) => {
       console.error("Error fetching notifications from RTDB:", error);
-      setError("Failed to connect to the notifications service. Please check your connection and configuration.");
+      const errorMessage = "Failed to connect to the notifications service. Please check your connection and configuration.";
+      setError(errorMessage);
+      onDataEvent?.({ type: 'error', message: errorMessage });
       setIsLoading(false);
     };
 
@@ -53,7 +64,7 @@ export function useNotifications() {
     return () => {
       off(notificationsRef, 'value', unsubscribe);
     };
-  }, []);
+  }, [onDataEvent]);
 
   return { notifications, isLoading, error };
 }
