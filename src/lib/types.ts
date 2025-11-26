@@ -1,3 +1,4 @@
+
 export interface Note {
     id: string;
     title: string;
@@ -15,4 +16,10 @@ export interface Note {
     };
   }
   
-  
+export interface FirebaseNotification {
+  id: string;
+  packageName: string;
+  title: string;
+  text: string;
+  timestamp: number;
+}

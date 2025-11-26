@@ -20,7 +20,7 @@ import {
 } from '@/services/note-service';
 import SpotifyView from '@/components/spotify-view';
 import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
-import OtpView from '@/components/otp-view';
+import NotificationsView from '@/components/notifications-view';
 
 const defaultKeyInfo: Note[] = [
   {
@@ -31,9 +31,9 @@ const defaultKeyInfo: Note[] = [
     createdAt: new Date(0).toISOString(),
   },
   {
-    id: 'default-otp-placeholder',
-    title: 'OTP',
-    content: 'View your one-time passwords from connected services.',
+    id: 'default-notifications-placeholder',
+    title: 'Notifications',
+    content: 'View your real-time notifications from connected devices.',
     type: 'keyInformation',
     createdAt: new Date(0).toISOString(),
   },
@@ -57,7 +57,7 @@ export default function NotesContentPage() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [initialFormValues, setInitialFormValues] = useState<NoteFormValues | null>(null);
   
-  const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'otp'>('notes');
+  const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'notifications'>('notes');
 
   useEffect(() => {
     // Check authentication status on the client side only
@@ -432,8 +432,8 @@ export default function NotesContentPage() {
     switch (activeView) {
       case 'spotify':
         return <SpotifyView />;
-      case 'otp':
-        return <OtpView />;
+      case 'notifications':
+        return <NotificationsView />;
       case 'notes':
       default:
         return renderNotesView();
