@@ -1,111 +1,74 @@
 
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, Loader2, ServerCrash } from "lucide-react";
+import { useState } from 'react';
 import { useNotifications, type Notification } from "@/hooks/use-notifications";
-import { ScrollArea } from "./ui/scroll-area";
-import { formatDistanceToNow } from 'date-fns';
-import { Badge } from "./ui/badge";
-import { useToast } from "@/hooks/use-toast";
-
-function NotificationItem({ notification }: { notification: Notification }) {
-  // A placeholder icon. In a real app, you might map packageName to a specific icon.
-  const AppIcon = Bell; 
-
-  return (
-    <div className="flex items-start gap-4 p-4 border-b last:border-b-0">
-      <div className="bg-muted p-2 rounded-full mt-1">
-        <AppIcon className="h-5 w-5 text-muted-foreground" />
-      </div>
-      <div className="flex-1 space-y-1">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold">{notification.title}</p>
-          <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
-          </p>
-        </div>
-        <p className="text-sm text-muted-foreground">{notification.text}</p>
-        <Badge variant="outline" className="text-xs">{notification.packageName}</Badge>
-      </div>
-    </div>
-  );
-}
+import { Loader2, FileText, Notebook } from "lucide-react";
+import NotificationList from './notification-list';
+import NotificationView from './notification-view';
 
 export default function NotificationsView() {
-  const { toast } = useToast();
+  const { notifications, isLoading, error } = useNotifications();
+  const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
 
-  const handleDataEvent = (event: { type: 'success' | 'error' | 'empty', message?: string }) => {
-    if (event.type === 'success') {
-      toast({
-        title: "Connected",
-        description: "Live notifications are active.",
-      });
-    } else if (event.type === 'empty') {
-      toast({
-        title: "Connected",
-        description: "No notifications yet. Waiting for new data.",
-      });
-    }
-  };
-
-  const { notifications, isLoading, error } = useNotifications(handleDataEvent);
-
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-          <Loader2 className="h-10 w-10 mb-4 animate-spin" />
-          <p>Connecting to Realtime Database...</p>
-        </div>
-      );
-    }
-    
-    if (error) {
-       return (
-        <div className="flex flex-col items-center justify-center h-64 text-destructive">
-          <ServerCrash className="h-10 w-10 mb-4" />
-          <p className="font-semibold">Connection Error</p>
-          <p className="text-sm text-center">{error}</p>
-        </div>
-      );
-    }
-    
-    if (notifications.length === 0) {
-      return (
-        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-          <Bell className="h-10 w-10 mb-4" />
-          <p>No notifications yet.</p>
-          <p className="text-sm text-center">New notifications from your devices will appear here in real-time.</p>
-        </div>
-      );
-    }
-
+  if (isLoading) {
     return (
-      <ScrollArea className="h-[500px] border rounded-lg">
-        {notifications.map((notif) => (
-          <NotificationItem key={notif.id} notification={notif} />
-        ))}
-      </ScrollArea>
+      <main className="flex-1 flex items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="ml-4 text-lg text-muted-foreground">Connecting to Real-time Notifications...</p>
+      </main>
     );
   }
+  
+  if (error) {
+     return (
+        <main className="flex-1 flex items-center justify-center text-center text-destructive p-4">
+            <p>{error}</p>
+        </main>
+     )
+  }
+
+  const selectedNotification = notifications.find(n => n.id === selectedNotificationId) || null;
 
   return (
-    <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-      <Card className="w-full max-w-2xl shadow-xl">
-        <CardHeader className="text-center">
-          <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-            <Bell className="h-10 w-10 text-primary" />
+    <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden h-[calc(100vh-65px)]">
+      <section
+        aria-labelledby="notifications-list-heading"
+        className="md:w-1/3 flex flex-col"
+      >
+        <h2 id="notifications-list-heading" className="sr-only">Notifications</h2>
+        <NotificationList
+          notifications={notifications}
+          selectedNotificationId={selectedNotificationId}
+          onSelectNotification={setSelectedNotificationId}
+        />
+      </section>
+
+      {selectedNotification ? (
+        <section
+          aria-labelledby="view-notification-heading"
+          className="md:w-2/3 flex flex-col"
+        >
+          <h2 id="view-notification-heading" className="sr-only">Selected Notification: {selectedNotification.title}</h2>
+          <NotificationView notification={selectedNotification} />
+        </section>
+      ) : (
+        !isLoading && notifications.length > 0 && (
+          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground">No Notification Selected</h3>
+            <p className="text-muted-foreground">Select a notification from the list to view its details.</p>
           </div>
-          <CardTitle className="text-2xl md:text-3xl">Real-time Notifications</CardTitle>
-          <CardDescription className="text-md">
-            Live stream of notifications from your connected devices.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {renderContent()}
-        </CardContent>
-      </Card>
+        )
+      )}
+       { !selectedNotification && !isLoading && notifications.length === 0 && (
+          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
+            <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground">No Notifications Yet</h3>
+            <p className="text-muted-foreground">Waiting for incoming notifications from your devices.</p>
+          </div>
+        )
+      }
     </main>
   );
 }
