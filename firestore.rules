@@ -13,7 +13,21 @@ service cloud.firestore {
     // all client requests to your Firestore database will be denied until you Update
     // your rules
     match /{document=**} {
-      allow read, write:  if true
+      allow read, write:  if true;
+    }
+  }
+}
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
+service firebase.database {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
