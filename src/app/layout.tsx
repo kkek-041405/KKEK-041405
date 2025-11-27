@@ -32,8 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
-      <body className={`font-sans antialiased`} suppressHydrationWarning={true}>
-        {children}
+      <body className={`font-sans antialiased h-screen w-screen overflow-hidden flex flex-col`} suppressHydrationWarning={true}>
+        <div className="flex-1 overflow-auto">
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>
