@@ -374,10 +374,10 @@ export default function NotesContentPage() {
   }
 
   const renderNotesView = () => (
-    <main className="flex-1 flex flex-col md:flex-row gap-6 overflow-hidden h-[calc(100vh-65px)]">
+    <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
       <section
         aria-labelledby="items-list-heading"
-        className="md:w-1/3 flex flex-col"
+        className="md:w-80 flex flex-col border-r"
       >
         <h2 id="items-list-heading" className="sr-only">Your Items</h2>
         <NoteList
@@ -394,37 +394,39 @@ export default function NotesContentPage() {
         />
       </section>
 
-      {selectedNote ? (
-        <section
-          aria-labelledby="view-item-heading"
-          className="md:w-2/3 flex flex-col"
-        >
-          <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
-          <NoteView
-            note={selectedNote}
-            resolvedServingUrl={selectedNote ? resolvedServingUrls[selectedNote.id] ?? null : null}
-            onSummarize={handleSummarizeNote}
-            isLoadingSummary={isLoadingSummary}
-            onEditRequest={handleRequestEdit}
-          />
-        </section>
-      ) : (
-        !isLoadingNotes && allNotesWithDefaults.length > 0 && (
-          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
-            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
-            <p className="text-muted-foreground">Select an item from the list to view its details.</p>
-          </div>
-        )
-      )}
-       { !selectedNote && !isLoadingNotes && allNotesWithDefaults.length === 0 && (
-          <div className="hidden md:flex md:w-2/3 flex-col items-center justify-center bg-card text-card-foreground rounded-lg shadow-lg border p-8 text-center">
-            <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
-            <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
-          </div>
-        )
-      }
+      <div className="flex-1 flex flex-col">
+        {selectedNote ? (
+          <section
+            aria-labelledby="view-item-heading"
+            className="flex flex-col flex-1 min-w-0"
+          >
+            <h2 id="view-item-heading" className="sr-only">Selected Item: {selectedNote.title}</h2>
+            <NoteView
+              note={selectedNote}
+              resolvedServingUrl={selectedNote ? resolvedServingUrls[selectedNote.id] ?? null : null}
+              onSummarize={handleSummarizeNote}
+              isLoadingSummary={isLoadingSummary}
+              onEditRequest={handleRequestEdit}
+            />
+          </section>
+        ) : (
+          !isLoadingNotes && allNotesWithDefaults.length > 0 && (
+            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
+              <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
+              <p className="text-muted-foreground">Select an item from the list to view its details.</p>
+            </div>
+          )
+        )}
+         { !selectedNote && !isLoadingNotes && allNotesWithDefaults.length === 0 && (
+            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
+              <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
+              <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
+            </div>
+          )
+        }
+      </div>
     </main>
   );
 
