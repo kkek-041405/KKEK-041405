@@ -86,19 +86,53 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
 
   return (
     <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1 h-full">
-      <div className="flex flex-col space-y-1.5 p-6 border-b">
-        <div className="flex justify-between items-start">
-          <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
-            {note.title}
-          </h2>
-          <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="ml-2 whitespace-nowrap">
-            <ItemIcon className="mr-1 h-4 w-4" />
-            {itemTypeDisplay}
-          </Badge>
+      <div className="flex items-start justify-between gap-4 p-6 border-b">
+        <div className="flex-1 space-y-1.5">
+            <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
+              {note.title}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Created on: {format(new Date(note.createdAt), "PPP p")}
+            </p>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Created on: {format(new Date(note.createdAt), "PPP p")}
-        </p>
+        <div className="flex items-center gap-2 flex-shrink-0">
+             <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="whitespace-nowrap h-fit">
+              <ItemIcon className="mr-1 h-4 w-4" />
+              {itemTypeDisplay}
+            </Badge>
+            {note.type === 'document' && (
+                <Button
+                    onClick={() => {
+                        if (!documentUrl) return;
+                        window.open(documentUrl, '_blank', 'noopener,noreferrer');
+                    }}
+                    variant="outline"
+                    size="sm"
+                    disabled={!documentUrl}
+                >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Open
+                </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+            </Button>
+            {note.type === 'note' && (
+            <Button size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
+                {isLoadingSummary ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Summarizing...
+                </>
+                ) : (
+                <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Summarize
+                </>
+                )}
+            </Button>
+            )}
+        </div>
       </div>
       <div className="p-6 pt-0 flex-1 overflow-y-auto">
         {note.type === 'note' && note.content && (
@@ -187,40 +221,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
               <p className="text-muted-foreground whitespace-pre-wrap break-words">{note.summary}</p>
             </div>
           </div>
-        )}
-      </div>
-      
-      <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto min-h-[76px] gap-2">
-        {note.type === 'document' && (
-             <Button
-                onClick={() => {
-                    if (!documentUrl) return;
-                    window.open(documentUrl, '_blank', 'noopener,noreferrer');
-                }}
-                variant="outline"
-                disabled={!documentUrl}
-            >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Open in New Tab
-            </Button>
-        )}
-        <Button variant="outline" size="default" onClick={() => onEditRequest(note)}>
-            <Pencil className="mr-2 h-4 w-4" /> Edit
-        </Button>
-        {note.type === 'note' && (
-          <Button onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
-            {isLoadingSummary ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Summarizing...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Summarize Note
-              </>
-            )}
-          </Button>
         )}
       </div>
     </div>
