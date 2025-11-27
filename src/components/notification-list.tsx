@@ -49,7 +49,7 @@ export default function NotificationList({
 }: NotificationListProps) {
 
   return (
-    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
+    <div className="bg-card text-card-foreground flex flex-col flex-1 h-full">
       <div className="p-4 border-b flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 overflow-hidden">
             <Bell className="h-5 w-5 text-primary shrink-0" />

@@ -13,7 +13,7 @@ interface NotificationViewProps {
 export default function NotificationView({ notification }: NotificationViewProps) {
 
   return (
-    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1 h-full">
+    <div className="bg-card text-card-foreground flex flex-col flex-1 h-full">
       <div className="flex flex-col space-y-1.5 p-6 border-b">
         <div className="flex justify-between items-start">
           <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
