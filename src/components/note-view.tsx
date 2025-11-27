@@ -5,10 +5,10 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, ExternalLink, FileArchive } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface NoteViewProps {
@@ -23,7 +23,7 @@ interface NoteViewProps {
 export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
-  // opening is synchronous when using pre-resolved URL; no async spinner needed
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
   
   const [canCopy, setCanCopy] = useState(false);
@@ -35,6 +35,19 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const handleSummarize = () => {
     if (note.type === 'note') {
       onSummarize(note.id, note.content);
+    }
+  };
+
+  const handleFullscreen = () => {
+    if (iframeRef.current) {
+      iframeRef.current.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        toast({
+          title: "Fullscreen Not Supported",
+          description: "Your browser might not support this feature or it was blocked.",
+          variant: "destructive",
+        });
+      });
     }
   };
 
@@ -103,16 +116,13 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </Badge>
             {note.type === 'document' && (
                 <Button
-                    onClick={() => {
-                        if (!documentUrl) return;
-                        window.open(documentUrl, '_blank', 'noopener,noreferrer');
-                    }}
+                    onClick={handleFullscreen}
                     variant="outline"
                     size="sm"
                     disabled={!documentUrl}
                 >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Open
+                    <Maximize className="mr-2 h-4 w-4" />
+                    Fullscreen
                 </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
@@ -180,9 +190,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             <div className="h-full flex flex-col">
               {documentUrl ? (
                 <iframe
+                  ref={iframeRef}
                   src={documentUrl}
                   className="w-full h-full flex-1 border-0"
                   title={`Embedded document: ${note.title}`}
+                  allowFullScreen
                 />
               ) : (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground">
