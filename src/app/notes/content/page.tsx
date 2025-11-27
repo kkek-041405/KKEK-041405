@@ -374,7 +374,7 @@ export default function NotesContentPage() {
   }
 
   const renderNotesView = () => (
-    <main className="flex-1 flex flex-col md:flex-row gap-6 p-4 sm:p-6 md:p-8 overflow-hidden h-[calc(100vh-65px)]">
+    <main className="flex-1 flex flex-col md:flex-row gap-6 overflow-hidden h-[calc(100vh-65px)]">
       <section
         aria-labelledby="items-list-heading"
         className="md:w-1/3 flex flex-col"
