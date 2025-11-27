@@ -3,13 +3,40 @@
 
 import { useState } from 'react';
 import { useNotifications, type Notification } from "@/hooks/use-notifications";
-import { Loader2, FileText, Notebook } from "lucide-react";
+import { Loader2, FileText, Notebook, Trash2 } from "lucide-react";
 import NotificationList from './notification-list';
 import NotificationView from './notification-view';
+import { useToast } from "@/hooks/use-toast";
+
 
 export default function NotificationsView() {
-  const { notifications, isLoading, error } = useNotifications();
+  const { notifications, isLoading, error, deleteNotification } = useNotifications();
   const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleDeleteNotification = async (id: string) => {
+    const notificationToDelete = notifications.find(n => n.id === id);
+    if (!notificationToDelete) return;
+    
+    try {
+        await deleteNotification(id);
+        toast({
+            title: "Notification Deleted",
+            description: `The notification "${notificationToDelete.title}" has been removed.`,
+            variant: "destructive",
+        });
+        if (selectedNotificationId === id) {
+            setSelectedNotificationId(null);
+        }
+    } catch (err) {
+        toast({
+            title: "Error Deleting Notification",
+            description: "Could not delete the notification. Please try again.",
+            variant: "destructive",
+        });
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -41,6 +68,7 @@ export default function NotificationsView() {
           notifications={notifications}
           selectedNotificationId={selectedNotificationId}
           onSelectNotification={setSelectedNotificationId}
+          onDeleteNotification={handleDeleteNotification}
         />
       </section>
 

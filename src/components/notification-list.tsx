@@ -3,16 +3,24 @@
 
 import type { FirebaseNotification as Notification } from "@/lib/types";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bell } from 'lucide-react';
+import { Bell, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from "./ui/button";
 
 interface NotificationListItemProps {
   notification: Notification;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete: () => void;
 }
 
-function NotificationListItem({ notification, isSelected, onSelect }: NotificationListItemProps) {
+function NotificationListItem({ notification, isSelected, onSelect, onDelete }: NotificationListItemProps) {
+  
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent selection when deleting
+    onDelete();
+  };
+  
   return (
     <div
       role="button"
@@ -20,7 +28,7 @@ function NotificationListItem({ notification, isSelected, onSelect }: Notificati
       onClick={onSelect}
       onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       className={cn(
-        "flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
+        "flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50 group",
         isSelected ? "bg-primary/10 border border-primary" : "border border-transparent"
       )}
     >
@@ -30,6 +38,15 @@ function NotificationListItem({ notification, isSelected, onSelect }: Notificati
             <p className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{notification.title}</p>
         </div>
       </div>
+       <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={handleDelete}
+        aria-label={`Delete notification titled ${notification.title}`}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
     </div>
   );
 }
@@ -39,12 +56,14 @@ interface NotificationListProps {
   notifications: Notification[];
   selectedNotificationId: string | null;
   onSelectNotification: (id: string) => void;
+  onDeleteNotification: (id: string) => void;
 }
 
 export default function NotificationList({ 
   notifications, 
   selectedNotificationId, 
   onSelectNotification,
+  onDeleteNotification
 }: NotificationListProps) {
 
   return (
@@ -71,6 +90,7 @@ export default function NotificationList({
                 notification={notification}
                 isSelected={notification.id === selectedNotificationId}
                 onSelect={() => onSelectNotification(notification.id)}
+                onDelete={() => onDeleteNotification(notification.id)}
               />
             ))}
           </div>

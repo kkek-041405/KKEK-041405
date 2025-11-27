@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, orderBy, onSnapshot, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, type DocumentData, type QuerySnapshot, doc, deleteDoc } from 'firebase/firestore';
 import type { FirebaseNotification as Notification } from '@/lib/types';
 
 type DataEvent = {
@@ -60,5 +60,17 @@ export function useNotifications(onDataEvent?: DataEventCallback) {
     };
   }, [onDataEvent]);
 
-  return { notifications, isLoading, error };
+  const deleteNotification = useCallback(async (notificationId: string) => {
+    try {
+      const notificationRef = doc(db, 'notifications', notificationId);
+      await deleteDoc(notificationRef);
+      // The onSnapshot listener will automatically update the local state
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+      // Optionally, you can re-throw the error or handle it by setting an error state
+      throw new Error("Failed to delete notification.");
+    }
+  }, []);
+
+  return { notifications, isLoading, error, deleteNotification };
 }
