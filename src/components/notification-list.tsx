@@ -28,7 +28,6 @@ function NotificationListItem({ notification, isSelected, onSelect }: Notificati
         <Bell className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
         <div className="overflow-hidden">
             <p className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{notification.title}</p>
-            <p className={cn("text-xs truncate", isSelected ? "text-primary/80" : "text-muted-foreground")}>{notification.appName}: {notification.text}</p>
         </div>
       </div>
     </div>
