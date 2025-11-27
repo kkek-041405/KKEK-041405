@@ -96,10 +96,17 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
   const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
 
-  const documentUrl = resolvedServingUrl ?? (note.type === 'document' ? note.content : null);
+  const isDocx = note.documentMetadata?.fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
+
+  let documentUrl = resolvedServingUrl ?? (note.type === 'document' ? note.content : null);
+
+  if (documentUrl && isDocx) {
+    documentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
+  }
+
 
   return (
-    <div className="bg-card text-card-foreground shadow-lg border flex flex-col flex-1 h-full">
+    <div className="bg-card text-card-foreground border flex flex-col flex-1 h-full">
       <div className="flex items-start justify-between gap-4 p-6 border-b">
         <div className="flex-1 space-y-1.5">
             <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
