@@ -103,21 +103,38 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   if (documentUrl && isDocx) {
     documentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
   }
+  
+  const getFileExtension = () => {
+    if (note.type !== 'document' || !note.documentMetadata?.fileName) {
+      return null;
+    }
+    const parts = note.documentMetadata.fileName.split('.');
+    return parts.length > 1 ? parts.pop()?.toLowerCase() : null;
+  }
+  
+  const fileExtension = getFileExtension();
 
 
   return (
-    <div className="bg-card text-card-foreground border flex flex-col flex-1 h-full">
+    <div className="bg-card text-card-foreground border-0 flex flex-col flex-1 h-full">
       <div className="flex items-start justify-between gap-4 p-6 border-b">
         <div className="flex-1 space-y-1.5">
-            <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
-              {note.title}
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
+                {note.title}
+              </h2>
+              {fileExtension && (
+                <Badge variant="secondary" className="whitespace-nowrap h-fit">
+                  {fileExtension}
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">
               Created on: {format(new Date(note.createdAt), "PPP p")}
             </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-             <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="whitespace-nowrap h-fit">
+             <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="whitespace-nowrap h-fit hidden">
               <ItemIcon className="mr-1 h-4 w-4" />
               {itemTypeDisplay}
             </Badge>
