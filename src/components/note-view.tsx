@@ -9,6 +9,7 @@ import { Sparkles, Loader2, FileText, Info, Copy, Pencil, ExternalLink, FileArch
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface NoteViewProps {
   note: Note;
@@ -134,7 +135,10 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             )}
         </div>
       </div>
-      <div className="p-6 pt-0 flex-1 overflow-y-auto">
+      <div className={cn(
+        "flex-1 overflow-y-auto",
+        note.type !== 'document' && "p-6 pt-0"
+      )}>
         {note.type === 'note' && note.content && (
           <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words pt-6">
             {note.content}
@@ -173,11 +177,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
 
         {note.type === 'document' && (
-            <div className="pt-6 h-full flex flex-col">
+            <div className="h-full flex flex-col">
               {documentUrl ? (
                 <iframe
                   src={documentUrl}
-                  className="w-full h-full flex-1 border rounded-md"
+                  className="w-full h-full flex-1 border-0"
                   title={`Embedded document: ${note.title}`}
                 />
               ) : (
