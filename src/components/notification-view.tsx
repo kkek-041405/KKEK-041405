@@ -32,11 +32,6 @@ export default function NotificationView({ notification }: NotificationViewProps
       <div className="p-6 pt-4 flex-1 overflow-y-auto space-y-6">
         
         <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" /> From App</h3>
-            <p className="text-base text-foreground break-words bg-muted/50 p-3 rounded-md">{notification.appName}</p>
-        </div>
-
-        <div className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><MessageSquare className="h-4 w-4" /> Content</h3>
             <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words text-base text-foreground">
                 {notification.text}
