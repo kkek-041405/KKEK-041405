@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { Notification } from "@/hooks/use-notifications";
+import type { FirebaseNotification as Notification } from "@/lib/types";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -28,7 +28,7 @@ function NotificationListItem({ notification, isSelected, onSelect }: Notificati
         <Bell className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
         <div className="overflow-hidden">
             <p className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{notification.title}</p>
-            <p className={cn("text-xs truncate", isSelected ? "text-primary/80" : "text-muted-foreground")}>{notification.text}</p>
+            <p className={cn("text-xs truncate", isSelected ? "text-primary/80" : "text-muted-foreground")}>{notification.appName}: {notification.text}</p>
         </div>
       </div>
     </div>

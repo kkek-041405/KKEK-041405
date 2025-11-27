@@ -18,8 +18,9 @@ export interface Note {
   
 export interface FirebaseNotification {
   id: string;
-  packageName: string;
+  appName: string;
   title: string;
   text: string;
   timestamp: number;
+  actions: string[];
 }

@@ -1,9 +1,9 @@
 
 "use client";
 
-import type { Notification } from '@/hooks/use-notifications';
+import type { FirebaseNotification as Notification } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Package, Calendar, MessageSquare } from 'lucide-react';
+import { Bell, Package, Calendar, MessageSquare, Gamepad2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationViewProps {
@@ -33,7 +33,7 @@ export default function NotificationView({ notification }: NotificationViewProps
         
         <div className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" /> From App</h3>
-            <p className="text-base text-foreground break-words bg-muted/50 p-3 rounded-md">{notification.packageName}</p>
+            <p className="text-base text-foreground break-words bg-muted/50 p-3 rounded-md">{notification.appName}</p>
         </div>
 
         <div className="space-y-2">
@@ -43,6 +43,16 @@ export default function NotificationView({ notification }: NotificationViewProps
             </div>
         </div>
 
+        {notification.actions && notification.actions.length > 0 && (
+          <div className="space-y-3">
+              <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Gamepad2 className="h-4 w-4" /> Available Actions</h3>
+              <div className="flex flex-wrap gap-2">
+                  {notification.actions.map((action, index) => (
+                      <Badge key={index} variant="outline">{action}</Badge>
+                  ))}
+              </div>
+          </div>
+        )}
       </div>
     </div>
   );
