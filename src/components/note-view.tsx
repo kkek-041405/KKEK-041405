@@ -82,8 +82,10 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
   const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
 
+  const documentUrl = resolvedServingUrl ?? (note.type === 'document' ? note.content : null);
+
   return (
-    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1">
+    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1 h-full">
       <div className="flex flex-col space-y-1.5 p-6 border-b">
         <div className="flex justify-between items-start">
           <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
@@ -137,39 +139,22 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
 
         {note.type === 'document' && (
-             <div className="space-y-4 pt-6">
-                <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Document Name:</h3>
-                    <p className="text-lg text-foreground break-words">{note.title}</p>
+            <div className="pt-6 h-full flex flex-col">
+              {documentUrl ? (
+                <iframe
+                  src={documentUrl}
+                  className="w-full h-full flex-1 border rounded-md"
+                  title={`Embedded document: ${note.title}`}
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                  {resolvedServingUrl === undefined ? (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  ) : (
+                    <span>Document preview not available.</span>
+                  )}
                 </div>
-                <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-muted-foreground">File Location:</h3>
-               {note.documentMetadata?.fileName && (
-                <p className="text-muted-foreground">{note.documentMetadata.fileName}</p>
-               )}
-               <div className="flex gap-2">
-                <Button
-                  onClick={() => {
-                    console.log('[NoteView] View Document button clicked', { noteId: note.id });
-                    if (!note.content) return;
-
-                    const urlToOpen = resolvedServingUrl ?? note.content;
-                    console.log('[NoteView] opening URL', urlToOpen);
-                    const opened = window.open(urlToOpen as string, '_blank', 'noopener');
-                    if (opened) {
-                      toast({ title: 'Opening document', description: 'A new tab opened for the document.' });
-                    } else {
-                      console.error('[NoteView] Popup blocked - unable to open tab for', urlToOpen);
-                      toast({ title: 'Blocked', description: 'The browser blocked opening a new tab.', variant: 'destructive' });
-                    }
-                  }}
-                  variant="outline"
-                >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  View Document
-                </Button>
-               </div>
-                </div>
+              )}
             </div>
         )}
         
@@ -206,6 +191,19 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
       </div>
       
       <div className="flex items-center justify-end p-6 pt-0 border-t mt-auto min-h-[76px] gap-2">
+        {note.type === 'document' && (
+             <Button
+                onClick={() => {
+                    if (!documentUrl) return;
+                    window.open(documentUrl, '_blank', 'noopener,noreferrer');
+                }}
+                variant="outline"
+                disabled={!documentUrl}
+            >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Open in New Tab
+            </Button>
+        )}
         <Button variant="outline" size="default" onClick={() => onEditRequest(note)}>
             <Pencil className="mr-2 h-4 w-4" /> Edit
         </Button>
