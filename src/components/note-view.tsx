@@ -52,13 +52,14 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   };
 
   const handlePrint = () => {
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.focus(); // Focus on the iframe is important for some browsers
-      iframeRef.current.contentWindow.print();
+    // We cannot programmatically print a cross-origin iframe.
+    // Instead, we open the direct file URL in a new tab, which the user can then print.
+    if (resolvedServingUrl) {
+      window.open(resolvedServingUrl, '_blank');
     } else {
        toast({
           title: "Print Not Available",
-          description: "Could not access the document content to print.",
+          description: "The document URL is not yet available. Please wait a moment and try again.",
           variant: "destructive",
         });
     }
@@ -109,11 +110,14 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
   const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
 
-  const isDocx = note.documentMetadata?.fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
+  const fileType = note.documentMetadata?.fileType;
+  const isOfficeDoc = fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
+  const isPdf = fileType === 'application/pdf' || note.documentMetadata?.fileName?.endsWith('.pdf');
 
-  let documentUrl = resolvedServingUrl ?? (note.type === 'document' ? note.content : null);
+  let documentUrl = resolvedServingUrl;
 
-  if (documentUrl && isDocx) {
+  // Use Google Docs viewer for both PDF and DOCX for consistent UI and better compatibility.
+  if (documentUrl && (isOfficeDoc || isPdf)) {
     documentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
   }
   
@@ -157,7 +161,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                     onClick={handlePrint}
                     variant="outline"
                     size="sm"
-                    disabled={!documentUrl}
+                    disabled={!resolvedServingUrl} // Only enable if we have the direct URL
                 >
                     <Printer className="mr-2 h-4 w-4" />
                     Print
@@ -195,16 +199,16 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
       </div>
       <div className={cn(
         "flex-1 overflow-y-auto",
-        note.type !== 'document' && "p-6 pt-0"
+        note.type !== 'document' && "p-6"
       )}>
         {note.type === 'note' && note.content && (
-          <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words pt-6">
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
             {note.content}
           </div>
         )}
 
         {note.type === 'keyInformation' && (
-          <div className="space-y-4 pt-6">
+          <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Key Name:</h3>
               <p className="text-lg text-foreground break-words">{note.title}</p>
@@ -257,7 +261,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
         
         {note.summary && note.type === 'note' && (
-          <div className={`${!(note.type === 'note' && note.content) ? 'pt-6' : ''}`}>
+          <div>
             {note.type === 'note' && note.content && <Separator className="my-6" />}
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -290,3 +294,5 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
     </div>
   );
 }
+
+    
