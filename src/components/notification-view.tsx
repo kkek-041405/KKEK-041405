@@ -20,8 +20,8 @@ export default function NotificationView({ notification }: NotificationViewProps
             {notification.title}
           </h2>
           <Badge variant="secondary" className="ml-2 whitespace-nowrap">
-            <Bell className="mr-1 h-4 w-4" />
-            Notification
+            <Package className="mr-1 h-4 w-4" />
+            {notification.appName}
           </Badge>
         </div>
          <p className="text-sm text-muted-foreground flex items-center gap-2 pt-1">
