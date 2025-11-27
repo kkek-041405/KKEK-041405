@@ -5,7 +5,7 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Printer } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -48,20 +48,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
           variant: "destructive",
         });
       });
-    }
-  };
-
-  const handlePrint = () => {
-    // We cannot programmatically print a cross-origin iframe.
-    // Instead, we open the direct file URL in a new tab, which the user can then print.
-    if (resolvedServingUrl) {
-      window.open(resolvedServingUrl, '_blank');
-    } else {
-       toast({
-          title: "Print Not Available",
-          description: "The document URL is not yet available. Please wait a moment and try again.",
-          variant: "destructive",
-        });
     }
   };
 
@@ -157,15 +143,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </Badge>
             {note.type === 'document' && (
               <>
-                <Button
-                    onClick={handlePrint}
-                    variant="outline"
-                    size="sm"
-                    disabled={!resolvedServingUrl} // Only enable if we have the direct URL
-                >
-                    <Printer className="mr-2 h-4 w-4" />
-                    Print
-                </Button>
                 <Button
                     onClick={handleFullscreen}
                     variant="outline"
@@ -294,5 +271,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
     </div>
   );
 }
+
+    
 
     
