@@ -28,10 +28,10 @@ export async function GET(req: NextRequest) {
     if (!result) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     // If Convex returned a direct serving URL, redirect the client there (fast)
-    const { url, fileType, fileName, fileSize } = result as any;
-    if (url) {
+    const { url: fileUrl } = result as any;
+    if (fileUrl) {
       // Redirecting here keeps the app server from proxying bytes and lets Convex serve the file.
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(fileUrl);
     }
 
     // If there's no URL (e.g., storage missing), return not found
