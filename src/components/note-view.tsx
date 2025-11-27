@@ -86,7 +86,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const documentUrl = resolvedServingUrl ?? (note.type === 'document' ? note.content : null);
 
   return (
-    <div className="bg-card text-card-foreground shadow-lg rounded-lg border flex flex-col flex-1 h-full">
+    <div className="bg-card text-card-foreground shadow-lg border flex flex-col flex-1 h-full">
       <div className="flex items-start justify-between gap-4 p-6 border-b">
         <div className="flex-1 space-y-1.5">
             <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
