@@ -90,20 +90,34 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   const uploadPromiseRef = React.useRef<Promise<any> | null>(null);
 
   const onSubmit = async (data: NoteFormValues) => {
-    // If a background upload is in progress, wait for it to finish
-    if (uploadInProgress && uploadPromiseRef.current) {
-      try {
-        const res = await uploadPromiseRef.current;
-        if (res) setUploadResult(res);
-      } catch (err) {
-        // uploadPromiseRef already sets uploadError; fall through
-      }
-    }
     // If creating a document, require either a file or a URL content
     if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '') && !isEditing) {
       alert('Please select a file to upload or provide a document URL.');
       return;
     }
+
+    // If the user selected a new file but we haven't uploaded it yet, upload now.
+    if (data.type === 'document' && selectedFile && !uploadResult) {
+      setUploadInProgress(true);
+      const promise = uploadFileToServer(selectedFile).then((res) => {
+        setUploadResult(res);
+        setUploadInProgress(false);
+        return res;
+      }).catch((err) => {
+        console.error('Upload failed', err);
+        setUploadError((err && err.message) || String(err));
+        setUploadInProgress(false);
+        return null;
+      });
+      uploadPromiseRef.current = promise;
+
+      const res = await promise;
+      if (!res) {
+        alert('File upload failed. Please try again.');
+        return;
+      }
+    }
+
     const submission: NoteFormSubmission = { ...data, file: selectedFile };
 
     // If it's a document and we have upload metadata, attach it and set a server-download URL
@@ -169,20 +183,6 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
         const nameWithoutExtension = (lastDotIndex > 0) ? fileName.substring(0, lastDotIndex) : fileName;
         form.setValue('title', nameWithoutExtension);
       }
-
-      // Start pre-upload immediately
-      setUploadInProgress(true);
-      const promise = uploadFileToServer(file).then((res) => {
-        setUploadResult(res);
-        setUploadInProgress(false);
-        return res;
-      }).catch((err) => {
-        console.error('Upload failed', err);
-        setUploadError((err && err.message) || String(err));
-        setUploadInProgress(false);
-        return null;
-      });
-      uploadPromiseRef.current = promise;
     }
   };
 
