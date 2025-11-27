@@ -5,7 +5,7 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -48,6 +48,19 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
           variant: "destructive",
         });
       });
+    }
+  };
+
+  const handlePrint = () => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.focus(); // Focus on the iframe is important for some browsers
+      iframeRef.current.contentWindow.print();
+    } else {
+       toast({
+          title: "Print Not Available",
+          description: "Could not access the document content to print.",
+          variant: "destructive",
+        });
     }
   };
 
@@ -139,6 +152,16 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
               {itemTypeDisplay}
             </Badge>
             {note.type === 'document' && (
+              <>
+                <Button
+                    onClick={handlePrint}
+                    variant="outline"
+                    size="sm"
+                    disabled={!documentUrl}
+                >
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print
+                </Button>
                 <Button
                     onClick={handleFullscreen}
                     variant="outline"
@@ -148,6 +171,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                     <Maximize className="mr-2 h-4 w-4" />
                     Fullscreen
                 </Button>
+              </>
             )}
             <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
                 <Pencil className="mr-2 h-4 w-4" /> Edit
