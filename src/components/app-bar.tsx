@@ -9,13 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Notebook, Home, Music, KeyRound, ChevronDown, Bell } from 'lucide-react';
+import { Notebook, Home, Music, KeyRound, ChevronDown, Bell, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggleButton } from './theme-toggle-button';
 
 interface AppBarProps {
-  activeView: 'notes' | 'spotify' | 'notifications';
-  onViewChange: (view: 'notes' | 'spotify' | 'notifications') => void;
+  activeView: 'notes' | 'spotify' | 'notifications' | 'phone';
+  onViewChange: (view: 'notes' | 'spotify' | 'notifications' | 'phone') => void;
 }
 
 export function AppBar({ activeView, onViewChange }: AppBarProps) {
@@ -24,6 +24,7 @@ export function AppBar({ activeView, onViewChange }: AppBarProps) {
     notes: { label: 'NoteNest', icon: Notebook },
     spotify: { label: 'Spotify', icon: Music },
     notifications: { label: 'Notifications', icon: Bell },
+    phone: { label: 'Phone', icon: Phone },
   };
 
   const ActiveViewIcon = viewOptions[activeView].icon;
@@ -59,6 +60,10 @@ export function AppBar({ activeView, onViewChange }: AppBarProps) {
               <DropdownMenuItem onSelect={() => onViewChange('notifications')}>
                 <Bell className="mr-2 h-4 w-4" />
                 <span>Notifications</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => onViewChange('phone')}>
+                <Phone className="mr-2 h-4 w-4" />
+                <span>Phone</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

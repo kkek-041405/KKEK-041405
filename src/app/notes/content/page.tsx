@@ -21,6 +21,7 @@ import {
 import SpotifyView from '@/components/spotify-view';
 import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
 import NotificationsView from '@/components/notifications-view';
+import PhoneView from '@/components/phone-view';
 
 const defaultKeyInfo: Note[] = [
   {
@@ -57,7 +58,7 @@ export default function NotesContentPage() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [initialFormValues, setInitialFormValues] = useState<NoteFormValues | null>(null);
   
-  const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'notifications'>('notes');
+  const [activeView, setActiveView] = useState<'notes' | 'spotify' | 'notifications' | 'phone'>('notes');
 
   useEffect(() => {
     // Check authentication status on the client side only
@@ -436,6 +437,8 @@ export default function NotesContentPage() {
         return <SpotifyView />;
       case 'notifications':
         return <NotificationsView />;
+      case 'phone':
+        return <PhoneView />;
       case 'notes':
       default:
         return renderNotesView();
