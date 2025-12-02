@@ -24,3 +24,18 @@ export interface FirebaseNotification {
   timestamp: number;
   actions: string[];
 }
+
+export interface CommandParameter {
+  name: string;
+  type: 'String' | 'Number' | 'Boolean';
+  description: string;
+  isRequired: boolean;
+}
+
+export interface Command {
+  id: string;
+  description: string;
+  parameters: CommandParameter[];
+}
+
+export type Commands = Record<string, Omit<Command, 'id'>>;
