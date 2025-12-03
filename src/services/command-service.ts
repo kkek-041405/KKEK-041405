@@ -1,33 +1,34 @@
 
-import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { rtdb } from '@/lib/firebase';
+import { ref, get } from 'firebase/database';
 import type { Commands, Command } from '@/lib/types';
 
-const COMMANDS_COLLECTION = 'commands';
-const METADATA_DOC_ID = 'metadata';
+const COMMANDS_PATH = 'commands/metadata';
 
 /**
- * Retrieves all command definitions from the 'metadata' document in the 'commands' collection.
+ * Retrieves all command definitions from the Realtime Database.
  * @returns An array of commands with their IDs.
  */
 export const getCommandsFromFirestore = async (): Promise<Command[]> => {
   try {
-    const commandsRef = doc(db, COMMANDS_COLLECTION, METADATA_DOC_ID);
-    const docSnap = await getDoc(commandsRef);
+    const commandsRef = ref(rtdb, COMMANDS_PATH);
+    const snapshot = await get(commandsRef);
 
-    if (docSnap.exists()) {
-      const commandsData = docSnap.data() as Commands;
+    if (snapshot.exists()) {
+      const commandsData = snapshot.val() as Commands;
       // Transform the record into an array of Command objects
       return Object.entries(commandsData).map(([id, commandData]) => ({
         id,
         ...commandData,
+        // RTDB may store array-like objects, ensure parameters is an array
+        parameters: commandData.parameters ? Object.values(commandData.parameters) : [],
       }));
     } else {
-      console.warn(`Commands document not found at: ${COMMANDS_COLLECTION}/${METADATA_DOC_ID}`);
+      console.warn(`Commands data not found at: ${COMMANDS_PATH}`);
       return [];
     }
   } catch (error) {
-    console.error("Error fetching commands from Firestore:", error);
+    console.error("Error fetching commands from Realtime Database:", error);
     return [];
   }
 };
