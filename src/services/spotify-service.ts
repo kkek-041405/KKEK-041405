@@ -415,6 +415,7 @@ export function createSpotifyService(): SpotifyService {
     "user-modify-playback-state",
     "streaming",
     "playlist-read-private",
+    "app-remote-control"
   ];
 
   if (!clientId || !clientSecret || !redirectUri) {
