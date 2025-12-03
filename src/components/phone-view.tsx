@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Loader2, Terminal, SlidersHorizontal } from "lucide-react";
 import type { Command } from '@/lib/types';
-import { getCommandsFromFirestore } from '@/services/command-service';
+import { getCommandsFromFirestore, dispatchCommand } from '@/services/command-service';
 import { useToast } from "@/hooks/use-toast";
 import CommandList from './command-list';
 import CommandView from './command-view';
@@ -13,6 +13,7 @@ export default function PhoneView() {
   const [commands, setCommands] = useState<Command[]>([]);
   const [selectedCommandId, setSelectedCommandId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExecuting, setIsExecuting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,6 +22,10 @@ export default function PhoneView() {
       try {
         const firestoreCommands = await getCommandsFromFirestore();
         setCommands(firestoreCommands);
+        // Automatically select the first command if list is not empty
+        if (firestoreCommands.length > 0) {
+            setSelectedCommandId(firestoreCommands[0].id);
+        }
       } catch (error) {
         console.error("Failed to fetch commands:", error);
         toast({
@@ -35,6 +40,28 @@ export default function PhoneView() {
     fetchCommands();
   }, [toast]);
   
+  const handleExecuteCommand = useCallback(async (params: Record<string, any>) => {
+    if (!selectedCommandId) return;
+    
+    setIsExecuting(true);
+    try {
+        await dispatchCommand(selectedCommandId, params);
+        toast({
+            title: "Command Sent",
+            description: `Your command "${selectedCommandId}" has been dispatched successfully.`,
+        });
+    } catch (error) {
+        console.error("Failed to execute command:", error);
+        toast({
+            title: "Execution Failed",
+            description: "Could not send the command to the device.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsExecuting(false);
+    }
+  }, [selectedCommandId, toast]);
+
   const selectedCommand = commands.find(c => c.id === selectedCommandId) || null;
 
   if (isLoading) {
@@ -67,23 +94,29 @@ export default function PhoneView() {
             className="flex-1 flex flex-col min-w-0"
           >
             <h2 id="view-command-heading" className="sr-only">Selected Command: {selectedCommand.id}</h2>
-            <CommandView command={selectedCommand} />
+            <CommandView 
+                command={selectedCommand}
+                onExecute={handleExecuteCommand}
+                isExecuting={isExecuting}
+            />
           </section>
         ) : (
           <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-            <Terminal className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold text-foreground">No Command Selected</h3>
-            <p className="text-muted-foreground">Select a command from the list to view its details.</p>
+            {commands.length > 0 ? (
+                <>
+                    <Terminal className="h-16 w-16 text-muted-foreground mb-4" />
+                    <h3 className="text-xl font-semibold text-foreground">No Command Selected</h3>
+                    <p className="text-muted-foreground">Select a command from the list to view its details.</p>
+                </>
+            ) : (
+                 <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
+                  <SlidersHorizontal className="h-16 w-16 text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground">No Commands Found</h3>
+                  <p className="text-muted-foreground">There are no commands configured in the Realtime Database.</p>
+                </div>
+            )}
           </div>
         )}
-        { !selectedCommand && !isLoading && commands.length === 0 && (
-            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-              <SlidersHorizontal className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No Commands Found</h3>
-              <p className="text-muted-foreground">There are no commands configured in Firestore.</p>
-            </div>
-          )
-        }
       </div>
     </main>
   );

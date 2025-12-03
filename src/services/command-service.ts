@@ -1,9 +1,10 @@
 
 import { rtdb } from '@/lib/firebase';
-import { ref, get } from 'firebase/database';
+import { ref, get, push, serverTimestamp } from 'firebase/database';
 import type { Commands, Command } from '@/lib/types';
 
 const COMMANDS_PATH = 'commands/metadata';
+const PENDING_COMMANDS_PATH = 'commands/pending';
 
 /**
  * Retrieves all command definitions from the Realtime Database.
@@ -31,4 +32,26 @@ export const getCommandsFromFirestore = async (): Promise<Command[]> => {
     console.error("Error fetching commands from Realtime Database:", error);
     return [];
   }
+};
+
+
+/**
+ * Dispatches a command to the pending queue in the Realtime Database.
+ * @param commandId - The ID of the command to execute.
+ * @param params - The parameters for the command.
+ * @returns A promise that resolves when the command is sent.
+ */
+export const dispatchCommand = async (commandId: string, params: Record<string, any>): Promise<void> => {
+    try {
+        const pendingRef = ref(rtdb, PENDING_COMMANDS_PATH);
+        const commandParcel = {
+            tool: commandId,
+            parameters: params,
+            timestamp: serverTimestamp(),
+        };
+        await push(pendingRef, commandParcel);
+    } catch (error) {
+        console.error("Error dispatching command to Realtime Database:", error);
+        throw new Error("Failed to send command to the database.");
+    }
 };
