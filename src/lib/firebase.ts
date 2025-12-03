@@ -11,6 +11,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  // Add the databaseURL for the correct region
+  databaseURL: "https://kkek-041405-default-rtdb.asia-southeast1.firebasedatabase.app",
 };
 
 let app: FirebaseApp;
