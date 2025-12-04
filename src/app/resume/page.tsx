@@ -13,8 +13,8 @@ export default function Resume() {
           <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> +91 76719 45929</span>
             <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> komaleshwarakumarkonatham@gmail.com</a>
-            <a href="https://github.com/kkek-041405" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4"/>github.com/kkek-041405</a>
-            <a href="https://kkek.vercel.app" target="_blank" className="flex items-center gap-1 hover:underline"><Globe className="h-4 w-4" /> kkek.vercel.app</a>
+            <a href="https://github.com/kkek-041405/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4" /> github.com/kkek-041405</a>
+            <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Globe className="h-4 w-4" /> kkek.vercel.app</a>
           </div>
         </header>
 
@@ -34,7 +34,7 @@ export default function Resume() {
             <div className="flex justify-between items-baseline">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                     ZenControl – AI Agent for Headless Android
-                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| GitHub</a>
+                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Github className="inline h-3 w-3 mr-0.5" /> GitHub</a>
                 </h3>
                 <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
             </div>
@@ -50,7 +50,7 @@ export default function Resume() {
             <div className="flex justify-between items-baseline">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                     Multiplayer Chess
-                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| Play Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <ExternalLink className="inline h-3 w-3 mr-0.5" /> Play Store</a>
                 </h3>
               <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets, Stockfish</span>
             </div>
@@ -66,7 +66,7 @@ export default function Resume() {
             <div className="flex justify-between items-baseline">
               <h3 className="font-bold text-gray-900 flex items-center gap-2">
                 Portfolio + NoteNest
-                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| Portfolio</a>
+                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Globe className="inline h-3 w-3 mr-0.5" /> Portfolio</a>
               </h3>
               <span className="text-xs italic text-gray-600">Next.js, TS, Firebase, Genkit</span>
             </div>
