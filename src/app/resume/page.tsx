@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Github, Globe, Mail, Phone } from 'lucide-react';
+import { Github, Globe, Mail, Phone, ExternalLink } from 'lucide-react';
 
 export default function Resume() {
   return (
@@ -72,11 +72,13 @@ export default function Resume() {
           
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-gray-900">ZenControl (Headless Automation Framework)</h3>
-              <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
+                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    ZenControl (Headless Automation Framework)
+                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><Github className="h-3 w-3"/>GitHub</a>
+                </h3>
+                <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
             </div>
-            <a href="https://github.com/kkek-041405/ZenControl" className="text-xs text-blue-700 hover:underline mb-1 block">github.com/kkek-041405/ZenControl</a>
-            <ul className="list-disc list-inside text-sm text-gray-800">
+            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
               <li>Architected a modular <strong>Agent Framework</strong> capable of executing complex device tasks (Calls, Media, Navigation) without human intervention.</li>
               <li>Engineered a scalable <code>AiTool</code> system using <strong>Clean Architecture</strong> and <strong>Hilt</strong>, enabling the device to function via remote commands.</li>
               <li>Built a custom <strong>Accessibility Service</strong> to scrape screen context and inject gestures, turning a standard phone into a programmable headless device.</li>
@@ -85,11 +87,13 @@ export default function Resume() {
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-gray-900">Multiplayer Chess Application</h3>
+                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    Multiplayer Chess Application
+                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><ExternalLink className="h-3 w-3"/>Play Store</a>
+                </h3>
               <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets</span>
             </div>
-            <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" className="text-xs text-blue-700 hover:underline mb-1 block">Live on Play Store</a>
-            <ul className="list-disc list-inside text-sm text-gray-800">
+            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
               <li>Designed and published a feature-rich Chess app using <strong>Jetpack Compose</strong>, prioritizing performance and modern UI.</li>
               <li>Engineered a low-latency multiplayer backend using <strong>WebSockets</strong> for bidirectional, real-time move synchronization.</li>
               <li>Integrated the <strong>Stockfish Chess Engine</strong> to power intelligent AI bots for offline practice.</li>
@@ -98,11 +102,13 @@ export default function Resume() {
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-gray-900">NoteNest & Portfolio</h3>
+              <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                NoteNest & Portfolio
+                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><ExternalLink className="h-3 w-3"/>Live</a>
+              </h3>
               <span className="text-xs italic text-gray-600">Next.js, TypeScript, Google Genkit</span>
             </div>
-            <a href="https://kkek.vercel.app" className="text-xs text-blue-700 hover:underline mb-1 block">kkek.vercel.app</a>
-            <ul className="list-disc list-inside text-sm text-gray-800">
+            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
               <li>Developed a secure personal workspace using <strong>Next.js</strong> and <strong>TypeScript</strong> with a password-protected notes module.</li>
               <li>Integrated <strong>Google Genkit</strong> to provide AI-powered summarization and insights for stored notes.</li>
               <li>Utilized <strong>Firebase Firestore</strong> for secure, real-time data persistence and authentication.</li>
