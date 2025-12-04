@@ -9,61 +9,21 @@ export default function Resume() {
         
         {/* Header */}
         <header className="border-b-2 border-gray-800 pb-4 mb-4 text-center">
-          <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">K.K.Eshwara kumar</h1>
-          <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-4">
-            <span className="flex items-center gap-1"><Globe className="h-4 w-4" /> Guntur, Andhra Pradesh</span>
+          <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">K.K.Eshwara Kumar</h1>
+          <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> +91 76719 45929</span>
             <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> komaleshwarakumarkonatham@gmail.com</a>
-          </div>
-          <div className="mt-1 text-sm text-blue-700 font-semibold flex flex-wrap justify-center gap-6">
-            <a href="https://github.com/kkek-041405" target="_blank" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4" /> github.com/kkek-041405</a>
+            <a href="https://github.com/kkek-041405" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4"/>github.com/kkek-041405</a>
             <a href="https://kkek.vercel.app" target="_blank" className="flex items-center gap-1 hover:underline"><Globe className="h-4 w-4" /> kkek.vercel.app</a>
           </div>
         </header>
 
         {/* Professional Summary */}
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Professional Summary</h2>
+          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Summary</h2>
           <p className="text-gray-800 text-sm leading-relaxed">
-            I thrive on solving tough problems and exploring new ideas, and I’m looking for a role where I can apply this mindset to build innovative solutions. I bring a resourceful, "figure-it-out" approach to engineering, with a focus on diagnosing root causes—whether in hardware constraints or system architectures—and developing efficient, scalable software to fix them.
+            Software engineer interested in automation and user-independent system behavior. I focus on reliability, performance, and clean design over shortcuts. I enjoy breaking down complex problems and building systems that scale without constant user involvement. Seeking opportunities to contribute to product-driven engineering teams.
           </p>
-        </section>
-
-        {/* Education */}
-        <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Education</h2>
-          <div className="mb-2">
-            <div className="flex justify-between font-semibold text-gray-900">
-              <span>Vasireddy Venkatadri Institute of Technology (VVIT)</span>
-              <span>Expected 2026</span>
-            </div>
-            <div className="flex justify-between text-sm italic text-gray-700">
-              <span>B.Tech in Computer Science and Engineering</span>
-              <span>CGPA: 6.76 (upto 6th Sem)</span>
-            </div>
-            <p className="text-xs text-gray-600 mt-1"><span className="font-semibold">Relevant Coursework:</span> Data Structures & Algorithms, Operating Systems, DBMS, OOP, Computer Networks.</p>
-          </div>
-          <div>
-            <div className="flex justify-between font-semibold text-gray-900">
-              <span>M.B.T.S Govt. Polytechnic</span>
-              <span>2020 – 2023</span>
-            </div>
-            <div className="flex justify-between text-sm italic text-gray-700">
-              <span>Diploma in Computer Engineering</span>
-              <span>Percentage: 76%</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Technical Skills */}
-        <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Technical Skills</h2>
-          <ul className="text-sm text-gray-800 space-y-1">
-            <li><span className="font-bold">Languages:</span> Kotlin, TypeScript, JavaScript, Java, Python, SQL.</li>
-            <li><span className="font-bold">Android:</span> Jetpack Compose, Hilt (DI), Accessibility Services, Room DB, Retrofit.</li>
-            <li><span className="font-bold">Web & Cloud:</span> React.js, Next.js, Firebase (Realtime DB, Firestore, Auth), WebSockets, Google Genkit.</li>
-            <li><span className="font-bold">Tools:</span> Git, GitHub, Android Studio, VS Code.</li>
-          </ul>
         </section>
 
         {/* Projects */}
@@ -73,45 +33,47 @@ export default function Resume() {
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                    ZenControl (Headless Automation Framework)
-                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><Github className="h-3 w-3"/>GitHub</a>
+                    ZenControl – AI Agent for Headless Android
+                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| GitHub</a>
                 </h3>
                 <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
             </div>
             <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Architected a modular <strong>Agent Framework</strong> capable of executing complex device tasks (Calls, Media, Navigation) without human intervention.</li>
-              <li>Engineered a scalable <code>AiTool</code> system using <strong>Clean Architecture</strong> and <strong>Hilt</strong>, enabling the device to function via remote commands.</li>
-              <li>Built a custom <strong>Accessibility Service</strong> to scrape screen context and inject gestures, turning a standard phone into a programmable headless device.</li>
+              <li>Built an automation layer that enables complete phone operation without a display (calls, navigation, media).</li>
+              <li>Custom Accessibility Service for view traversal & gesture injection across OS versions.</li>
+              <li>Modular AiTool architecture for scalable task execution.</li>
+              <li>Result: Converts a standard Android phone into a fully usable display-less device.</li>
             </ul>
           </div>
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                    Multiplayer Chess Application
-                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><ExternalLink className="h-3 w-3"/>Play Store</a>
+                    Multiplayer Chess
+                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| Play Store</a>
                 </h3>
-              <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets</span>
+              <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets, Stockfish</span>
             </div>
             <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Designed and published a feature-rich Chess app using <strong>Jetpack Compose</strong>, prioritizing performance and modern UI.</li>
-              <li>Engineered a low-latency multiplayer backend using <strong>WebSockets</strong> for bidirectional, real-time move synchronization.</li>
-              <li>Integrated the <strong>Stockfish Chess Engine</strong> to power intelligent AI bots for offline practice.</li>
+              <li>Real-time multiplayer sync with sub-120ms latency on mobile networks.</li>
+              <li>Optimized Compose UI for uninterrupted gameplay during rapid state updates.</li>
+              <li>Integrated adaptive Stockfish AI for offline mode.</li>
+              <li>Result: Production-ready Android app demonstrating end-to-end product delivery.</li>
             </ul>
           </div>
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
               <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                NoteNest & Portfolio
-                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1"><ExternalLink className="h-3 w-3"/>Live</a>
+                Portfolio + NoteNest
+                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| Portfolio</a>
               </h3>
-              <span className="text-xs italic text-gray-600">Next.js, TypeScript, Google Genkit</span>
+              <span className="text-xs italic text-gray-600">Next.js, TS, Firebase, Genkit</span>
             </div>
             <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Developed a secure personal workspace using <strong>Next.js</strong> and <strong>TypeScript</strong> with a password-protected notes module.</li>
-              <li>Integrated <strong>Google Genkit</strong> to provide AI-powered summarization and insights for stored notes.</li>
-              <li>Utilized <strong>Firebase Firestore</strong> for secure, real-time data persistence and authentication.</li>
+                <li>Secure workspace with summaries and insights for display-less usage.</li>
+                <li>Real-time sync and Firestore security rules for safe access.</li>
+                <li>Purpose: Supports headless workflow by enabling information management without visual screen usage.</li>
             </ul>
           </div>
         </section>
@@ -121,13 +83,53 @@ export default function Resume() {
           <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Leadership & Experience</h2>
           <div className="mb-2">
             <div className="flex justify-between font-semibold text-gray-900">
-              <span>IUCEE Student Chapter - Technical Head</span>
+              <span>IUCEE Student Chapter</span>
               <span>Aug 2024 – Present</span>
             </div>
-            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Orchestrated a <strong>24-hour Inter-College Hackathon</strong> and multiple intra-college technical events, managing logistics and mentorship.</li>
-              <li>Represented the institute at external summits and led workshops to foster technical excellence.</li>
+            <div className="flex justify-between text-sm italic text-gray-700 mb-1">
+              <span>Technical Head</span>
+              <span>VVIT</span>
+            </div>
+            <ul className="list-disc list-inside text-sm text-gray-800">
+              <li>Orchestrated a 24-hour Inter-College Hackathon 300+ participants and multiple intra-college technical events, managing logistics and mentorship for student participants.</li>
+              <li>Represented the institute at external summits and led workshops to foster technical excellence and cross-campus collaboration.</li>
             </ul>
+          </div>
+        </section>
+
+        {/* Technical Skills */}
+        <section className="mb-4">
+          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Technical Skills</h2>
+          <ul className="text-sm text-gray-800 space-y-1">
+            <li><span className="font-bold">Languages:</span> Kotlin, TypeScript, JavaScript, Java, Python, SQL</li>
+            <li><span className="font-bold">Android:</span> Jetpack Compose, Hilt, Accessibility Services, Room, Retrofit</li>
+            <li><span className="font-bold">Web & Cloud:</span> React.js, Next.js, Firebase, WebSockets, Google Genkit</li>
+            <li><span className="font-bold">Tools:</span> Git, GitHub, Android Studio, VS Code</li>
+          </ul>
+        </section>
+
+        {/* Education */}
+        <section className="mb-4">
+          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Education</h2>
+          <div className="mb-2">
+            <div className="flex justify-between font-semibold text-gray-900">
+              <span>Vasireddy Venkatadri Institute of Technology (VVIT)</span>
+              <span>Nambur, India</span>
+            </div>
+            <div className="flex justify-between text-sm italic text-gray-700">
+              <span>B.Tech, Computer Science and Engineering</span>
+              <span>Graduation: 2026</span>
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between font-semibold text-gray-900">
+              <span>M.B.T.S Govt. Polytechnic</span>
+              <span>Guntur, India</span>
+            </div>
+            <div className="flex justify-between text-sm italic text-gray-700">
+              <span>Diploma, Computer Engineering</span>
+              <span>2020 – 2023</span>
+            </div>
           </div>
         </section>
 
@@ -135,7 +137,7 @@ export default function Resume() {
         <section>
           <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Coding Profiles</h2>
           <p className="text-sm text-gray-800">
-            <span className="font-bold">Platforms:</span> Active Problem Solver on <strong>LeetCode</strong> & <strong>Codeforces</strong> (Consistent participation in contests).
+            <span className="font-bold">Platforms:</span> LeetCode · Codeforces – Regular participation in contests
           </p>
         </section>
 
