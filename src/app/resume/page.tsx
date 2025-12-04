@@ -9,7 +9,7 @@ export default function Resume() {
         
         {/* Header */}
         <header className="border-b-2 border-gray-800 pb-4 mb-4 text-center">
-          <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">Konatham Komal Eshwara Kumar (KKEK)</h1>
+          <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">K.K.Eshwara kumar</h1>
           <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-4">
             <span className="flex items-center gap-1"><Globe className="h-4 w-4" /> Guntur, Andhra Pradesh</span>
             <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> +91 76719 45929</span>
