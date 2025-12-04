@@ -12,7 +12,7 @@ export default function Resume() {
           <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">K.K.Eshwara Kumar</h1>
           <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> +91 76719 45929</span>
-            <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> komaleshwarakumarkonatham@gmail.com</a>
+            <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> komalkonatham@gmail.com</a>
             <a href="https://github.com/kkek-041405/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4" /> github.com/kkek-041405</a>
             <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Globe className="h-4 w-4" /> kkek.vercel.app</a>
           </div>
@@ -22,7 +22,7 @@ export default function Resume() {
         <section className="mb-4">
           <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Summary</h2>
           <p className="text-gray-800 text-sm leading-relaxed">
-            Software engineer interested in automation and user-independent system behavior. I focus on reliability, performance, and clean design over shortcuts. I enjoy breaking down complex problems and building systems that scale without constant user involvement. Seeking opportunities to contribute to product-driven engineering teams.
+          Software Engineer with strong foundations in Data Structures \& Algorithms, object-oriented design, and full-stack development. Experienced in building production-grade systems, real-time applications, and automation tools. Passionate about problem-solving and delivering reliable, user-focused products. Seeking the SDE Intern role  to contribute to high-impact engineering teams.
           </p>
         </section>
 

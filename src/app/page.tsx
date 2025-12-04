@@ -31,10 +31,9 @@ const experiences: ExperienceItem[] = [
     organization: "IUCEE VVIT Student Chapter",
     dates: "2024 – Present",
     details: [
-      "Led technical initiatives, workshops, and hackathons impacting 200+ students.",
-      "Mentored junior members in web development and competitive programming.",
-      "Developed and deployed 3+ internal tools for chapter management and event coordination.",
-      "Fostered an innovation-driven culture on campus through collaborative projects.",
+      "Orchestrated a 24-hour Inter-College Hackathon with over 300 participants, managing logistics and mentorship.",
+      "Represented the institute at external summits to foster cross-campus collaboration.",
+      "Led technical workshops on modern web development and competitive programming for 200+ students.",
     ],
     iconName: "Briefcase",
   },
@@ -43,10 +42,9 @@ const experiences: ExperienceItem[] = [
     organization: "Campus Companion (Personal Project)",
     dates: "2023 – Present",
     details: [
-      "Conceptualized, designed, and developing a collaborative learning platform for university students.",
-      "Implementing features like AI-powered document search and structured discussion forums.",
-      "Utilizing React, Next.js, Firebase, and Genkit for a scalable and modern tech stack.",
-      "Aiming to enhance student engagement and knowledge sharing within the campus community.",
+      "Conceptualized, designed, and developed a collaborative learning platform for university students.",
+      "Architected with React, Next.js, and Firebase for a scalable and real-time user experience.",
+      "Engineered AI-powered document search and structured discussion forums to enhance knowledge sharing.",
     ],
     iconName: "Zap",
   },
@@ -55,23 +53,59 @@ const experiences: ExperienceItem[] = [
 // Projects Data
 const initialProjects: Project[] = [
   {
+    id: "zen-control",
+    title: "ZenControl – AI Agent for Headless Android",
+    subtitle: "A headless automation framework for Android devices.",
+    shortDescription: "An automation layer that enables complete phone operation (calls, navigation, media) without a display, driven by remote commands and AI.",
+    detailedDescription: "ZenControl is an automation framework that converts a standard Android phone into a fully usable, display-less device. It uses a custom Accessibility Service to traverse the view hierarchy and inject gestures, enabling remote operation. The system is built on a modular AiTool architecture using Clean Architecture and Hilt, allowing for scalable and maintainable task execution. The primary goal is to enable complex device interactions without human intervention, supporting a truly headless workflow.",
+    imageSrc: "https://picsum.photos/seed/zencontrol-banner/600/400",
+    imageHint: "headless android automation",
+    screenshots: [
+        { src: "https://picsum.photos/seed/zen-ss1/800/450", alt: "ZenControl Screenshot 1", hint: "android automation code" },
+        { src: "https://picsum.photos/seed/zen-ss2/800/450", alt: "ZenControl Screenshot 2", hint: "accessibility service diagram" },
+    ],
+    videoUrl: undefined,
+    tech: ["Kotlin", "Hilt", "Accessibility API", "Clean Architecture"],
+    achievements: ["Enables full device control without a screen", "Modular AiTool system for scalable tasks"],
+    githubLink: "https://github.com/kkek-041405/ZenControl",
+    liveLink: undefined,
+    caseStudyLink: undefined,
+  },
+  {
     id: "online-chess-arena",
-    title: "Online Chess Arena",
-    subtitle: "Play Chess Online with Friends or AI",
-    shortDescription: "A real-time multiplayer chess application built with Kotlin and Firebase, offering matches with friends or the computer.",
-    detailedDescription: "Online Chess Arena is a Kotlin-based mobile application built using Jetpack Compose and Firebase, designed to deliver a seamless online chess experience. Players can challenge friends in real-time matches or play against an AI. The app supports game invitations, match acceptance, and real-time board updates using Firebase Realtime Database. It's built for simplicity, with a sleek UI and robust gameplay mechanics tailored for casual and serious players alike.",
+    title: "Multiplayer Chess Application",
+    subtitle: "Real-time chess with friends or AI.",
+    shortDescription: "A production-ready Android chess app with real-time multiplayer, optimized UI, and an integrated Stockfish AI for offline play.",
+    detailedDescription: "This feature-rich chess application, live on the Google Play Store, was built using Kotlin and Jetpack Compose with a focus on performance and modern UI. It features a low-latency multiplayer backend using WebSockets for real-time move synchronization. For offline practice, the app integrates the adaptive Stockfish chess engine, providing a challenging AI opponent. The project demonstrates end-to-end product delivery, from design to deployment.",
     imageSrc: "https://picsum.photos/seed/chess-banner/600/400",
     imageHint: "chess game",
     screenshots: [
         { src: "https://picsum.photos/seed/chess-ss1/800/450", alt: "Online Chess Arena Screenshot 1", hint: "mobile app screenshot" },
         { src: "https://picsum.photos/seed/chess-ss2/800/450", alt: "Online Chess Arena Screenshot 2", hint: "mobile app screenshot" },
-        { src: "https://picsum.photos/seed/chess-ss3/800/450", alt: "Online Chess Arena Screenshot 3", hint: "mobile app screenshot" },
     ],
     videoUrl: undefined,
-    tech: ["Kotlin", "Jetpack Compose", "Firebase Realtime Database", "Firebase Authentication", "Google Analytics"],
-    achievements: ["Developed real-time multiplayer sync using Firebase", "Implemented turn-based logic with online matchmaking"],
+    tech: ["Kotlin", "Jetpack Compose", "WebSockets", "Stockfish"],
+    achievements: ["Sub-120ms latency on mobile networks", "Published on Google Play Store"],
     githubLink: "https://github.com/kkek-041405/Chess",
     liveLink: "https://play.google.com/store/apps/details?id=com.KKEK.chess",
+    caseStudyLink: undefined,
+  },
+   {
+    id: "portfolio-notenest",
+    title: "Portfolio + NoteNest",
+    subtitle: "A personal portfolio with a secure, AI-powered notes module.",
+    shortDescription: "A secure workspace with AI-powered summarization for notes, supporting a headless workflow for information management without visual screen usage.",
+    detailedDescription: "This project is a dual-purpose application serving as a professional portfolio and a private notes-taking module called NoteNest. Built with Next.js, TypeScript, and Firebase, it provides a secure, password-protected area for personal notes. A key feature is the integration of Google Genkit to offer AI-powered summarization and insights, designed to support a headless workflow where information can be managed without constant visual interaction. Data is persisted securely using Firestore with real-time synchronization.",
+    imageSrc: "https://picsum.photos/seed/notenest-banner/600/400",
+    imageHint: "portfolio notes app",
+    screenshots: [
+        { src: "https://picsum.photos/seed/notenest-ss1/800/450", alt: "NoteNest Screenshot 1", hint: "notes app interface" },
+    ],
+    videoUrl: undefined,
+    tech: ["Next.js", "TypeScript", "Firebase", "Google Genkit", "Tailwind CSS"],
+    achievements: ["AI-powered note summarization", "Secure, real-time data persistence"],
+    githubLink: "https://github.com/kkek-041405/",
+    liveLink: "https://kkek.vercel.app",
     caseStudyLink: undefined,
   },
 ];
@@ -79,28 +113,37 @@ const initialProjects: Project[] = [
 // Skills Data
 const skillsData = [
   {
-    category: "Core Technologies",
+    category: "Languages & Core Technologies",
     icon: Code2,
     items: [
-      { name: "React", skillIcon: Orbit, proficiency: 85 },
-      { name: "Next.js", skillIcon: ServerIcon, proficiency: 80 },
-      { name: "TypeScript", skillIcon: Type, proficiency: 75 },
-      { name: "Tailwind CSS", skillIcon: Wind, proficiency: 90 },
-      { name: "Node.js", skillIcon: ServerCog, proficiency: 70 },
-      { name: "Firebase", skillIcon: Cloud, proficiency: 80 },
-      { name: "Python", skillIcon: FileCode, proficiency: 65 },
-      { name: "Firestore", skillIcon: Database, proficiency: 78 },
-      { name: "MongoDB", skillIcon: Database, proficiency: 70 },
+      { name: "Kotlin", skillIcon: ToyBrick, proficiency: 90 },
+      { name: "TypeScript", skillIcon: Type, proficiency: 85 },
+      { name: "JavaScript", skillIcon: Braces, proficiency: 80 },
+      { name: "Java", skillIcon: FileCode, proficiency: 75 },
+      { name: "Python", skillIcon: FileCode, proficiency: 70 },
+      { name: "SQL", skillIcon: Database, proficiency: 65 },
+    ],
+  },
+   {
+    category: "Frameworks & Libraries",
+    icon: ServerIcon,
+    items: [
+      { name: "Next.js", skillIcon: ServerCog, proficiency: 85 },
+      { name: "React.js", skillIcon: Orbit, proficiency: 80 },
+      { name: "Jetpack Compose", skillIcon: Palette, proficiency: 90 },
+      { name: "Firebase", skillIcon: Cloud, proficiency: 85 },
+      { name: "Google Genkit", skillIcon: Wand2, proficiency: 75 },
+      { name: "Hilt", skillIcon: Container, proficiency: 80 },
     ],
   },
   {
-    category: "Soft Skills & Methodologies",
-    icon: Users,
+    category: "Tools & Methodologies",
+    icon: Wrench,
     items: [
+      { name: "Git & GitHub", skillIcon: GitFork },
       { name: "Problem Solving", skillIcon: Puzzle },
-      { name: "Team Collaboration", skillIcon: Handshake },
-      { name: "Agile Methodologies", skillIcon: IterationCcw },
-      { name: "Communication", skillIcon: MessageCircleIcon },
+      { name: "System Design", skillIcon: Share2 },
+      { name: "Agile", skillIcon: IterationCcw },
       { name: "Leadership", skillIcon: Crown },
     ],
   },
@@ -117,7 +160,7 @@ export default function PortfolioPage() {
 
   // Set document title dynamically for client components
   useEffect(() => {
-    document.title = 'K. Komal Eshwara Kumar — Full-Stack Developer & AI Enthusiast | Portfolio';
+    document.title = 'K. Komal Eshwara Kumar — Software Engineer';
   }, []);
 
   // Intersection Observer for Skills Section
@@ -175,31 +218,21 @@ export default function PortfolioPage() {
           <section id="home" className="w-full py-12 md:py-16 lg:py-20 xl:py-20 bg-gradient-to-br from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center text-center space-y-6 lg:col-span-2 xl:col-span-1">
-                  <div className="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-6">
-                    <Avatar className="w-24 h-24 md:w-28 md:h-28 border-4 border-primary shadow-xl">
-                      <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
-                      <AvatarFallback>KKEK</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start text-left">
-                      <p className="text-lg sm:text-xl md:text-2xl font-medium">Hi, I’m KKEK</p>
-                      <p className="text-base sm:text-lg text-primary font-medium mt-1">
-                        3rd Year CSE | GATE Aspirant | Technical Head @ IUCEE VVIT
-                      </p>
-                    </div>
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-foreground text-center">
-                    <span className="block text-center">Building Real-World Apps</span>
-                    <span className="block text-center text-primary">Scalable. Performant.</span>
+                  <Avatar className="w-28 h-28 md:w-32 md:h-32 border-4 border-primary shadow-xl">
+                    <AvatarImage src="https://picsum.photos/seed/avatar-kkek/200" alt="KKEK" data-ai-hint="professional portrait" />
+                    <AvatarFallback>KKEK</AvatarFallback>
+                  </Avatar>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+                    <span className="block">K. Komal Eshwara Kumar</span>
+                    <span className="block text-primary text-2xl sm:text-3xl md:text-4xl mt-2">Software Engineer</span>
                   </h1>
                    <p className="max-w-2xl text-base sm:text-lg text-muted-foreground md:mx-0">
-                    A passionate full-stack developer specializing in React, Next.js, and Firebase. 
-                    I love creating efficient, user-friendly web applications and exploring the potential of AI. 
-                    Currently seeking opportunities to contribute to innovative projects.
+                    Interested in automation and user-independent system behavior. I focus on reliability, performance, and clean design to build systems that scale.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 pt-3 w-full sm:w-auto">
                     <Button size="lg" asChild className="shadow-lg hover:shadow-primary/50 transition-shadow w-full sm:w-auto">
-                      <Link href="/lm">
-                        <BrainCircuit className="mr-2 h-5 w-5" /> LM
+                      <Link href="#contact">
+                        <Mail className="mr-2 h-5 w-5" /> Get in Touch
                       </Link>
                     </Button>
                     <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
@@ -232,20 +265,17 @@ export default function PortfolioPage() {
               </div>
               <div className="md:col-span-3 text-lg space-y-5 text-muted-foreground">
                 <p>
-                Hello! I'm K. Komal Eshwara Kumar, a dedicated and results-driven software developer with a solid foundation in modern web technologies and a strong interest in artificial intelligence. My journey in tech began with a deep curiosity about how software can solve real-world problems and elevate user experiences—and I’ve been building solutions ever since.
+                  I'm a software engineer who enjoys breaking down complex problems and building systems that scale without constant user involvement. My focus is on reliability, performance, and clean design over shortcuts.
                 </p>
                 <p>
-                I specialize in developing scalable web applications using React.js, Firebase, Node.js, and modern frontend-backend ecosystems. One of my key projects is Campus Companion, a collaborative learning platform for university students, which I designed and deployed with AI-powered document search and structured discussion forums, currently serving an active student community.
+                  I specialize in full-stack development with a strong interest in automation and system-level behavior. My work includes creating production-ready Android applications, developing scalable web platforms with Next.js and Firebase, and engineering headless automation frameworks.
                 </p>
                 <p>
-                As the Technical Head of the IUCEE Student Chapter at Vasireddy Venkatadri Institute of Technology, I lead technical initiatives that bridge academic concepts with practical applications. Under my leadership, we've conducted workshops, hackathons, and collaborative projects impacting over 200 students and fostering an innovation-driven culture on campus.
-                </p>
-                <p>
-                Continuous learning is the cornerstone of my professional growth — I actively expand my skill set to stay aligned with cutting-edge technologies and industry demands. I aspire to develop AI-driven products that scale globally and solve real-world challenges in education and collaboration, while taking on leadership roles in transformative tech projects.
+                  As the Technical Head of the IUCEE Student Chapter, I lead initiatives that connect academic concepts with real-world application, orchestrating hackathons and workshops that have engaged hundreds of students. I thrive in environments where I can contribute to product-driven engineering teams and tackle challenging technical problems.
                 </p>
                  <Button variant="link" asChild className="text-primary p-0 h-auto text-lg hover:underline">
                    <Link href="/resume.pdf" target="_blank" download>
-                     Download My CV <Download className="ml-2 h-5 w-5" />
+                     View My Full Resume <Download className="ml-2 h-5 w-5" />
                     </Link>
                  </Button>
               </div>
@@ -310,7 +340,7 @@ export default function PortfolioPage() {
                       </div>
                       {project.achievements && project.achievements.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Achievements</h4>
+                          <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Key Features</h4>
                           <div className="flex flex-wrap gap-2">
                             {project.achievements.slice(0,2).map(achievement => (
                               <Badge key={achievement} variant="outline" className="text-primary border-primary/50 bg-primary/10">
@@ -363,12 +393,20 @@ export default function PortfolioPage() {
         <AnimatedSection as="div" triggerOnce={true} delay="delay-200">
           <section id="skills" ref={skillsSectionRef} className="py-12 md:py-16 bg-background dark:bg-background">
             <div className="container mx-auto px-4">
-              <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
+              <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
+                      <Cpu className="h-10 w-10 text-primary" /> Technical Skills
+                  </h2>
+                  <p className="text-muted-foreground mt-2 text-lg">
+                      My toolkit for building reliable and performant applications.
+                  </p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
                 {skillsData.map((skillCategory) => (
                   <div key={skillCategory.category}>
                     <div className="flex items-center gap-3 mb-6">
                       {skillCategory.icon && <skillCategory.icon className="h-8 w-8 text-primary" />}
-                      <h3 className="text-2xl md:text-3xl font-semibold text-foreground">{skillCategory.category}</h3>
+                      <h3 className="text-2xl font-semibold text-foreground">{skillCategory.category}</h3>
                     </div>
                     <div className="flex flex-wrap gap-3 justify-start">
                       {skillCategory.items.map(skill => (
@@ -407,16 +445,16 @@ export default function PortfolioPage() {
               <MessageSquare className="h-10 w-10 text-primary" /> Get In Touch
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
-              I'm actively seeking new opportunities and collaborations. If you have a project in mind, a question, or just want to connect, feel free to reach out! I typically respond within 24-48 hours.
+              I'm actively seeking opportunities to contribute to product-driven engineering teams. If you have a project in mind, a question, or just want to connect, feel free to reach out.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
               <Button size="lg" asChild className="w-full sm:w-auto shadow-lg hover:shadow-primary/50 transition-shadow">
-                <Link href="mailto:k.komaleshwarakumar@example.com">
+                <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
                   <Mail className="mr-2 h-5 w-5" /> Send an Email
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="w-full sm:w-auto shadow-lg hover:shadow-accent/50 transition-shadow">
-                <Link href="https://linkedin.com/in/kkeshkumar" target="_blank" rel="noopener noreferrer">
+                <Link href="https://www.linkedin.com/in/konatham-komal-eshwara-kumar-a253a522a/" target="_blank" rel="noopener noreferrer">
                   <LinkedinIcon className="mr-2 h-5 w-5" /> Connect on LinkedIn
                 </Link>
               </Button>
@@ -434,10 +472,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-
-
-
-
-    
-
-    
