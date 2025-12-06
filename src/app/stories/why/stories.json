@@ -5,7 +5,7 @@
     "title": "ZenControl",
     "slug": "why-zencontrol",
     "date": "2024-07-29T12:00:00.000Z",
-    "tagline": "A broken phone screen led to one of my smartest builds.",
+    "tagline": "When my phone’s display broke, I didn’t replace the phone — I replaced the way I interacted with it.",
     "reason": "Control your phone hands-free—with commands, not touch.",
     "githubLink": "https://github.com/kkek-041405/ZenControl",
     "tags": ["Automation", "Android", "Kotlin", "Accessibility"],
@@ -28,7 +28,11 @@
       },
       {
         "title": "What I Built",
-        "content": "The first version was simple: **calls in and calls out without touching the display**. Then I expanded it — music control, toggling features, basic automation. With each update, **the screen mattered less**.\n\nEventually the idea shifted from controlling a *broken* phone to **controlling a phone hands-free**.\n\nThat’s when **ZenControl** was born — a personal on-device assistant that executes commands directly:\n\n```\n“Turn on the hotspot.”\n“Play music.”\n“Call Dad.”\n```\n\nNo typing, no swiping — **just intent → action.**"
+        "content": "The first version was simple: **calls in and calls out without touching the display**. Then I expanded it — music control, toggling features, basic automation. With each update, **the screen mattered less**.\n\nEventually the idea shifted from controlling a *broken* phone to **controlling a phone hands-free**.\n\nThat’s when **ZenControl** was born — a personal on-device assistant that executes commands directly:\n\n```\n“Turn on the hotspot.”\n“Play music.”\n“Call Dad.”\n```\nNo typing, no swiping — **just intent → action.**"
+      },
+      {
+        "title": "[Screenshots / demo carousel here]",
+        "content": ""
       },
       {
         "title": "Impact",
