@@ -29,36 +29,101 @@ interface Story {
 }
 
 const SimpleMarkdownParser = ({ content }: { content: string }) => {
-    const parts = content.split(/(\*\*.*?\*\*|\*.*?\*|`{3}[\s\S]*?`{3}|>.*)/g);
+    // Split by newlines to process line-by-line for block elements
+    const lines = content.split('\n');
+    const elements: React.ReactNode[] = [];
 
-    return (
-        <>
-            {parts.map((part, index) => {
-                if (part.startsWith('**') && part.endsWith('**')) {
-                    return <strong key={index} className="text-white">{part.slice(2, -2)}</strong>;
-                }
-                if (part.startsWith('*') && part.endsWith('*')) {
-                    return <em key={index}>{part.slice(1, -1)}</em>;
-                }
-                 if (part.startsWith('```') && part.endsWith('```')) {
-                    return (
-                        <pre key={index} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
-                            <code>{part.slice(3, -3).trim()}</code>
-                        </pre>
-                    );
-                }
-                 if (part.startsWith('>')) {
-                    return (
-                        <blockquote key={index} className="border-l-4 border-zinc-600 pl-4 italic text-zinc-400 my-4">
-                            {part.slice(1).trim()}
-                        </blockquote>
-                    );
-                }
-                return <React.Fragment key={index}>{part.split('\n').map((line, i) => <React.Fragment key={i}>{line}{i < part.split('\n').length - 1 && <br/>}</React.Fragment>)}</React.Fragment>;
-            })}
-        </>
-    );
+    let currentBlock: string[] | null = null;
+    let inCodeBlock = false;
+
+    lines.forEach((line, lineIndex) => {
+        if (line.startsWith('```')) {
+            if (inCodeBlock) {
+                // End of code block
+                elements.push(
+                    <pre key={`code-${elements.length}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                        <code>{currentBlock?.join('\n')}</code>
+                    </pre>
+                );
+                currentBlock = null;
+                inCodeBlock = false;
+            } else {
+                // Start of code block
+                inCodeBlock = true;
+                currentBlock = [];
+            }
+            return;
+        }
+
+        if (inCodeBlock) {
+            currentBlock?.push(line);
+            return;
+        }
+
+        if (line.startsWith('>')) {
+            elements.push(
+                <blockquote key={`quote-${lineIndex}`} className="border-l-4 border-zinc-600 pl-4 italic text-zinc-400 my-4">
+                    {line.slice(1).trim()}
+                </blockquote>
+            );
+            return;
+        }
+        
+        // Handle inline markdown within paragraphs
+        const parts = line.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+
+        elements.push(
+            <React.Fragment key={`line-${lineIndex}`}>
+                {parts.map((part, index) => {
+                    if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={index} className="text-white">{part.slice(2, -2)}</strong>;
+                    }
+                    if (part.startsWith('*') && part.endsWith('*')) {
+                        return <em key={index}>{part.slice(1, -1)}</em>;
+                    }
+                     if (part.startsWith('`') && part.endsWith('`')) {
+                        return <code key={index} className="bg-zinc-800/60 text-zinc-300 rounded-sm px-1.5 py-0.5 font-mono text-sm">{part.slice(1, -1)}</code>;
+                    }
+                    return <React.Fragment key={index}>{part}</React.Fragment>;
+                })}
+                {lineIndex < lines.length -1 && <br />}
+            </React.Fragment>
+        );
+    });
+
+    // Handle unterminated code block at the end of content
+    if (inCodeBlock && currentBlock) {
+        elements.push(
+            <pre key="code-final" className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                <code>{currentBlock.join('\n')}</code>
+            </pre>
+        );
+    }
+    
+    // Group consecutive <br> and text fragments into paragraphs
+    const finalElements: React.ReactNode[] = [];
+    let pBuffer: React.ReactNode[] = [];
+
+    elements.forEach((el, index) => {
+        if (typeof el === 'object' && el !== null && 'type' in el && (el.type === 'blockquote' || el.type === 'pre')) {
+            if (pBuffer.length > 0) {
+                finalElements.push(<p key={`p-${finalElements.length}`}>{pBuffer}</p>);
+                pBuffer = [];
+            }
+            finalElements.push(el);
+        } else {
+            pBuffer.push(el);
+        }
+    });
+
+    if (pBuffer.length > 0) {
+        finalElements.push(<p key={`p-final`}>{pBuffer}</p>);
+    }
+
+
+    return <>{finalElements}</>;
 };
+
 
 
 // Reusable Hero Component
@@ -247,9 +312,9 @@ function WhyPageContent() {
                       {selectedStory.sections.map((section, index) => (
                           <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
                               <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
-                              <p className="!mt-0">
+                              <div className="!mt-0">
                                   <SimpleMarkdownParser content={section.content} />
-                              </p>
+                              </div>
                           </AnimatedSection>
                       ))}
                   </div>
