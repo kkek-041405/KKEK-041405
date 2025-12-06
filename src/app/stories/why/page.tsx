@@ -73,7 +73,6 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
           className="text-6xl sm:text-7xl md:text-8xl font-semibold text-zinc-100 min-h-[1.2em]"
         >
           {typedProjectName}
-          <span className="animate-blink">|</span>
         </h1>
         <p 
           className="text-base md:text-lg text-zinc-500 lowercase max-w-md animate-fade-in"
@@ -109,13 +108,6 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
         }
         .animate-bounce-once {
           animation: bounce-once 1s ease-in-out;
-        }
-        @keyframes blink-caret {
-          from, to { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        .animate-blink {
-          animation: blink-caret 1s step-end infinite;
         }
       `}</style>
     </div>
