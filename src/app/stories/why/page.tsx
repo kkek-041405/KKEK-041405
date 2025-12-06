@@ -3,8 +3,7 @@
 
 import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Loader2, ArrowLeft, ArrowRight, ArrowDown } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, ArrowLeft, ArrowDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,7 @@ interface Story {
   projectId: string;
   title: string;
   tagline: string;
+  trigger: string;
   reason: string;
   sections: StorySection[];
   tags: string[];
@@ -69,7 +69,7 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 
     return (
         <>
-            {parts.map((part, index) => {
+            {parts.map((part) => {
                 if (!part) return null;
                 
                 if (part.trim() === '[Screenshots / demo carousel here]') {
@@ -82,24 +82,6 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 
                 if (part.startsWith('```')) {
                     const codeBlockContent = part.replace(/^```\s*|```\s*$/g, '').trim();
-                    const lines = codeBlockContent.split('\n');
-                    const codeContent = lines.slice(0, -1).join('\n');
-                    const lastLine = lines[lines.length - 1];
-
-                    // Heuristic: Check if the last line looks like code or a regular sentence.
-                    // This is imperfect but covers the current use case.
-                    const isLastLineCode = lastLine.trim().startsWith('“') || lastLine.includes(';') || lastLine.includes('{');
-                    
-                    if (!isLastLineCode) {
-                        return (
-                          <React.Fragment key={`code-frag-${keyCounter++}`}>
-                            <pre className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
-                                <code>{codeContent}</code>
-                            </pre>
-                            <p className="text-zinc-300">{renderInlineMarkdown(lastLine)}</p>
-                          </React.Fragment>
-                        );
-                    }
                      return (
                         <pre key={`code-${keyCounter++}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
                             <code>{codeBlockContent}</code>
@@ -109,7 +91,7 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 
                 if (part.startsWith('>')) {
                     const quoteContent = part.split('\n').map(line => line.replace(/^>\s?/, '')).join('\n');
-                     if(part.includes('Pull-Quote')){ 
+                     if(part.includes('Pull-Quote')){
                         return (
                            <blockquote key={`quote-${keyCounter++}`} className="text-center text-2xl leading-relaxed my-12 text-zinc-300">
                              <p>{renderInlineMarkdown(quoteContent.replace('Pull-Quote: ', ''))}</p>
@@ -356,38 +338,47 @@ function WhyPageContent() {
   return (
     <div className="py-12 md:py-16">
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold">Project Stories</h1>
-        <p className="text-lg text-zinc-400 mt-2">The personal challenges that led to the code.</p>
+        <h1 className="text-4xl md:text-5xl font-bold">The Reason behind the code</h1>
+        <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not an idea.</p>
       </div>
       {stories.length === 0 ? (
         <p className="text-center text-muted-foreground">No stories have been published yet.</p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="space-y-8 max-w-4xl mx-auto">
           {stories.map(story => (
             <Link key={story.id} href={`/stories/why?project=${story.projectId}`} legacyBehavior>
-              <a className="block h-full group">
-                <div className="flex flex-col h-full overflow-hidden rounded-lg bg-zinc-900/50 border border-white/5 p-8 transition-all duration-300 group-hover:scale-105 group-hover:border-white/10"
+              <a className="block group">
+                <div className="flex flex-col h-full overflow-hidden rounded-lg bg-zinc-900/50 border border-white/5 p-8 transition-all duration-300 group-hover:scale-[1.02] group-hover:border-white/10"
                   style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
                 >
                   <div className="flex-grow">
-                    <p className="text-sm text-zinc-500 mb-1">{new Date(story.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <p className="text-sm text-zinc-500 mb-2">{new Date(story.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     <h2 className="text-2xl font-bold text-white mb-3">{story.title}</h2>
+                    
+                    <div className="mb-4 text-zinc-400 pl-3 border-l-2 border-primary/30">
+                        <p className="font-medium text-primary text-sm mb-1">The trigger →</p>
+                        <p className="italic">{story.trigger}</p>
+                    </div>
+                    
                     <p className="text-zinc-400 leading-relaxed mb-6 line-clamp-3">
                       {story.tagline}
                     </p>
                   </div>
-                  <div className="mt-auto">
-                     <div className="flex items-center text-sm font-medium text-primary mb-4 transition-transform group-hover:translate-x-1">
-                        → Read the story
-                      </div>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mt-auto flex justify-between items-end">
+                     <div className="flex flex-wrap gap-2">
                          {story.tags.slice(0, 3).map(tag => <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-300">{tag}</Badge>)}
                     </div>
+                     <div className="flex items-center text-sm font-medium text-primary transition-transform group-hover:translate-x-1">
+                        → Read the reason
+                      </div>
                   </div>
                 </div>
               </a>
             </Link>
           ))}
+           <footer className="text-center text-zinc-500 mt-16 text-sm">
+                <p>More reasons will appear here as life breaks things — and I build to fix them.</p>
+            </footer>
         </div>
       )}
     </div>
