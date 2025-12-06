@@ -51,6 +51,7 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
     return (
         <>
             {blocks.map((block, blockIndex) => {
+                // Handle code blocks
                 if (block.startsWith('```')) {
                     const code = block.replace(/```/g, '').trim();
                     return (
@@ -59,24 +60,22 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
                         </pre>
                     );
                 }
-                
-                const lines = block.split('\n');
-                
+
                 // Handle blockquotes
-                if (lines.every(line => line.startsWith('>'))) {
-                    const quoteContent = lines.map(line => line.slice(1).trim()).join('\n');
-                    return (
+                if (block.startsWith('>')) {
+                    const quoteContent = block.slice(1).trim();
+                     return (
                          <blockquote key={`quote-${blockIndex}`} className="border-l-4 border-primary pl-4 italic text-zinc-300 my-4">
                             <p>{renderInlineMarkdown(quoteContent)}</p>
                         </blockquote>
                     );
                 }
-
+                
                 // Handle lists (basic unordered)
-                if (lines.every(line => line.trim().startsWith('- '))) {
+                if (block.split('\n').every(line => line.trim().startsWith('- '))) {
                     return (
                         <ul key={`list-${blockIndex}`} className="list-disc pl-6 space-y-2 my-4">
-                            {lines.map((line, lineIndex) => (
+                            {block.split('\n').map((line, lineIndex) => (
                                 <li key={lineIndex}>{renderInlineMarkdown(line.trim().slice(2))}</li>
                             ))}
                         </ul>
@@ -85,13 +84,8 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 
                 // Handle regular paragraphs
                 return (
-                    <p key={`p-${blockIndex}`}>
-                        {lines.map((line, lineIndex) => (
-                            <React.Fragment key={lineIndex}>
-                                {renderInlineMarkdown(line)}
-                                {lineIndex < lines.length - 1 && <br />}
-                            </React.Fragment>
-                        ))}
+                    <p key={`p-${blockIndex}`} className="text-zinc-300">
+                        {renderInlineMarkdown(block)}
                     </p>
                 );
             })}
