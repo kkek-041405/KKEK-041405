@@ -24,52 +24,90 @@ interface Story {
 }
 
 // Reusable Hero Component
-const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName: string, projectReason: string, onExploreClick: () => void }) => {
-  const [isArrowAnimating, setIsArrowAnimating] = useState(false);
+const StoryHero = ({ 
+  projectName, 
+  projectReason, 
+  onExploreClick,
+  onBackClick
+}: { 
+  projectName: string, 
+  projectReason: string, 
+  onExploreClick: () => void,
+  onBackClick: () => void
+}) => {
   const [typedProjectName, setTypedProjectName] = useState('');
-  const [isTitleAnimationComplete, setIsTitleAnimationComplete] = useState(false);
+
+  // Animation sequence states
+  const [showWhy, setShowWhy] = useState(false);
+  const [startTypingName, setStartTypingName] = useState(false);
+  const [showReason, setShowReason] = useState(false);
+  const [showExploreButton, setShowExploreButton] = useState(false);
+  const [showBackButton, setShowBackButton] = useState(false);
+  const [isArrowAnimating, setIsArrowAnimating] = useState(false);
 
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsArrowAnimating(true);
-    }, 2000);
-    return () => clearTimeout(timer);
+    // Staggered animation sequence
+    const timers: NodeJS.Timeout[] = [];
+    timers.push(setTimeout(() => setShowWhy(true), 500)); // 1. "why i built" fades in
+    timers.push(setTimeout(() => setStartTypingName(true), 1200)); // 2. Start typing project name
+    
+    // Dependent animations are handled in other useEffects
+
+    return () => timers.forEach(clearTimeout);
   }, []);
+  
+  useEffect(() => {
+    if (startTypingName && projectName) {
+      let i = 0;
+      const intervalId = setInterval(() => {
+        if (i < projectName.length) {
+          setTypedProjectName(projectName.substring(0, i + 1));
+          i++;
+        } else {
+          clearInterval(intervalId);
+          // 3. Subheadline fades in after typing is complete
+          setTimeout(() => setShowReason(true), 400); 
+        }
+      }, 100);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [startTypingName, projectName]);
+  
+  useEffect(() => {
+    if(showReason) {
+       // 4. "Explore" button fades in
+       setTimeout(() => setShowExploreButton(true), 500);
+    }
+  }, [showReason]);
 
   useEffect(() => {
-    setTypedProjectName('');
-    setIsTitleAnimationComplete(false);
-    if (projectName) {
-      const initialDelay = 400; 
-      const typingSpeed = 100;
-
-      const timeoutId = setTimeout(() => {
-        let i = 0;
-        const intervalId = setInterval(() => {
-          if (i <= projectName.length) {
-            setTypedProjectName(projectName.substring(0, i));
-            i++;
-          } else {
-            clearInterval(intervalId);
-            setIsTitleAnimationComplete(true);
-          }
-        }, typingSpeed);
-
-        return () => clearInterval(intervalId);
-      }, initialDelay);
-      
-      return () => clearTimeout(timeoutId);
+    if (showExploreButton) {
+      // 5. "Back" button fades in
+      setTimeout(() => setShowBackButton(true), 500);
+      // Trigger arrow animation
+      setTimeout(() => setIsArrowAnimating(true), 1500);
     }
-  }, [projectName]);
-
+  }, [showExploreButton]);
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center p-6 relative">
+       <Button 
+        variant="outline" 
+        onClick={onBackClick} 
+        className={cn(
+          "absolute top-6 left-6 z-10 bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white transition-opacity duration-700",
+          showBackButton ? "opacity-100" : "opacity-0"
+        )}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
+      </Button>
       <div className="flex flex-col items-center gap-4">
         <p 
-          className="font-mono text-xl md:text-2xl font-bold text-zinc-400 animate-fade-in" 
-          style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}
+          className={cn(
+            "font-mono text-xl md:text-2xl font-bold text-zinc-100 transition-opacity duration-700",
+            showWhy ? "opacity-100" : "opacity-0"
+          )}
         >
           why i built
         </p>
@@ -81,14 +119,13 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
         <p 
           className={cn(
             "text-base md:text-lg text-zinc-500 lowercase max-w-md transition-opacity duration-700",
-            isTitleAnimationComplete ? "opacity-100" : "opacity-0"
+            showReason ? "opacity-100" : "opacity-0"
             )}
         >
           {projectReason}
         </p>
         <div 
-          className="mt-6 animate-fade-in"
-          style={{ animationDelay: '800ms', animationFillMode: 'backwards' }}
+          className={cn("mt-6 transition-opacity duration-700", showExploreButton ? "opacity-100" : "opacity-0")}
         >
           <Button 
             onClick={onExploreClick} 
@@ -101,13 +138,6 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
         </div>
       </div>
        <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
         @keyframes bounce-once {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-25%); }
@@ -159,14 +189,11 @@ function WhyPageContent() {
 
     return (
         <div className="flex flex-col min-h-screen">
-             <Button variant="outline" onClick={() => router.push('/stories/why')} className="absolute top-6 left-6 z-10 bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
-            </Button>
-            
             <StoryHero 
               projectName={selectedStory.title}
               projectReason={selectedStory.reason}
               onExploreClick={handleExploreClick}
+              onBackClick={() => router.push('/stories/why')}
             />
 
             <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
