@@ -46,48 +46,53 @@ const renderInlineMarkdown = (text: string) => {
 };
 
 const SimpleMarkdownParser = ({ content }: { content: string }) => {
-    const blocks = content.split('\n\n');
+    const regex = /(```[\s\S]*?```|>[^\n]+(?:\n[^\n]+)*)/g;
+    const parts = content.split(regex);
+    let keyCounter = 0;
 
     return (
         <>
-            {blocks.map((block, blockIndex) => {
+            {parts.map((part, index) => {
+                if (!part) return null;
+
                 // Handle code blocks
-                if (block.startsWith('```')) {
-                    const code = block.replace(/```/g, '').trim();
+                if (part.startsWith('```')) {
+                    const code = part.replace(/```/g, '').trim();
                     return (
-                        <pre key={`code-${blockIndex}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                        <pre key={`code-${keyCounter++}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
                             <code>{code}</code>
                         </pre>
                     );
                 }
 
                 // Handle blockquotes
-                if (block.startsWith('>')) {
-                    const quoteContent = block.slice(1).trim();
-                     return (
-                         <blockquote key={`quote-${blockIndex}`} className="border-l-4 border-primary pl-4 italic text-zinc-300 my-4">
+                if (part.startsWith('>')) {
+                    const quoteContent = part.split('\n').map(line => line.replace(/^>\s?/, '')).join('\n');
+                    return (
+                        <blockquote key={`quote-${keyCounter++}`} className="border-l-4 border-primary pl-4 italic text-zinc-300 my-4">
                             <p>{renderInlineMarkdown(quoteContent)}</p>
                         </blockquote>
                     );
                 }
                 
-                // Handle lists (basic unordered)
-                if (block.split('\n').every(line => line.trim().startsWith('- '))) {
+                // Handle remaining text as paragraphs and lists
+                const paragraphs = part.split('\n\n').filter(p => p.trim() !== '');
+                return paragraphs.map((para) => {
+                    if (para.split('\n').every(line => line.trim().startsWith('- '))) {
+                        return (
+                             <ul key={`list-${keyCounter++}`} className="list-disc pl-6 space-y-2 my-4">
+                                {para.split('\n').map((line, lineIndex) => (
+                                    <li key={lineIndex}>{renderInlineMarkdown(line.trim().slice(2))}</li>
+                                ))}
+                            </ul>
+                        )
+                    }
                     return (
-                        <ul key={`list-${blockIndex}`} className="list-disc pl-6 space-y-2 my-4">
-                            {block.split('\n').map((line, lineIndex) => (
-                                <li key={lineIndex}>{renderInlineMarkdown(line.trim().slice(2))}</li>
-                            ))}
-                        </ul>
-                    )
-                }
-
-                // Handle regular paragraphs
-                return (
-                    <p key={`p-${blockIndex}`} className="text-zinc-300">
-                        {renderInlineMarkdown(block)}
-                    </p>
-                );
+                        <p key={`p-${keyCounter++}`} className="text-zinc-300">
+                           {renderInlineMarkdown(para)}
+                        </p>
+                    );
+                });
             })}
         </>
     );
