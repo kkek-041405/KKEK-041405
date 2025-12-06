@@ -11,8 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/animated-section';
-import { PortfolioHeader } from '@/components/portfolio-header';
-import { PortfolioFooter } from '@/components/portfolio-footer';
+
 
 // Define the structure of a story document from Firestore
 interface Story {
@@ -203,8 +202,13 @@ function WhyPageContent() {
 // The main page component that wraps the content in Suspense
 export default function WhyPage() {
     return (
-        <div className="flex flex-col min-h-screen bg-background text-foreground">
-            <PortfolioHeader />
+        <div 
+            className="dark flex flex-col min-h-screen" 
+            style={{ 
+                '--background': '0 0% 0%', 
+                '--foreground': '0 0% 100%' 
+            } as React.CSSProperties}
+        >
             <main className="flex-1 container mx-auto px-4">
                 <Suspense fallback={
                     <div className="flex-1 flex items-center justify-center h-full">
@@ -214,7 +218,6 @@ export default function WhyPage() {
                     <WhyPageContent />
                 </Suspense>
             </main>
-            <PortfolioFooter />
         </div>
     );
 }
