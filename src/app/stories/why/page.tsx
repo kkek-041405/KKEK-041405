@@ -1,11 +1,11 @@
 
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
-import { Loader2, ArrowLeft, Tag } from 'lucide-react';
+import { Loader2, ArrowLeft, Tag, ArrowDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -41,6 +41,7 @@ function WhyPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const projectId = searchParams.get('project');
+  const storyContentRef = useRef<HTMLDivElement>(null);
 
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
@@ -102,6 +103,10 @@ function WhyPageContent() {
     fetchStories();
   }, [projectId]);
 
+  const handleExploreClick = () => {
+    storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Loading State
   if (isLoading) {
     return (
@@ -137,26 +142,41 @@ function WhyPageContent() {
     if (!selectedStory) return null; // Should be covered by loading/not found
 
     return (
-      <AnimatedSection as="article" className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-         <div className="mb-8">
-          <Button variant="outline" onClick={() => router.push('/stories/why')}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
-          </Button>
+        <div className="flex flex-col min-h-screen">
+            <div className="h-screen flex flex-col items-center justify-center text-center p-4 relative">
+                <Button variant="outline" onClick={() => router.push('/stories/why')} className="absolute top-6 left-6">
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
+                </Button>
+                
+                <AnimatedSection as="div" className="w-full">
+                    <p className="text-xl text-zinc-400">Project Stories</p>
+                    <h1 className="text-7xl font-mono font-bold text-red-500 my-2">why i build</h1>
+                    <p className="text-sm text-zinc-500 mb-8">The story behind the code</p>
+                    
+                    <h2 className="text-5xl font-mono font-semibold text-green-400 mb-10">{selectedStory.title}</h2>
+
+                    <Button variant="outline" onClick={handleExploreClick} className="rounded-full px-6">
+                        Explore
+                        <ArrowDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </AnimatedSection>
+            </div>
+
+            <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
+                <header className="mb-8 border-b border-zinc-700 pb-6 text-center">
+                    <p className="text-zinc-400 text-lg">Published on {selectedStory.date}</p>
+                    <div className="flex flex-wrap gap-2 justify-center mt-4">
+                        {selectedStory.tags.map(tag => (
+                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                        ))}
+                    </div>
+                </header>
+                <div 
+                className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: selectedStory.content.replace(/\n/g, '<br />') }} 
+                />
+            </article>
         </div>
-        <header className="mb-8 border-b pb-6">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-3">{selectedStory.title}</h1>
-          <p className="text-muted-foreground text-lg">Published on {selectedStory.date}</p>
-          <div className="flex flex-wrap gap-2 mt-4">
-             {selectedStory.tags.map(tag => (
-              <Badge key={tag} variant="secondary">{tag}</Badge>
-            ))}
-          </div>
-        </header>
-        <div 
-          className="prose dark:prose-invert prose-lg max-w-none text-foreground/90 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: selectedStory.content.replace(/\n/g, '<br />') }} 
-        />
-      </AnimatedSection>
     );
   }
 
@@ -174,19 +194,19 @@ function WhyPageContent() {
           {stories.map(story => (
             <Link key={story.id} href={`/stories/why?project=${story.projectId}`} legacyBehavior>
               <a className="block h-full">
-                <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1">
+                <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1 bg-zinc-900 border-zinc-800">
                   <CardHeader>
-                    <CardTitle className="text-xl">{story.title}</CardTitle>
+                    <CardTitle className="text-xl text-white">{story.title}</CardTitle>
                     <CardDescription>{story.date}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow">
-                    <p className="text-muted-foreground line-clamp-3">
+                    <p className="text-zinc-400 line-clamp-3">
                       {story.content.substring(0, 150).replace(/<[^>]*>?/gm, '')}...
                     </p>
                   </CardContent>
                    <div className="p-6 pt-0">
                       <div className="flex flex-wrap gap-2">
-                         {story.tags.slice(0, 3).map(tag => <Badge key={tag} variant="outline">{tag}</Badge>)}
+                         {story.tags.slice(0, 3).map(tag => <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-300">{tag}</Badge>)}
                       </div>
                   </div>
                 </Card>
