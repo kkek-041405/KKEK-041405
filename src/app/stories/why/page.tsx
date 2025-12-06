@@ -27,6 +27,8 @@ interface Story {
 const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName: string, projectReason: string, onExploreClick: () => void }) => {
   const [isArrowAnimating, setIsArrowAnimating] = useState(false);
   const [typedProjectName, setTypedProjectName] = useState('');
+  const [isTitleAnimationComplete, setIsTitleAnimationComplete] = useState(false);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,7 +38,8 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
   }, []);
 
   useEffect(() => {
-    setTypedProjectName(''); // Reset on project name change
+    setTypedProjectName('');
+    setIsTitleAnimationComplete(false);
     if (projectName) {
       const initialDelay = 400; 
       const typingSpeed = 100;
@@ -49,6 +52,7 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
             i++;
           } else {
             clearInterval(intervalId);
+            setIsTitleAnimationComplete(true);
           }
         }, typingSpeed);
 
@@ -75,8 +79,10 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
           {typedProjectName}
         </h1>
         <p 
-          className="text-base md:text-lg text-zinc-500 lowercase max-w-md animate-fade-in"
-          style={{ animationDelay: '600ms', animationFillMode: 'backwards' }}
+          className={cn(
+            "text-base md:text-lg text-zinc-500 lowercase max-w-md transition-opacity duration-700",
+            isTitleAnimationComplete ? "opacity-100" : "opacity-0"
+            )}
         >
           {projectReason}
         </p>
