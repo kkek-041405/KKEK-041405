@@ -63,18 +63,18 @@ function WhyPageContent() {
     return (
         <div className="flex flex-col min-h-screen">
             <div className="h-screen flex flex-col items-center justify-center text-center p-4 relative">
-                <Button variant="outline" onClick={() => router.push('/stories/why')} className="absolute top-6 left-6">
+                <Button variant="outline" onClick={() => router.push('/stories/why')} className="absolute top-6 left-6 bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white">
                     <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
                 </Button>
                 
                 <AnimatedSection as="div" className="w-full">
-                    <p className="text-xl text-zinc-400">Project Stories</p>
-                    <h1 className="text-7xl font-mono font-bold text-red-500 my-2">why i build</h1>
+                    <p className="text-lg text-zinc-400">Project Stories</p>
+                    <h1 className="text-6xl md:text-7xl font-mono font-bold text-white my-4">why i build</h1>
                     <p className="text-sm text-zinc-500 mb-8">The story behind the code</p>
                     
-                    <h2 className="text-5xl font-mono font-semibold text-green-400 mb-10">{selectedStory.title}</h2>
+                    <h2 className="text-4xl md:text-5xl font-mono font-semibold text-zinc-300 mb-12">{selectedStory.title}</h2>
 
-                    <Button variant="outline" onClick={handleExploreClick} className="rounded-full px-6">
+                    <Button variant="outline" onClick={handleExploreClick} className="rounded-full px-6 bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white">
                         Explore
                         <ArrowDown className="ml-2 h-4 w-4" />
                     </Button>
@@ -86,7 +86,7 @@ function WhyPageContent() {
                     <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     <div className="flex flex-wrap gap-2 justify-center mt-4">
                         {selectedStory.tags.map(tag => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
                         ))}
                     </div>
                 </header>
