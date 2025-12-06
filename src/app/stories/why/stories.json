@@ -44,5 +44,86 @@
         "content": "Limitations aren’t obstacles — **they're pressure**. Pressure forces clarity. Pressure forces innovation.\n\nZenControl started because I couldn’t afford a new phone. It grew because I **refused to settle for inconvenience**.\n\nNow I approach every problem with a single question:\n\n> **Is this truly impossible — or just inconvenient enough that people learn to live with it?**"
       }
     ]
+  },
+  {
+    "projectId": "notenest",
+    "title": "NoteNest",
+    "slug": "notenest",
+    "date": "2023-08-01",
+    "trigger": "I needed a personal space to organize my work and showcase my projects without relying on third-party platforms like Google Drive, Dropbox, or WhatsApp.",
+    "tagline": "A secure, private workspace to store my notes, PDFs, and files — freeing me from reliance on external platforms.",
+    "reason": "A secure, private workspace to store my notes, PDFs, and files",
+    "githubLink": "https://github.com/kkek-041405/NoteNest",
+    "tags": ["Android", "Firebase", "Storage", "Productivity", "Portfolio"],
+    "sections": [
+      {
+        "title": "Trigger",
+        "content": "I needed a personal space to organize my work — notes, PDFs, code snippets, and other files — without relying on external products like Google Drive, Dropbox, or WhatsApp, all of which require logins or compromise privacy."
+      },
+      {
+        "title": "Pain",
+        "content": "Switching between multiple apps to store and showcase my work was frustrating. I needed a central, private hub where I could safely store files and display selected projects professionally."
+      },
+      {
+        "title": "Turning Point",
+        "content": "Instead of compromising with existing platforms, I decided to build my own secure workspace. By integrating it with my portfolio website, I could manage files privately and showcase them selectively."
+      },
+      {
+        "title": "What I Built",
+        "content": "NoteNest is a password-protected workspace connected to my portfolio website. It allows me to:\n- Store notes, PDFs, and project files securely\n- Organize resources without third-party dependency\n- Showcase selected files and projects to anyone I choose\n- Maintain full control over personal and professional content"
+      },
+      {
+        "title": "Impact",
+        "content": "I now have a single, secure hub for both work and presentation. It’s more than storage — it’s a reflection of my process, my organization, and my ability to create tools tailored to my workflow."
+      },
+      {
+        "title": "What It Taught Me",
+        "content": "Sometimes the best solution isn’t out there — it’s what you build yourself. NoteNest taught me autonomy, privacy, and designing tools that serve both personal and professional needs simultaneously."
+      }
+    ]
+  },
+  {
+    "projectId": "chess",
+    "title": "The Chess Game",
+    "slug": "chess-proof-of-intent",
+    "date": "2023-06-01",
+    "trigger": "I wanted to build something undeniably complex to prove that I could take a product from idea to deployment — without waiting for industry experience.",
+    "tagline": "Not a project from pain — a project from ambition.",
+    "reason": "A personal challenge to build a complex, logic-heavy app that’s unforgiving to bugs — proving I could deliver a production-ready product while juggling coursework.",
+    "githubLink": "https://github.com/kkek-041405/Chess",
+    "tags": ["Android", "Kotlin", "Firebase", "Game Development", "Multiplayer"],
+    "sections": [
+      {
+        "title": "Trigger",
+        "content": "In my 2nd year of B.Tech, I kept hearing that *real* apps only happen after internships or industry experience. I didn’t agree. I didn’t want to wait for permission — I wanted proof that I could build and deploy something complex on my own."
+      },
+      {
+        "title": "Drive",
+        "content": "This project wasn’t fueled by pain — it was fueled by ambition. I chose chess because there are no shortcuts. The logic, state management, UI precision, and synchronisation leave no room for sloppy engineering. If I could build this, then I could build anything."
+      },
+      {
+        "title": "Turning Point",
+        "content": "Once I committed, the scope exploded: move validation, piece logic, multiplayer states, Firebase sync, UI polish, persistence. Instead of stepping back, I doubled down. I attended classes in the day and built through the night. I wasn’t working on an assignment — I was building a product."
+      },
+      {
+        "title": "What I Built",
+        "content": "A full-fledged chess application featuring:\n- Online multiplayer with Firebase\n- Real-time move synchronization\n- Clean Jetpack Compose UI\n- Local mode and a bot to practice with\n\nThe app underwent a 20-user test for 15 days — not for feedback, but because it was required for Play Store deployment. I cleared it and shipped."
+      },
+      {
+        "title": "Impact",
+        "content": "The goal wasn’t downloads or virality. The win was proving that I could take an idea from **scratch → shipped app** while managing coursework and complexity. It wasn’t luck — it was persistence, engineering, and execution."
+      },
+      {
+        "title": "What It Taught Me",
+        "content": "Some projects are born from frustration. This one was born from belief. I learned that validation doesn’t come from praise — it comes from finishing what you start. Today, when someone says students can’t build production-grade apps, I don’t argue. I just point to the app on the Play Store."
+      }
+    ]
   }
+  
+  
 ]
+  
+  
+
+
+

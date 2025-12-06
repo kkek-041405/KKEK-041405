@@ -339,7 +339,7 @@ function WhyPageContent() {
     <div className="py-12 md:py-16">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold">The Reason behind the code</h1>
-        <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not an idea.</p>
+        <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not just an idea.</p>
       </div>
       {stories.length === 0 ? (
         <p className="text-center text-muted-foreground">No stories have been published yet.</p>
