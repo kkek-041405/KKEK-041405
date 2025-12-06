@@ -172,6 +172,13 @@ function WhyPageContent() {
     }
   }
 
+  // Parse story content into sections
+  const storySections = selectedStory?.content.split('### ').filter(section => section.trim() !== '').map(section => {
+    const [title, ...contentParts] = section.split('\n');
+    const content = contentParts.join('\n').trim();
+    return { title, content };
+  });
+
   if (projectId) {
     if (notFound) {
       return (
@@ -197,18 +204,22 @@ function WhyPageContent() {
             />
 
             <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
-                <header className="mb-8 border-b border-zinc-700 pb-6 text-center">
+                <AnimatedSection as="header" triggerOnce={true} className="mb-8 border-b border-zinc-700 pb-6 text-center">
                     <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     <div className="flex flex-wrap gap-2 justify-center mt-4">
                         {selectedStory.tags.map(tag => (
                         <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
                         ))}
                     </div>
-                </header>
-                <div 
-                  className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: selectedStory.content.replace(/### (.*?)\n/g, '<h3 class="text-2xl font-semibold text-white mt-8 mb-4">$1</h3>').replace(/\n/g, '<br />') }} 
-                />
+                </AnimatedSection>
+                <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
+                    {storySections?.map((section, index) => (
+                        <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
+                            <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
+                            <p className="!mt-0">{section.content.replace(/\n/g, '\n\n')}</p>
+                        </AnimatedSection>
+                    ))}
+                </div>
             </article>
         </div>
     );
