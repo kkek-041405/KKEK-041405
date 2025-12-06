@@ -156,10 +156,20 @@ function WhyPageContent() {
   const router = useRouter();
   const projectId = searchParams.get('project');
   const storyContentRef = useRef<HTMLDivElement>(null);
+  const [isStoryVisible, setIsStoryVisible] = useState(false);
 
   const handleExploreClick = () => {
-    storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setIsStoryVisible(true);
   };
+  
+  useEffect(() => {
+    if (isStoryVisible && storyContentRef.current) {
+        // Wait a moment for the DOM to update, then scroll
+        setTimeout(() => {
+            storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
+  }, [isStoryVisible]);
 
   const stories: Story[] = storiesData.map(story => ({...story, id: story.projectId}));
   let selectedStory: Story | null = null;
@@ -202,25 +212,27 @@ function WhyPageContent() {
               onExploreClick={handleExploreClick}
               onBackClick={() => router.push('/stories/why')}
             />
-
-            <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
-                <AnimatedSection as="header" triggerOnce={true} className="mb-8 border-b border-zinc-700 pb-6 text-center">
-                    <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                    <div className="flex flex-wrap gap-2 justify-center mt-4">
-                        {selectedStory.tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
-                        ))}
-                    </div>
-                </AnimatedSection>
-                <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
-                    {storySections?.map((section, index) => (
-                        <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
-                            <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
-                            <p className="!mt-0">{section.content.replace(/\n/g, '\n\n')}</p>
-                        </AnimatedSection>
-                    ))}
-                </div>
-            </article>
+            
+            {isStoryVisible && (
+              <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
+                  <AnimatedSection as="header" triggerOnce={true} className="mb-8 border-b border-zinc-700 pb-6 text-center">
+                      <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                      <div className="flex flex-wrap gap-2 justify-center mt-4">
+                          {selectedStory.tags.map(tag => (
+                          <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
+                          ))}
+                      </div>
+                  </AnimatedSection>
+                  <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
+                      {storySections?.map((section, index) => (
+                          <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
+                              <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
+                              <p className="!mt-0">{section.content.replace(/\n/g, '\n\n')}</p>
+                          </AnimatedSection>
+                      ))}
+                  </div>
+              </article>
+            )}
         </div>
     );
   }
