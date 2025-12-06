@@ -3,7 +3,7 @@
 
 import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Loader2, ArrowLeft, ArrowDown } from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowRight, ArrowDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -53,16 +53,13 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 
     let match;
     while ((match = regex.exec(content)) !== null) {
-        // Add the text before the match
         if (match.index > lastIndex) {
             parts.push(content.substring(lastIndex, match.index));
         }
-        // Add the matched part (code block or blockquote)
         parts.push(match[0]);
         lastIndex = regex.lastIndex;
     }
 
-    // Add any remaining text after the last match
     if (lastIndex < content.length) {
         parts.push(content.substring(lastIndex));
     }
@@ -75,7 +72,6 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
             {parts.map((part, index) => {
                 if (!part) return null;
                 
-                // Handle Demo placeholder
                 if (part.trim() === '[Screenshots / demo carousel here]') {
                   return (
                      <div key={`demo-${keyCounter++}`} className="text-center my-8 p-8 border border-dashed border-zinc-700 rounded-lg">
@@ -84,23 +80,39 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
                   )
                 }
 
-                // Handle code blocks
                 if (part.startsWith('```')) {
-                    const code = part.replace(/^```\s*|```\s*$/g, '').trim();
-                    return (
+                    const codeBlockContent = part.replace(/^```\s*|```\s*$/g, '').trim();
+                    const lines = codeBlockContent.split('\n');
+                    const codeContent = lines.slice(0, -1).join('\n');
+                    const lastLine = lines[lines.length - 1];
+
+                    // Heuristic: Check if the last line looks like code or a regular sentence.
+                    // This is imperfect but covers the current use case.
+                    const isLastLineCode = lastLine.trim().startsWith('“') || lastLine.includes(';') || lastLine.includes('{');
+                    
+                    if (!isLastLineCode) {
+                        return (
+                          <React.Fragment key={`code-frag-${keyCounter++}`}>
+                            <pre className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                                <code>{codeContent}</code>
+                            </pre>
+                            <p className="text-zinc-300">{renderInlineMarkdown(lastLine)}</p>
+                          </React.Fragment>
+                        );
+                    }
+                     return (
                         <pre key={`code-${keyCounter++}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
-                            <code>{code}</code>
+                            <code>{codeBlockContent}</code>
                         </pre>
                     );
                 }
 
-                // Handle blockquotes
                 if (part.startsWith('>')) {
                     const quoteContent = part.split('\n').map(line => line.replace(/^>\s?/, '')).join('\n');
-                     if(part.includes('Pull-Quote')){ // Specific styling for the pull-quote
+                     if(part.includes('Pull-Quote')){ 
                         return (
                            <blockquote key={`quote-${keyCounter++}`} className="text-center text-2xl leading-relaxed my-12 text-zinc-300">
-                             <p>{renderInlineMarkdown(quoteContent)}</p>
+                             <p>{renderInlineMarkdown(quoteContent.replace('Pull-Quote: ', ''))}</p>
                            </blockquote>
                         )
                     }
@@ -111,7 +123,6 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
                     );
                 }
                 
-                // Handle remaining text as paragraphs and lists
                 const paragraphs = part.split('\n\n').filter(p => p.trim() !== '');
                 return paragraphs.map((para) => {
                     if (para.split('\n').every(line => line.trim().startsWith('- '))) {
@@ -123,11 +134,17 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
                             </ul>
                         )
                     }
-                    return (
+                     const paraLines = para.split('\n');
+                      return (
                         <p key={`p-${keyCounter++}`} className="text-zinc-300">
-                           {renderInlineMarkdown(para)}
+                           {paraLines.map((line, lineIdx) => (
+                             <React.Fragment key={lineIdx}>
+                               {renderInlineMarkdown(line)}
+                               {lineIdx < paraLines.length - 1 && <br />}
+                             </React.Fragment>
+                           ))}
                         </p>
-                    );
+                      );
                 });
             })}
         </>
@@ -135,7 +152,6 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
 };
 
 
-// Reusable Hero Component
 const StoryHero = ({ 
   projectName, 
   projectReason, 
@@ -262,16 +278,11 @@ function WhyPageContent() {
 
   const handleExploreClick = () => {
     setIsStoryVisible(true);
+    setTimeout(() => {
+        storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
   
-  useEffect(() => {
-    if (isStoryVisible && storyContentRef.current) {
-        setTimeout(() => {
-            storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-    }
-  }, [isStoryVisible]);
-
   const stories: Story[] = storiesData.map(story => ({...story, id: story.projectId}));
   let selectedStory: Story | null = null;
   let notFound = false;
@@ -286,13 +297,13 @@ function WhyPageContent() {
   if (projectId) {
     if (notFound) {
       return (
-        <AnimatedSection as="div" className="flex-1 text-center p-8">
+        <div className="flex-1 text-center p-8">
           <h2 className="text-2xl font-semibold mb-4">Story Not Found</h2>
           <p className="text-muted-foreground mb-6">The story for project "{projectId}" could not be found.</p>
           <Button onClick={() => router.push('/stories/why')}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Stories
           </Button>
-        </AnimatedSection>
+        </div>
       );
     }
 
@@ -309,32 +320,23 @@ function WhyPageContent() {
             
             {isStoryVisible && (
               <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
-                  <AnimatedSection as="header" triggerOnce={true} className="mb-8 border-b border-zinc-700 pb-6 text-center">
+                  <header className="mb-8 border-b border-zinc-700 pb-6 text-center">
                       <div className="flex flex-wrap gap-2 justify-center mb-4">
                           {selectedStory.tags.map(tag => (
                           <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
                           ))}
                       </div>
                       <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                  </AnimatedSection>
+                  </header>
                   <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
-                      {selectedStory.sections.map((section, index) => {
-                          if (section.title === "Pull-Quote") {
-                             return (
-                               <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
-                                  <SimpleMarkdownParser content={section.content} />
-                               </AnimatedSection>
-                             )
-                          }
-                          return (
+                      {selectedStory.sections.map((section, index) => (
                             <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
-                                <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
+                                {section.title !== "Pull-Quote" && <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>}
                                 <div className="!mt-0">
                                     <SimpleMarkdownParser content={section.content} />
                                 </div>
                             </AnimatedSection>
-                          )
-                        })}
+                        ))}
                   </div>
                   {selectedStory.githubLink && (
                     <div className="text-center mt-12 pt-8 border-t border-zinc-700">
@@ -352,40 +354,43 @@ function WhyPageContent() {
   }
 
   return (
-    <AnimatedSection as="div" className="py-12 md:py-16">
+    <div className="py-12 md:py-16">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold">Project Stories</h1>
-        <p className="text-lg text-muted-foreground mt-2">The "why" behind the code.</p>
+        <p className="text-lg text-zinc-400 mt-2">The personal challenges that led to the code.</p>
       </div>
       {stories.length === 0 ? (
         <p className="text-center text-muted-foreground">No stories have been published yet.</p>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {stories.map(story => (
             <Link key={story.id} href={`/stories/why?project=${story.projectId}`} legacyBehavior>
-              <a className="block h-full">
-                <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1 bg-zinc-900 border-zinc-800">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-white">{story.title}</CardTitle>
-                    <CardDescription>{new Date(story.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-zinc-400 line-clamp-3">
+              <a className="block h-full group">
+                <div className="flex flex-col h-full overflow-hidden rounded-lg bg-zinc-900/50 border border-white/5 p-8 transition-all duration-300 group-hover:scale-105 group-hover:border-white/10"
+                  style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+                >
+                  <div className="flex-grow">
+                    <p className="text-sm text-zinc-500 mb-1">{new Date(story.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <h2 className="text-2xl font-bold text-white mb-3">{story.title}</h2>
+                    <p className="text-zinc-400 leading-relaxed mb-6 line-clamp-3">
                       {story.tagline}
                     </p>
-                  </CardContent>
-                   <div className="p-6 pt-0">
-                      <div className="flex flex-wrap gap-2">
-                         {story.tags.slice(0, 3).map(tag => <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-300">{tag}</Badge>)}
-                      </div>
                   </div>
-                </Card>
+                  <div className="mt-auto">
+                     <div className="flex items-center text-sm font-medium text-primary mb-4 transition-transform group-hover:translate-x-1">
+                        → Read the story
+                      </div>
+                    <div className="flex flex-wrap gap-2">
+                         {story.tags.slice(0, 3).map(tag => <Badge key={tag} variant="outline" className="border-zinc-700 text-zinc-300">{tag}</Badge>)}
+                    </div>
+                  </div>
+                </div>
               </a>
             </Link>
           ))}
         </div>
       )}
-    </AnimatedSection>
+    </div>
   );
 }
 

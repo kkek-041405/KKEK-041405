@@ -31,10 +31,6 @@
         "content": "The first version was simple: **calls in and calls out without touching the display**. Then I expanded it — music control, toggling features, basic automation. With each update, **the screen mattered less**.\n\nEventually the idea shifted from controlling a *broken* phone to **controlling a phone hands-free**.\n\nThat’s when **ZenControl** was born — a personal on-device assistant that executes commands directly:\n\n```\n“Turn on the hotspot.”\n“Play music.”\n“Call Dad.”\n```\n\nNo typing, no swiping — **just intent → action.**"
       },
       {
-        "title": "Demo",
-        "content": "[Screenshots / demo carousel here]"
-      },
-      {
         "title": "Impact",
         "content": "Instead of buying a new phone, I **repurposed a broken one into something more powerful**. ZenControl didn’t just save money — it unlocked control in situations where touchscreens normally fail:\n- driving\n- multitasking\n- accessibility challenges\n- low-vision use cases\n\nA device that was once **unusable** became **effortless**."
       },
