@@ -28,6 +28,39 @@ interface Story {
   date: string;
 }
 
+const SimpleMarkdownParser = ({ content }: { content: string }) => {
+    const parts = content.split(/(\*\*.*?\*\*|\*.*?\*|`{3}[\s\S]*?`{3}|>.*)/g);
+
+    return (
+        <>
+            {parts.map((part, index) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={index} className="text-white">{part.slice(2, -2)}</strong>;
+                }
+                if (part.startsWith('*') && part.endsWith('*')) {
+                    return <em key={index}>{part.slice(1, -1)}</em>;
+                }
+                 if (part.startsWith('```') && part.endsWith('```')) {
+                    return (
+                        <pre key={index} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                            <code>{part.slice(3, -3).trim()}</code>
+                        </pre>
+                    );
+                }
+                 if (part.startsWith('>')) {
+                    return (
+                        <blockquote key={index} className="border-l-4 border-zinc-600 pl-4 italic text-zinc-400 my-4">
+                            {part.slice(1).trim()}
+                        </blockquote>
+                    );
+                }
+                return <React.Fragment key={index}>{part.split('\n').map((line, i) => <React.Fragment key={i}>{line}{i < part.split('\n').length - 1 && <br/>}</React.Fragment>)}</React.Fragment>;
+            })}
+        </>
+    );
+};
+
+
 // Reusable Hero Component
 const StoryHero = ({ 
   projectName, 
@@ -41,8 +74,6 @@ const StoryHero = ({
   onBackClick: () => void
 }) => {
   const [typedProjectName, setTypedProjectName] = useState('');
-
-  // Animation sequence states
   const [showWhy, setShowWhy] = useState(false);
   const [startTypingName, setStartTypingName] = useState(false);
   const [showReason, setShowReason] = useState(false);
@@ -50,15 +81,11 @@ const StoryHero = ({
   const [showBackButton, setShowBackButton] = useState(false);
   const [isArrowAnimating, setIsArrowAnimating] = useState(false);
 
-
   useEffect(() => {
-    // Staggered animation sequence
     const timers: NodeJS.Timeout[] = [];
-    timers.push(setTimeout(() => setShowWhy(true), 500)); // 1. "why i built" fades in
-    timers.push(setTimeout(() => setStartTypingName(true), 1200)); // 2. Start typing project name
+    timers.push(setTimeout(() => setShowWhy(true), 500));
+    timers.push(setTimeout(() => setStartTypingName(true), 1200));
     
-    // Dependent animations are handled in other useEffects
-
     return () => timers.forEach(clearTimeout);
   }, []);
   
@@ -71,7 +98,6 @@ const StoryHero = ({
           i++;
         } else {
           clearInterval(intervalId);
-          // 3. Subheadline fades in after typing is complete
           setTimeout(() => setShowReason(true), 400); 
         }
       }, 100);
@@ -82,16 +108,13 @@ const StoryHero = ({
   
   useEffect(() => {
     if(showReason) {
-       // 4. "Explore" button fades in
        setTimeout(() => setShowExploreButton(true), 500);
     }
   }, [showReason]);
 
   useEffect(() => {
     if (showExploreButton) {
-      // 5. "Back" button fades in
       setTimeout(() => setShowBackButton(true), 500);
-      // Trigger arrow animation
       setTimeout(() => setIsArrowAnimating(true), 1500);
     }
   }, [showExploreButton]);
@@ -169,7 +192,6 @@ function WhyPageContent() {
   
   useEffect(() => {
     if (isStoryVisible && storyContentRef.current) {
-        // Wait a moment for the DOM to update, then scroll
         setTimeout(() => {
             storyContentRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -225,7 +247,9 @@ function WhyPageContent() {
                       {selectedStory.sections.map((section, index) => (
                           <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
                               <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
-                              <p className="!mt-0 whitespace-pre-line">{section.content}</p>
+                              <p className="!mt-0">
+                                  <SimpleMarkdownParser content={section.content} />
+                              </p>
                           </AnimatedSection>
                       ))}
                   </div>
