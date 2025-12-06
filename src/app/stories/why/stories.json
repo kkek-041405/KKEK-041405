@@ -1,0 +1,10 @@
+[
+  {
+    "projectId": "zencontrol",
+    "title": "ZenControl: Bringing Peace to Digital Chaos",
+    "slug": "why-zencontrol",
+    "date": "2024-12-06",
+    "tags": ["IoT", "Dashboard", "React", "Automation"],
+    "content": "### The Spark\n\nWe live in an era of fragmentation. My digital life was scattered across a dozen different apps—one for lights, one for server stats, another for task management. I found myself spending more time *managing* my tools than actually using them. The irony wasn't lost on me: technology was supposed to make life easier, but it was just adding cognitive load.\n\n### The Vision\n\nI wanted a \"Single Pane of Glass\"—a dashboard that wasn't just functional, but *calming*. I didn't want a clutter of graphs and buttons; I wanted **Zen**. The goal was to build a centralized control center that aggregated data from my most-used services and IoT devices into a minimalist, distraction-free interface.\n\n### The Build\n\nBuilding ZenControl was an exercise in restraint. The challenge wasn't just connecting APIs; it was deciding what to *leave out*. I chose **Next.js** for its snappy rendering and **Firebase** for real-time state synchronization. If a light turns on in the living room, or a server goes down, ZenControl reflects it instantly, without a refresh.\n\nOne of the most interesting technical hurdles was normalizing data streams from different sources. I had to write a custom adapter layer to treat a Spotify API response and a smart bulb status update as uniform \"events\" within the system.\n\n### The Outcome\n\nToday, ZenControl is the first tab I open. It’s not just a project; it’s my daily driver. It taught me that in software engineering, the best user interface is often the one that requires the least amount of attention. By controlling the chaos, I finally found my focus."
+  }
+]
