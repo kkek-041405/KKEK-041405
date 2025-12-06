@@ -202,16 +202,10 @@ function WhyPageContent() {
 // The main page component that wraps the content in Suspense
 export default function WhyPage() {
     return (
-        <div 
-            className="dark flex flex-col min-h-screen" 
-            style={{ 
-                '--background': '0 0% 0%', 
-                '--foreground': '0 0% 100%' 
-            } as React.CSSProperties}
-        >
+        <div className="dark bg-black text-white flex flex-col min-h-screen">
             <main className="flex-1 container mx-auto px-4">
                 <Suspense fallback={
-                    <div className="flex-1 flex items-center justify-center h-full">
+                    <div className="flex-1 flex items-center justify-center h-screen">
                         <Loader2 className="h-12 w-12 animate-spin text-primary" />
                     </div>
                 }>
