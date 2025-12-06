@@ -6,6 +6,7 @@ import type {Metadata} from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; 
+import { cn } from '@/lib/utils';
 
 const geistSans = Inter({ 
   variable: '--font-geist-sans',
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className={`font-sans antialiased h-screen w-screen overflow-hidden flex flex-col`} suppressHydrationWarning={true}>
-        <div className="flex-1 overflow-auto">
+        <div className={cn("flex-1 overflow-auto no-scrollbar")}>
           {children}
         </div>
         <Toaster />
