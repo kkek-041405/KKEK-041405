@@ -16,6 +16,7 @@ interface Story {
   id: string;
   projectId: string;
   title: string;
+  tagline: string;
   content: string;
   tags: string[];
   date: string;
@@ -118,7 +119,7 @@ function WhyPageContent() {
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <p className="text-zinc-400 line-clamp-3">
-                      {story.content.substring(0, 150).replace(/<[^>]*>?/gm, '').replace(/###/g, '')}...
+                      {story.tagline}
                     </p>
                   </CardContent>
                    <div className="p-6 pt-0">
