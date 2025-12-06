@@ -38,14 +38,14 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
   useEffect(() => {
     setTypedProjectName(''); // Reset on project name change
     if (projectName) {
-      const initialDelay = 400; // Corresponds to the old animation-delay
-      const typingSpeed = 100; // ms per character
+      const initialDelay = 400; 
+      const typingSpeed = 100;
 
       const timeoutId = setTimeout(() => {
         let i = 0;
         const intervalId = setInterval(() => {
-          if (i < projectName.length) {
-            setTypedProjectName(prev => prev + projectName.charAt(i));
+          if (i <= projectName.length) {
+            setTypedProjectName(projectName.substring(0, i));
             i++;
           } else {
             clearInterval(intervalId);
