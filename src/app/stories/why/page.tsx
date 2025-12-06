@@ -69,7 +69,6 @@ function WhyPageContent() {
                 
                 <AnimatedSection as="div" className="w-full">
                     <h1 className="text-6xl md:text-7xl font-mono font-bold text-white my-4">why i build</h1>
-                    <p className="text-sm text-zinc-500 mb-8">The story behind the code</p>
                     
                     <h2 className="text-4xl md:text-5xl font-mono font-semibold text-zinc-300 mb-12">{selectedStory.title}</h2>
 
