@@ -28,102 +28,76 @@ interface Story {
   date: string;
 }
 
-const SimpleMarkdownParser = ({ content }: { content: string }) => {
-    // Split by newlines to process line-by-line for block elements
-    const lines = content.split('\n');
-    const elements: React.ReactNode[] = [];
+const renderInlineMarkdown = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
 
-    let currentBlock: string[] | null = null;
-    let inCodeBlock = false;
-
-    lines.forEach((line, lineIndex) => {
-        if (line.startsWith('```')) {
-            if (inCodeBlock) {
-                // End of code block
-                elements.push(
-                    <pre key={`code-${elements.length}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
-                        <code>{currentBlock?.join('\n')}</code>
-                    </pre>
-                );
-                currentBlock = null;
-                inCodeBlock = false;
-            } else {
-                // Start of code block
-                inCodeBlock = true;
-                currentBlock = [];
-            }
-            return;
+    return parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={index} className="text-white">{part.slice(2, -2)}</strong>;
         }
-
-        if (inCodeBlock) {
-            currentBlock?.push(line);
-            return;
+        if (part.startsWith('*') && part.endsWith('*')) {
+            return <em key={index}>{part.slice(1, -1)}</em>;
         }
-
-        if (line.startsWith('>')) {
-            elements.push(
-                <blockquote key={`quote-${lineIndex}`} className="border-l-4 border-zinc-600 pl-4 italic text-zinc-400 my-4">
-                    {line.slice(1).trim()}
-                </blockquote>
-            );
-            return;
+        if (part.startsWith('`') && part.endsWith('`')) {
+            return <code key={index} className="bg-zinc-800/60 text-zinc-300 rounded-sm px-1.5 py-0.5 font-mono text-sm">{part.slice(1, -1)}</code>;
         }
-        
-        // Handle inline markdown within paragraphs
-        const parts = line.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
-
-        elements.push(
-            <React.Fragment key={`line-${lineIndex}`}>
-                {parts.map((part, index) => {
-                    if (part.startsWith('**') && part.endsWith('**')) {
-                        return <strong key={index} className="text-white">{part.slice(2, -2)}</strong>;
-                    }
-                    if (part.startsWith('*') && part.endsWith('*')) {
-                        return <em key={index}>{part.slice(1, -1)}</em>;
-                    }
-                     if (part.startsWith('`') && part.endsWith('`')) {
-                        return <code key={index} className="bg-zinc-800/60 text-zinc-300 rounded-sm px-1.5 py-0.5 font-mono text-sm">{part.slice(1, -1)}</code>;
-                    }
-                    return <React.Fragment key={index}>{part}</React.Fragment>;
-                })}
-                {lineIndex < lines.length -1 && <br />}
-            </React.Fragment>
-        );
+        return <React.Fragment key={index}>{part}</React.Fragment>;
     });
-
-    // Handle unterminated code block at the end of content
-    if (inCodeBlock && currentBlock) {
-        elements.push(
-            <pre key="code-final" className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
-                <code>{currentBlock.join('\n')}</code>
-            </pre>
-        );
-    }
-    
-    // Group consecutive <br> and text fragments into paragraphs
-    const finalElements: React.ReactNode[] = [];
-    let pBuffer: React.ReactNode[] = [];
-
-    elements.forEach((el, index) => {
-        if (typeof el === 'object' && el !== null && 'type' in el && (el.type === 'blockquote' || el.type === 'pre')) {
-            if (pBuffer.length > 0) {
-                finalElements.push(<p key={`p-${finalElements.length}`}>{pBuffer}</p>);
-                pBuffer = [];
-            }
-            finalElements.push(el);
-        } else {
-            pBuffer.push(el);
-        }
-    });
-
-    if (pBuffer.length > 0) {
-        finalElements.push(<p key={`p-final`}>{pBuffer}</p>);
-    }
-
-
-    return <>{finalElements}</>;
 };
 
+const SimpleMarkdownParser = ({ content }: { content: string }) => {
+    const blocks = content.split('\n\n');
+
+    return (
+        <>
+            {blocks.map((block, blockIndex) => {
+                if (block.startsWith('```')) {
+                    const code = block.replace(/```/g, '').trim();
+                    return (
+                        <pre key={`code-${blockIndex}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
+                            <code>{code}</code>
+                        </pre>
+                    );
+                }
+                
+                const lines = block.split('\n');
+                
+                // Handle blockquotes
+                if (lines.every(line => line.startsWith('>'))) {
+                    const quoteContent = lines.map(line => line.slice(1).trim()).join('\n');
+                    return (
+                         <blockquote key={`quote-${blockIndex}`} className="border-l-4 border-primary pl-4 italic text-zinc-300 my-4">
+                            <p>{renderInlineMarkdown(quoteContent)}</p>
+                        </blockquote>
+                    );
+                }
+
+                // Handle lists (basic unordered)
+                if (lines.every(line => line.trim().startsWith('- '))) {
+                    return (
+                        <ul key={`list-${blockIndex}`} className="list-disc pl-6 space-y-2 my-4">
+                            {lines.map((line, lineIndex) => (
+                                <li key={lineIndex}>{renderInlineMarkdown(line.trim().slice(2))}</li>
+                            ))}
+                        </ul>
+                    )
+                }
+
+                // Handle regular paragraphs
+                return (
+                    <p key={`p-${blockIndex}`}>
+                        {lines.map((line, lineIndex) => (
+                            <React.Fragment key={lineIndex}>
+                                {renderInlineMarkdown(line)}
+                                {lineIndex < lines.length - 1 && <br />}
+                            </React.Fragment>
+                        ))}
+                    </p>
+                );
+            })}
+        </>
+    );
+};
 
 
 // Reusable Hero Component
@@ -139,12 +113,12 @@ const StoryHero = ({
   onBackClick: () => void
 }) => {
   const [typedProjectName, setTypedProjectName] = useState('');
-  const [showWhy, setShowWhy] = useState(false);
   const [startTypingName, setStartTypingName] = useState(false);
-  const [showReason, setShowReason] = useState(false);
+  const [showSubheadline, setShowSubheadline] = useState(false);
   const [showExploreButton, setShowExploreButton] = useState(false);
   const [showBackButton, setShowBackButton] = useState(false);
   const [isArrowAnimating, setIsArrowAnimating] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
@@ -163,7 +137,7 @@ const StoryHero = ({
           i++;
         } else {
           clearInterval(intervalId);
-          setTimeout(() => setShowReason(true), 400); 
+          setTimeout(() => setShowSubheadline(true), 400); 
         }
       }, 100);
 
@@ -172,10 +146,10 @@ const StoryHero = ({
   }, [startTypingName, projectName]);
   
   useEffect(() => {
-    if(showReason) {
+    if(showSubheadline) {
        setTimeout(() => setShowExploreButton(true), 500);
     }
-  }, [showReason]);
+  }, [showSubheadline]);
 
   useEffect(() => {
     if (showExploreButton) {
@@ -185,7 +159,7 @@ const StoryHero = ({
   }, [showExploreButton]);
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center text-center p-6 relative">
+    <div className="h-screen flex flex-col items-center justify-center text-center p-6 relative bg-black">
        <Button 
         variant="outline" 
         onClick={onBackClick} 
@@ -212,7 +186,7 @@ const StoryHero = ({
         <p 
           className={cn(
             "text-base md:text-lg text-zinc-500 lowercase max-w-md transition-opacity duration-700",
-            showReason ? "opacity-100" : "opacity-0"
+            showSubheadline ? "opacity-100" : "opacity-0"
             )}
         >
           {projectReason}
