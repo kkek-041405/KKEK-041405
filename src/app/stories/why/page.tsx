@@ -12,13 +12,18 @@ import AnimatedSection from '@/components/animated-section';
 import storiesData from './stories.json';
 import { cn } from '@/lib/utils';
 
+interface StorySection {
+  title: string;
+  content: string;
+}
+
 interface Story {
   id: string;
   projectId: string;
   title: string;
   tagline: string;
   reason: string;
-  content: string;
+  sections: StorySection[];
   tags: string[];
   date: string;
 }
@@ -182,13 +187,6 @@ function WhyPageContent() {
     }
   }
 
-  // Parse story content into sections
-  const storySections = selectedStory?.content.split('### ').filter(section => section.trim() !== '').map(section => {
-    const [title, ...contentParts] = section.split('\n');
-    const content = contentParts.join('\n').trim();
-    return { title, content };
-  });
-
   if (projectId) {
     if (notFound) {
       return (
@@ -224,10 +222,10 @@ function WhyPageContent() {
                       </div>
                   </AnimatedSection>
                   <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
-                      {storySections?.map((section, index) => (
+                      {selectedStory.sections.map((section, index) => (
                           <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
                               <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
-                              <p className="!mt-0">{section.content.replace(/\n/g, '\n\n')}</p>
+                              <p className="!mt-0 whitespace-pre-line">{section.content}</p>
                           </AnimatedSection>
                       ))}
                   </div>
