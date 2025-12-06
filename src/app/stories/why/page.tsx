@@ -26,6 +26,7 @@ interface Story {
   sections: StorySection[];
   tags: string[];
   date: string;
+  githubLink?: string;
 }
 
 const renderInlineMarkdown = (text: string) => {
@@ -47,17 +48,45 @@ const renderInlineMarkdown = (text: string) => {
 
 const SimpleMarkdownParser = ({ content }: { content: string }) => {
     const regex = /(```[\s\S]*?```|>[^\n]+(?:\n[^\n]+)*)/g;
-    const parts = content.split(regex);
+    let lastIndex = 0;
+    const parts = [];
+
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+        // Add the text before the match
+        if (match.index > lastIndex) {
+            parts.push(content.substring(lastIndex, match.index));
+        }
+        // Add the matched part (code block or blockquote)
+        parts.push(match[0]);
+        lastIndex = regex.lastIndex;
+    }
+
+    // Add any remaining text after the last match
+    if (lastIndex < content.length) {
+        parts.push(content.substring(lastIndex));
+    }
+
+
     let keyCounter = 0;
 
     return (
         <>
             {parts.map((part, index) => {
                 if (!part) return null;
+                
+                // Handle Demo placeholder
+                if (part.trim() === '[Screenshots / demo carousel here]') {
+                  return (
+                     <div key={`demo-${keyCounter++}`} className="text-center my-8 p-8 border border-dashed border-zinc-700 rounded-lg">
+                        <p className="text-zinc-500 italic">{part.trim()}</p>
+                    </div>
+                  )
+                }
 
                 // Handle code blocks
                 if (part.startsWith('```')) {
-                    const code = part.replace(/```/g, '').trim();
+                    const code = part.replace(/^```\s*|```\s*$/g, '').trim();
                     return (
                         <pre key={`code-${keyCounter++}`} className="bg-zinc-800/50 border border-zinc-700 rounded-md p-4 my-4 whitespace-pre-wrap">
                             <code>{code}</code>
@@ -68,6 +97,13 @@ const SimpleMarkdownParser = ({ content }: { content: string }) => {
                 // Handle blockquotes
                 if (part.startsWith('>')) {
                     const quoteContent = part.split('\n').map(line => line.replace(/^>\s?/, '')).join('\n');
+                     if(part.includes('Pull-Quote')){ // Specific styling for the pull-quote
+                        return (
+                           <blockquote key={`quote-${keyCounter++}`} className="text-center text-2xl leading-relaxed my-12 text-zinc-300">
+                             <p>{renderInlineMarkdown(quoteContent)}</p>
+                           </blockquote>
+                        )
+                    }
                     return (
                         <blockquote key={`quote-${keyCounter++}`} className="border-l-4 border-primary pl-4 italic text-zinc-300 my-4">
                             <p>{renderInlineMarkdown(quoteContent)}</p>
@@ -198,7 +234,7 @@ const StoryHero = ({
             variant="outline" 
             className="rounded-full px-5 py-3 text-sm bg-zinc-900 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100"
           >
-            Read the Story
+            The journey from problem → innovation
             <ArrowDown className={cn("ml-2 h-4 w-4 transition-transform", isArrowAnimating && "animate-bounce-once")} />
           </Button>
         </div>
@@ -274,23 +310,41 @@ function WhyPageContent() {
             {isStoryVisible && (
               <article ref={storyContentRef} className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 w-full">
                   <AnimatedSection as="header" triggerOnce={true} className="mb-8 border-b border-zinc-700 pb-6 text-center">
-                      <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                      <div className="flex flex-wrap gap-2 justify-center mt-4">
+                      <div className="flex flex-wrap gap-2 justify-center mb-4">
                           {selectedStory.tags.map(tag => (
                           <Badge key={tag} variant="secondary" className="bg-zinc-800 text-zinc-300 border-zinc-700">{tag}</Badge>
                           ))}
                       </div>
+                      <p className="text-zinc-400 text-lg">Published on {new Date(selectedStory.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                   </AnimatedSection>
                   <div className="prose dark:prose-invert prose-lg max-w-none text-zinc-300 leading-relaxed space-y-6">
-                      {selectedStory.sections.map((section, index) => (
-                          <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
-                              <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
-                              <div className="!mt-0">
+                      {selectedStory.sections.map((section, index) => {
+                          if (section.title === "Pull-Quote") {
+                             return (
+                               <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
                                   <SimpleMarkdownParser content={section.content} />
-                              </div>
-                          </AnimatedSection>
-                      ))}
+                               </AnimatedSection>
+                             )
+                          }
+                          return (
+                            <AnimatedSection as="div" triggerOnce={true} key={index} className="space-y-4" delay={`delay-${index * 100}`}>
+                                <h3 className="text-2xl font-semibold text-white !mb-3">{section.title}</h3>
+                                <div className="!mt-0">
+                                    <SimpleMarkdownParser content={section.content} />
+                                </div>
+                            </AnimatedSection>
+                          )
+                        })}
                   </div>
+                  {selectedStory.githubLink && (
+                    <div className="text-center mt-12 pt-8 border-t border-zinc-700">
+                        <Button variant="link" asChild className="text-zinc-400 hover:text-white">
+                            <Link href={selectedStory.githubLink} target="_blank" rel="noopener noreferrer">
+                                Follow the development on GitHub →
+                            </Link>
+                        </Button>
+                    </div>
+                  )}
               </article>
             )}
         </div>
