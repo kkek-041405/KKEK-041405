@@ -26,6 +26,7 @@ interface Story {
 // Reusable Hero Component
 const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName: string, projectReason: string, onExploreClick: () => void }) => {
   const [isArrowAnimating, setIsArrowAnimating] = useState(false);
+  const [typedProjectName, setTypedProjectName] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,6 +34,31 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    setTypedProjectName(''); // Reset on project name change
+    if (projectName) {
+      const initialDelay = 400; // Corresponds to the old animation-delay
+      const typingSpeed = 100; // ms per character
+
+      const timeoutId = setTimeout(() => {
+        let i = 0;
+        const intervalId = setInterval(() => {
+          if (i < projectName.length) {
+            setTypedProjectName(prev => prev + projectName.charAt(i));
+            i++;
+          } else {
+            clearInterval(intervalId);
+          }
+        }, typingSpeed);
+
+        return () => clearInterval(intervalId);
+      }, initialDelay);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [projectName]);
+
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center p-6 relative">
@@ -44,10 +70,10 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
           why i built
         </p>
         <h1 
-          className="text-6xl sm:text-7xl md:text-8xl font-semibold text-zinc-100 animate-fade-in"
-          style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}
+          className="text-6xl sm:text-7xl md:text-8xl font-semibold text-zinc-100 min-h-[1.2em]"
         >
-          {projectName}
+          {typedProjectName}
+          <span className="animate-blink">|</span>
         </h1>
         <p 
           className="text-base md:text-lg text-zinc-500 lowercase max-w-md animate-fade-in"
@@ -83,6 +109,13 @@ const StoryHero = ({ projectName, projectReason, onExploreClick }: { projectName
         }
         .animate-bounce-once {
           animation: bounce-once 1s ease-in-out;
+        }
+        @keyframes blink-caret {
+          from, to { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .animate-blink {
+          animation: blink-caret 1s step-end infinite;
         }
       `}</style>
     </div>
