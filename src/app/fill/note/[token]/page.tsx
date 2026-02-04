@@ -41,7 +41,7 @@ export default async function FillNotePage({ params }: { params: { token: string
             </Link>
         </header>
         <main className="flex-1 flex flex-col items-center justify-center p-4">
-            <NoteFillForm note={note} />
+            <NoteFillForm note={note} token={token} />
         </main>
     </div>
   );

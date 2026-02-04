@@ -13,9 +13,26 @@ import Link from 'next/link';
 
 interface NoteFillFormProps {
   note: Note;
+  token: string;
 }
 
-export function NoteFillForm({ note }: NoteFillFormProps) {
+// New client-side service function to call the API route
+async function consumeTokenOnServer(token: string) {
+  try {
+    const res = await fetch('/api/notes/consume-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+    if (!res.ok) {
+        console.warn('Failed to consume token on server. The link may be reusable.');
+    }
+  } catch (error) {
+    console.warn('Failed to make consume token request:', error);
+  }
+}
+
+export function NoteFillForm({ note, token }: NoteFillFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -51,6 +68,9 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
       
       // Update the existing note
       await updateNoteInFirestore(note.id, submissionData);
+      
+      // After successful submission, consume the token.
+      await consumeTokenOnServer(token);
       
       setIsSubmitted(true);
     } catch (error) {

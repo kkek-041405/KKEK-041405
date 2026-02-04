@@ -3,13 +3,11 @@ import { db } from '@/lib/firebase';
 import {
   doc,
   getDoc,
-  updateDoc,
-  increment,
   deleteDoc,
   Timestamp,
 } from 'firebase/firestore';
-import type { Note } from '@/lib/types';
-import { getNoteFromFirestore, NOTES_COLLECTION } from './note-service';
+import type { Note, SharedNoteLink } from '@/lib/types';
+import { getNoteFromFirestore } from './note-service';
 
 export const getNoteFromShareToken = async (
   token: string
@@ -22,31 +20,29 @@ export const getNoteFromShareToken = async (
     return null;
   }
 
-  const linkData = linkSnap.data();
+  const linkData = linkSnap.data() as SharedNoteLink;
 
   // 1. Check if link is expired
-  const isExpired = new Date() > (linkData.expiresAt as Timestamp).toDate();
+  // The user wanted permanent links until submitted. The creation logic sets a far-future date.
+  // This check remains as a safeguard.
+  const isExpired = new Date() > (linkData.expiresAt as unknown as Timestamp).toDate();
   if (isExpired) {
     console.warn('Share link has expired, deleting.');
     await deleteDoc(linkRef);
     return null;
   }
 
-  // 2. Check if view limit has been reached
-  const viewLimitReached =
+  // 2. Check if the link has already been used its maximum number of times.
+  // This is important for single-use links, as viewCount will be >= 1 after a successful submission.
+  const isUsedUp =
     linkData.viewLimit > 0 && linkData.viewCount >= linkData.viewLimit;
-  if (viewLimitReached) {
-    console.warn('Share link view limit reached, deleting.');
+  if (isUsedUp) {
+    console.warn('Share link has already been used its limit, deleting.');
     await deleteDoc(linkRef);
     return null;
   }
-
-  // 3. The link is valid. Increment view count.
-  await updateDoc(linkRef, {
-    viewCount: increment(1),
-  });
-
-  // 4. Fetch the associated note
+  
+  // 3. The link is valid. Fetch the associated note.
   const note = await getNoteFromFirestore(linkData.noteId);
   if (!note) {
       console.warn(`Note with id ${linkData.noteId} not found, but share link exists. Deleting link.`);
@@ -54,10 +50,7 @@ export const getNoteFromShareToken = async (
       return null;
   }
 
-  // 5. Check if the link should be deleted AFTER this use.
-  if (linkData.viewLimit > 0 && (linkData.viewCount + 1) >= linkData.viewLimit) {
-      await deleteDoc(linkRef);
-  }
-
+  // IMPORTANT: We no longer increment the view count or delete the link here.
+  // Invalidation now happens explicitly after form submission by calling the consume-token API.
   return note;
 };
