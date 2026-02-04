@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import type { Note } from '@/lib/types';
 import { NoteForm, type NoteFormSubmission, type NoteFormValues } from '@/components/note-form';
-import { updateNoteInFirestore } from '@/services/note-service';
+import { addNoteToFirestore } from '@/services/note-service';
 import { uploadFileToServer } from '@/services/file-upload-service';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -38,7 +38,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
           delete (data as any).documentMetadata;
       }
       
-      await updateNoteInFirestore(note.id, data as Partial<Omit<Note, 'id' | 'createdAt'>>);
+      await addNoteToFirestore(data);
       setIsSubmitted(true);
     } catch (error) {
       console.error("Failed to submit note:", error);
