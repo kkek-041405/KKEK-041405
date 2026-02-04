@@ -16,7 +16,7 @@ import {
   getDoc,
 } from 'firebase/firestore';
 
-const NOTES_COLLECTION = 'notes';
+export const NOTES_COLLECTION = 'notes';
 
 // Helper to convert Firestore Timestamp to ISO string for Note.createdAt
 const formatNoteTimestamps = (noteData: any, id: string): Note => {

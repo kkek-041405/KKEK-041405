@@ -11,19 +11,19 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Link as LinkIcon } from 'lucide-react';
+import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
   type: z.literal('note'),
   title: z.string().min(1, { message: "Title is required." }).max(100, { message: "Title must be 100 characters or less." }),
-  content: z.string().min(1, { message: "Content is required." }),
+  content: z.string().optional(), // Make content optional for template creation
 });
 
 const keyInformationSchema = z.object({
   type: z.literal('keyInformation'),
   title: z.string().min(1, { message: "Key name is required." }).max(100, { message: "Key name must be 100 characters or less." }),
-  content: z.string().min(1, { message: "Value is required." }).max(500, { message: "Value must be 500 characters or less." }),
+  content: z.string().optional(), // Make content optional for template creation
 });
 
 const documentSchema = z.object({
@@ -57,9 +57,10 @@ interface NoteFormProps {
   onFormSubmit?: () => void; // Callback to notify parent after submission
   defaultValues?: NoteFormValues | null;
   isEditing?: boolean;
+  submitButtonText?: string;
 }
 
-export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValues, isEditing = false }: NoteFormProps) {
+export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValues, isEditing = false, submitButtonText }: NoteFormProps) {
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
     // Default values are now set via useEffect based on props
@@ -90,6 +91,14 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   const uploadPromiseRef = React.useRef<Promise<any> | null>(null);
 
   const processAndSave = async (data: NoteFormValues, options?: { createFillableLink?: boolean }) => {
+    // Manually validate content for regular saves or for a receiver filling a form
+    if (!options?.createFillableLink) {
+        if ((data.type === 'note' || data.type === 'keyInformation') && (!data.content || data.content.trim() === '')) {
+            form.setError('content', { message: 'This field is required.' });
+            return;
+        }
+    }
+
     if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '') && !isEditing) {
       alert('Please select a file to upload or provide a document URL.');
       return;
@@ -116,7 +125,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
       }
     }
 
-    const submission: NoteFormSubmission = { ...data, file: selectedFile };
+    const submission: NoteFormSubmission = { ...data, content: data.content ?? '', file: selectedFile };
 
     if (data.type === 'document') {
       if (uploadResult) {
@@ -356,12 +365,13 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                     disabled={isLoading || uploadInProgress}
                     className="w-full sm:w-auto"
                 >
-                    <LinkIcon className="mr-2 h-4 w-4" />
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LinkIcon className="mr-2 h-4 w-4" />}
                     {isLoading ? 'Saving...' : 'Save & Get Link'}
                 </Button>
                )}
               <Button type="submit" disabled={isLoading || uploadInProgress} className="w-full sm:w-auto">
-                {isLoading ? (isEditing ? 'Updating...' : 'Saving...') : (isEditing ? `Update Item` : `Save Item`)}
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isLoading ? 'Submitting...' : (submitButtonText || (isEditing ? 'Update Item' : 'Save Item'))}
               </Button>
             </div>
           </form>

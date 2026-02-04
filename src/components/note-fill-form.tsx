@@ -97,6 +97,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
                 onFormSubmit={() => {}}
                 defaultValues={initialValues}
                 isEditing={true} // Use editing mode to pre-fill the form
+                submitButtonText="Submit Information"
             />
         </CardContent>
     </Card>
