@@ -27,6 +27,7 @@ import {
   Phone,
   Home,
   LockKeyhole,
+  Feather,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -49,6 +50,7 @@ export function PortfolioHeader() {
     { href: "/#about", label: "About", icon: UserCircle },
     { href: "/#projects", label: "Projects", icon: LayoutGrid },
     { href: "/#skills", label: "Skills", icon: Code2 },
+    { href: "/stories/why", label: "Stories", icon: Feather },
     { href: "/#contact", label: "Contact", icon: Phone },
     { href: "/notes", label: "Notes", icon: NotebookText, isAuthTrigger: true },
   ];
@@ -75,7 +77,7 @@ export function PortfolioHeader() {
     if (href === "/notes") {
       return pathname.startsWith('/notes');
     }
-    return pathname === href;
+    return pathname.startsWith(href);
   };
 
   const handleAuthSubmit = async (data: NoteAuthFormValues) => {

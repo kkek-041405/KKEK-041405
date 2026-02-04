@@ -3,7 +3,7 @@
 
 import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Loader2, ArrowLeft, ArrowDown } from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowDown, Home } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -152,6 +152,7 @@ const StoryHero = ({
   const [showBackButton, setShowBackButton] = useState(false);
   const [isArrowAnimating, setIsArrowAnimating] = useState(false);
   const [showWhy, setShowWhy] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
@@ -193,15 +194,26 @@ const StoryHero = ({
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center p-6 relative bg-black">
-       <Button 
-        variant="outline" 
-        onClick={onBackClick} 
-        className={cn(
-          "absolute top-6 left-6 z-10 bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white transition-opacity duration-700",
+       <div className={cn(
+          "absolute top-6 left-6 z-10 flex gap-2 transition-opacity duration-700",
           showBackButton ? "opacity-100" : "opacity-0"
         )}>
+         <Button 
+            variant="outline" 
+            onClick={() => router.push('/')}
+            className="bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white"
+          >
+            <Home className="mr-2 h-4 w-4" /> Home
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={onBackClick} 
+          className="bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stories
-      </Button>
+        </Button>
+      </div>
+
       <div className="flex flex-col items-center gap-4">
         <p 
           className={cn(
@@ -337,14 +349,21 @@ function WhyPageContent() {
 
   return (
     <div className="py-12 md:py-16">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold">The Reason behind the code</h1>
-        <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not just an idea.</p>
+      <div className="max-w-4xl mx-auto mb-12 relative px-4">
+          <Button asChild variant="outline" className="absolute top-0 left-4 bg-zinc-900/50 border-white/10 hover:bg-zinc-800">
+              <Link href="/">
+                <Home className="mr-2 h-4 w-4" /> Home
+              </Link>
+          </Button>
+          <div className="text-center pt-16 sm:pt-0">
+            <h1 className="text-4xl md:text-5xl font-bold">The Reason behind the code</h1>
+            <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not just an idea.</p>
+          </div>
       </div>
       {stories.length === 0 ? (
         <p className="text-center text-muted-foreground">No stories have been published yet.</p>
       ) : (
-        <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="space-y-8 max-w-4xl mx-auto px-4">
           {stories.map(story => (
             <Link key={story.id} href={`/stories/why?project=${story.projectId}`} legacyBehavior>
               <a className="block group">
