@@ -7,24 +7,52 @@ import { FileWarning, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import type { Note } from '@/lib/types';
-
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '@/convex/_generated/api';
 
 // A slimmed-down, read-only version of NoteView
-function SharedNoteDisplay({ note }: { note: Note }) {
+function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: string | null }) {
   const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
 
+  const fileType = note.documentMetadata?.fileType;
+  const isOfficeDoc = fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
+  const isPdf = fileType === 'application/pdf' || note.documentMetadata?.fileName?.endsWith('.pdf');
+
+  let finalDocumentUrl = documentUrl;
+  if (documentUrl && (isOfficeDoc || isPdf)) {
+      finalDocumentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
+  }
+  
+  const getFileExtension = () => {
+    if (note.type !== 'document' || !note.documentMetadata?.fileName) {
+      return null;
+    }
+    const parts = note.documentMetadata.fileName.split('.');
+    return parts.length > 1 ? parts.pop()?.toLowerCase() : null;
+  }
+  
+  const fileExtension = getFileExtension();
+
+
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-xl">
+    <Card className="w-full max-w-4xl mx-auto shadow-xl flex flex-col max-h-[90vh]">
       <CardHeader>
         <div className="flex justify-between items-start">
-          <CardTitle className="text-2xl md:text-3xl">{note.title}</CardTitle>
+          <div className="flex items-center gap-3">
+            <CardTitle className="text-2xl md:text-3xl">{note.title}</CardTitle>
+            {fileExtension && (
+              <Badge variant="secondary" className="whitespace-nowrap h-fit">
+                {fileExtension}
+              </Badge>
+            )}
+          </div>
           <Badge variant="secondary">{itemTypeDisplay}</Badge>
         </div>
         <CardDescription>
           Shared on: {format(new Date(), "PPP p")}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex flex-col min-h-0">
         {note.type === 'note' && (
           <div className="prose prose-lg dark:prose-invert max-w-none whitespace-pre-wrap break-words">
             {note.content}
@@ -37,7 +65,20 @@ function SharedNoteDisplay({ note }: { note: Note }) {
             </div>
         )}
         {note.type === 'document' && (
-            <p className="text-muted-foreground">Document sharing is not yet supported in this view.</p>
+            <div className="h-full flex flex-col flex-1">
+              {finalDocumentUrl ? (
+                <iframe
+                  src={finalDocumentUrl}
+                  className="w-full h-full flex-1 border-0 rounded-md bg-white"
+                  title={`Embedded document: ${note.title}`}
+                  allowFullScreen
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md">
+                    <span>Document preview is not available for this file type.</span>
+                </div>
+              )}
+            </div>
         )}
          {note.summary && (
             <div className="mt-6 pt-6 border-t">
@@ -55,12 +96,32 @@ export default async function SharedNotePage({ params }: { params: { token: stri
   const { token } = params;
   const note = await getNoteFromShareToken(token);
 
+  let documentUrl: string | null = null;
+  if (note?.type === 'document') {
+    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+    if (convexUrl) {
+      try {
+        const convex = new ConvexHttpClient(convexUrl);
+        const storageId = note.documentMetadata?.storageId;
+        
+        if (storageId) {
+          const getDocFn = (api.queries as any).getDocument?.default ?? api.queries.getDocument;
+          const result = await convex.query(getDocFn, { storageId });
+          documentUrl = result?.url ?? null;
+        }
+
+      } catch (e) {
+        console.error("Failed to resolve document URL from Convex", e);
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <PortfolioHeader />
       <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         {note ? (
-          <SharedNoteDisplay note={note} />
+          <SharedNoteDisplay note={note} documentUrl={documentUrl} />
         ) : (
           <Card className="w-full max-w-md shadow-xl text-center">
             <CardHeader>

@@ -102,11 +102,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const isOfficeDoc = fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
   const isPdf = fileType === 'application/pdf' || note.documentMetadata?.fileName?.endsWith('.pdf');
 
-  let documentUrl = resolvedServingUrl;
+  let finalDocumentUrl = resolvedServingUrl;
 
   // Use Google Docs viewer for both PDF and DOCX for consistent UI and better compatibility.
-  if (documentUrl && (isOfficeDoc || isPdf)) {
-    documentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
+  if (finalDocumentUrl && (isOfficeDoc || isPdf)) {
+    finalDocumentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(finalDocumentUrl)}&embedded=true`;
   }
   
   const getFileExtension = () => {
@@ -149,7 +149,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                     onClick={handleFullscreen}
                     variant="outline"
                     size="sm"
-                    disabled={!documentUrl}
+                    disabled={!finalDocumentUrl}
                 >
                     <Maximize className="mr-2 h-4 w-4" />
                     Fullscreen
@@ -221,22 +221,22 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
 
         {note.type === 'document' && (
-            <div className="h-full flex flex-col">
-              {documentUrl ? (
+            <div className="h-full flex flex-col flex-1">
+              {resolvedServingUrl === undefined ? (
+                 <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                   <Loader2 className="h-8 w-8 animate-spin" />
+                 </div>
+              ) : finalDocumentUrl ? (
                 <iframe
                   ref={iframeRef}
-                  src={documentUrl}
-                  className="w-full h-full flex-1 border-0"
+                  src={finalDocumentUrl}
+                  className="w-full h-full flex-1 border-0 rounded-md bg-white"
                   title={`Embedded document: ${note.title}`}
                   allowFullScreen
                 />
               ) : (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                  {resolvedServingUrl === undefined ? (
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  ) : (
-                    <span>Document preview not available.</span>
-                  )}
+                <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md">
+                   <span>Document preview is not available for this file type.</span>
                 </div>
               )}
             </div>

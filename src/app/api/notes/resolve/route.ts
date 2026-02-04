@@ -2,15 +2,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { ConvexHttpClient } from 'convex/browser';
-import { api } from '../../../../../convex/_generated/api';
+import { api } from '@/convex/_generated/api';
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || process.env.CONVEX_URL;
-if (!convexUrl) {
-  console.error('[resolve route] CONVEX_URL not set. Set NEXT_PUBLIC_CONVEX_URL or CONVEX_URL to your Convex deployment URL.');
-}
-const convex = new ConvexHttpClient(convexUrl || 'https://example.convex.cloud');
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
 
 export async function GET(req: NextRequest) {
+  if (!convexUrl) {
+    console.error('[resolve route] CONVEX_URL not set. Set NEXT_PUBLIC_CONVEX_URL in your environment variables.');
+    return NextResponse.json({ error: 'Convex URL not configured on server.' }, { status: 500 });
+  }
+
   const url = new URL(req.url);
   const storageId = url.searchParams.get('storageId');
   if (!storageId) {
@@ -18,11 +19,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    if (!convexUrl) {
-      return NextResponse.json({ error: 'Convex URL not configured on server. Set NEXT_PUBLIC_CONVEX_URL or CONVEX_URL.' }, { status: 500 });
-    }
+    const convex = new ConvexHttpClient(convexUrl);
     console.log('[resolve route] resolving storageId', { storageId, convexUrl });
-    const getDocFn = (api as any).queries?.getDocument?.default ?? api.queries.getDocument;
+    const getDocFn = (api.queries as any).getDocument?.default ?? api.queries.getDocument;
     const result = await convex.query(getDocFn, { storageId });
     console.log('[resolve route] convex.query result', { storageId, result });
     if (!result) return NextResponse.json({ error: 'Not found' }, { status: 404 });
