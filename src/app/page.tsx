@@ -37,18 +37,7 @@ const experiences: ExperienceItem[] = [
       "Led technical workshops on modern web development and competitive programming for 200+ students.",
     ],
     iconName: "Briefcase",
-  },
-  {
-    role: "Founder & Lead Developer",
-    organization: "Campus Companion (Personal Project)",
-    dates: "2023 – Present",
-    details: [
-      "Conceptualized, designed, and developed a collaborative learning platform for university students.",
-      "Architected with React, Next.js, and Firebase for a scalable and real-time user experience.",
-      "Engineered AI-powered document search and structured discussion forums to enhance knowledge sharing.",
-    ],
-    iconName: "Zap",
-  },
+  }
 ];
 
 // Projects Data
