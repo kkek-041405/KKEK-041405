@@ -135,9 +135,6 @@ export default function NotesContentPage() {
         title: 'Link Ready!',
         description: 'A single-use link has been copied to your clipboard.',
       });
-
-      // 5. Add the template note to the UI temporarily
-      setNotes(prev => [templateNote, ...prev].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       
       setIsFormOpen(false);
       setEditingNote(null);
