@@ -11,25 +11,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Link as LinkIcon, Loader2 } from 'lucide-react';
+import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
   type: z.literal('note'),
   title: z.string().min(1, { message: "Title is required." }).max(100, { message: "Title must be 100 characters or less." }),
-  content: z.string().optional(), // Make content optional for template creation
+  content: z.string().min(1, { message: "Content is required." }),
 });
 
 const keyInformationSchema = z.object({
   type: z.literal('keyInformation'),
   title: z.string().min(1, { message: "Key name is required." }).max(100, { message: "Key name must be 100 characters or less." }),
-  content: z.string().optional(), // Make content optional for template creation
+  content: z.string().min(1, { message: "Value is required." }),
 });
 
 const documentSchema = z.object({
   type: z.literal('document'),
   title: z.string().min(1, { message: "Document name is required." }).max(100, { message: "Document name must be 100 characters or less." }),
-  // Content will be set after upload; allow empty string or URL
   content: z.string().optional(),
 });
 
@@ -52,9 +51,9 @@ export type NoteFormSubmission = NoteFormValues & {
 };
 
 interface NoteFormProps {
-  onSave: (data: NoteFormSubmission, options?: { createFillableLink?: boolean }) => Promise<void> | void;
+  onSave: (data: NoteFormSubmission) => Promise<void> | void;
   isLoading?: boolean;
-  onFormSubmit?: () => void; // Callback to notify parent after submission
+  onFormSubmit?: () => void;
   defaultValues?: NoteFormValues | null;
   isEditing?: boolean;
   submitButtonText?: string;
@@ -63,7 +62,6 @@ interface NoteFormProps {
 export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValues, isEditing = false, submitButtonText }: NoteFormProps) {
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
-    // Default values are now set via useEffect based on props
   });
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -78,7 +76,6 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
         type: 'note',
       } as NoteFormValues);
     }
-    // Reset file selection when form values change or on mode change
     setSelectedFile(null);
   }, [isEditing, defaultValues, form]);
 
@@ -88,66 +85,39 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   const [uploadInProgress, setUploadInProgress] = React.useState(false);
   const [uploadResult, setUploadResult] = React.useState<NoteFormSubmission['documentMetadata'] | null>(null);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
-  const uploadPromiseRef = React.useRef<Promise<any> | null>(null);
 
-  const processAndSave = async (data: NoteFormValues, options?: { createFillableLink?: boolean }) => {
-    // Manually validate content for regular saves or for a receiver filling a form
-    if (!options?.createFillableLink) {
-        if ((data.type === 'note' || data.type === 'keyInformation') && (!data.content || data.content.trim() === '')) {
-            form.setError('content', { message: 'This field is required.' });
-            return;
-        }
-    }
-
-    if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '') && !isEditing) {
-      alert('Please select a file to upload or provide a document URL.');
+  const onSubmit = async (data: NoteFormValues) => {
+    if (data.type === 'document' && !selectedFile && !isEditing) {
+      alert('Please select a file to upload for the document.');
       return;
     }
 
-    if (data.type === 'document' && selectedFile && !uploadResult) {
-      setUploadInProgress(true);
-      const promise = uploadFileToServer(selectedFile).then((res) => {
-        setUploadResult(res);
-        setUploadInProgress(false);
-        return res;
-      }).catch((err) => {
-        console.error('Upload failed', err);
-        setUploadError((err && err.message) || String(err));
-        setUploadInProgress(false);
-        return null;
-      });
-      uploadPromiseRef.current = promise;
+    const submission: NoteFormSubmission = { ...data, file: selectedFile };
 
-      const res = await promise;
-      if (!res) {
+    if (data.type === 'document' && selectedFile) {
+      setUploadInProgress(true);
+      try {
+        const res = await uploadFileToServer(selectedFile);
+        if (res) {
+          submission.documentMetadata = res;
+          submission.content = `/api/notes/download?storageId=${encodeURIComponent(String(res.storageId))}`;
+        } else {
+          throw new Error('Upload failed to return result.');
+        }
+      } catch (err) {
+        console.error('Upload failed', err);
+        setUploadError((err instanceof Error && err.message) || String(err));
         alert('File upload failed. Please try again.');
+        setUploadInProgress(false);
         return;
       }
-    }
-
-    const submission: NoteFormSubmission = { ...data, content: data.content ?? '', file: selectedFile };
-
-    if (data.type === 'document') {
-      if (uploadResult) {
-        submission.documentMetadata = uploadResult;
-        submission.file = null;
-        submission.content = `/api/notes/download?storageId=${encodeURIComponent(String(uploadResult.storageId))}`;
-      }
+      setUploadInProgress(false);
     }
     
-    await onSave(submission, options);
+    await onSave(submission);
 
     if (onFormSubmit) {
       onFormSubmit();
-    }
-  };
-
-  const handleRegularSubmit = form.handleSubmit((data) => processAndSave(data, { createFillableLink: false }));
-
-  const handleShareSubmit = async () => {
-    const isValid = await form.trigger();
-    if (isValid) {
-      await processAndSave(form.getValues(), { createFillableLink: true });
     }
   };
 
@@ -162,9 +132,9 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   
   const getTitlePlaceholder = () => {
     switch (selectedType) {
-        case 'note': return "Enter note title (e.g., Meeting Recap)";
-        case 'keyInformation': return "Enter key name (e.g., Wi-Fi Password)";
-        case 'document': return "Enter document name (e.g., Project Proposal Q3)";
+        case 'note': return "Enter note title...";
+        case 'keyInformation': return "Enter key name...";
+        case 'document': return "Enter document name...";
         default: return "Enter title";
     }
   }
@@ -179,8 +149,8 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
 
   const getContentPlaceholder = () => {
     switch (selectedType) {
-        case 'note': return "Write your note here... (e.g., Discussed project timelines...)";
-        case 'keyInformation': return "Enter the value for the key information (e.g., MyS3cur3P@ssw0rd!)";
+        case 'note': return "Write your note here...";
+        case 'keyInformation': return "Enter the value for the key...";
         default: return "Enter content";
     }
   }
@@ -204,7 +174,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   return (
     <div className="pt-4">
         <Form {...form}>
-          <form onSubmit={handleRegularSubmit} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {!isEditing && (
               <FormField
                 control={form.control}
@@ -265,7 +235,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                     <Input
                       placeholder={getTitlePlaceholder()}
                       {...field}
-                      value={field.value || ''} // Ensure controlled component
+                      value={field.value || ''}
                       />
                   </FormControl>
                   <FormMessage />
@@ -354,18 +324,6 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
             )}
 
             <div className="flex justify-end pt-2 gap-2">
-               {!isEditing && (
-                <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={handleShareSubmit}
-                    disabled={isLoading || uploadInProgress}
-                    className="w-full sm:w-auto"
-                >
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LinkIcon className="mr-2 h-4 w-4" />}
-                    {isLoading ? 'Saving...' : 'Save & Get Link'}
-                </Button>
-               )}
               <Button type="submit" disabled={isLoading || uploadInProgress} className="w-full sm:w-auto">
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {isLoading ? 'Submitting...' : (submitButtonText || (isEditing ? 'Update Item' : 'Save Item'))}

@@ -55,15 +55,8 @@ export const getNoteFromShareToken = async (
   }
 
   // 5. Check if the link should be deleted AFTER this use.
-  // This is for single-use links.
   if (linkData.viewLimit > 0 && (linkData.viewCount + 1) >= linkData.viewLimit) {
-      await deleteDoc(linkRef); // Delete the link document
-      
-      // If it's a fillable link, also delete the template note.
-      if (linkData.type === 'fill') {
-          const noteRef = doc(db, NOTES_COLLECTION, linkData.noteId);
-          await deleteDoc(noteRef);
-      }
+      await deleteDoc(linkRef);
   }
 
   return note;

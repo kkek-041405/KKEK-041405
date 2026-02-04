@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import type { Note } from '@/lib/types';
 import { NoteForm, type NoteFormSubmission, type NoteFormValues } from '@/components/note-form';
-import { addNoteToFirestore } from '@/services/note-service';
+import { updateNoteInFirestore } from '@/services/note-service';
 import { uploadFileToServer } from '@/services/file-upload-service';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -38,7 +38,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
           delete (data as any).documentMetadata;
       }
       
-      await addNoteToFirestore(data);
+      await updateNoteInFirestore(note.id, data);
       setIsSubmitted(true);
     } catch (error) {
       console.error("Failed to submit note:", error);
@@ -96,7 +96,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
                 isLoading={isSubmitting}
                 onFormSubmit={() => {}}
                 defaultValues={initialValues}
-                isEditing={true} // Use editing mode to pre-fill the form
+                isEditing={true}
                 submitButtonText="Submit Information"
             />
         </CardContent>
