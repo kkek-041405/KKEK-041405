@@ -1,3 +1,4 @@
+
 'use client';
 
 import { db } from '@/lib/firebase';
@@ -25,26 +26,31 @@ interface CreateShareLinkOptions {
 
 export const createShareLink = async (
   noteId: string,
-  options: CreateShareLinkOptions
+  options: CreateShareLinkOptions,
+  linkType: 'view' | 'fill' = 'view'
 ): Promise<string> => {
   const token = generateToken(20);
   const linkRef = doc(db, SHARED_NOTE_LINKS_COLLECTION, token);
 
   const now = new Date();
-  // If expiresInHours is 0, it's permanent. Set expiry to a far future date.
   const expiresAt =
     options.expiresInHours > 0
       ? new Date(now.getTime() + options.expiresInHours * 60 * 60 * 1000)
       : new Date('9999-12-31T23:59:59Z');
 
+  // Fillable links are single-use
+  const finalViewLimit = linkType === 'fill' ? 1 : options.viewLimit;
+
   await setDoc(linkRef, {
     noteId,
     createdAt: Timestamp.fromDate(now),
     expiresAt: Timestamp.fromDate(expiresAt),
-    viewLimit: options.viewLimit,
+    viewLimit: finalViewLimit,
     viewCount: 0,
+    type: linkType,
   });
 
-  const shareUrl = `${window.location.origin}/share/note/${token}`;
+  const page = linkType === 'fill' ? 'fill' : 'share';
+  const shareUrl = `${window.location.origin}/${page}/note/${token}`;
   return shareUrl;
 };

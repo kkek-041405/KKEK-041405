@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -19,10 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch'; // Import Switch
 import { createShareLink } from '@/services/share-note-service';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Check } from 'lucide-react';
+import { Loader2, Copy, Check, Link2 } from 'lucide-react';
 import type { Note } from '@/lib/types';
+import { cn } from '@/lib/utils';
+
 
 interface ShareNoteDialogProps {
   note: Note;
@@ -33,6 +37,7 @@ interface ShareNoteDialogProps {
 export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogProps) {
   const [expiresInHours, setExpiresInHours] = useState(24);
   const [viewLimit, setViewLimit] = useState(1);
+  const [shareType, setShareType] = useState<'view' | 'fill'>('view');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
@@ -41,7 +46,10 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
   const handleGenerateLink = async () => {
     setIsLoading(true);
     try {
-      const link = await createShareLink(note.id, { expiresInHours, viewLimit });
+      const link = await createShareLink(note.id, { 
+        expiresInHours, 
+        viewLimit: shareType === 'fill' ? 1 : viewLimit 
+      }, shareType);
       setGeneratedLink(link);
     } catch (error) {
       console.error('Failed to create share link:', error);
@@ -73,6 +81,7 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
       setGeneratedLink(null);
       setIsLoading(false);
       setIsCopied(false);
+      setShareType('view');
       setExpiresInHours(24);
       setViewLimit(1);
     }
@@ -80,6 +89,11 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
   }
   
   const generatedLinkDescription = () => {
+    if (shareType === 'fill') {
+      const expiryText = expiresInHours > 0 ? ` This link will expire in ${expiresInHours} hour(s).` : ' This link will not expire.';
+      return `The receiver can complete and submit this item once.${expiryText}`;
+    }
+
     const expiryText = expiresInHours > 0 ? `in ${expiresInHours} hour(s)` : 'never expires';
     const viewLimitText = viewLimit > 0 ? `after ${viewLimit} view(s)` : 'has unlimited views';
 
@@ -102,7 +116,9 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
         <DialogHeader>
           <DialogTitle>Share "{note.title}"</DialogTitle>
           <DialogDescription>
-            Create a secure, temporary link to share this item. The link will expire after a set time or number of views.
+            {shareType === 'view'
+              ? 'Create a secure, temporary link to share this item for viewing.'
+              : 'Create a single-use link for someone to complete and submit this item.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -118,7 +134,22 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
              <p className="text-sm text-muted-foreground">{generatedLinkDescription()}</p>
           </div>
         ) : (
-          <div className="grid gap-4 py-4">
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-center space-x-4 p-2 bg-muted rounded-lg">
+                <Label htmlFor="share-type" className={cn("text-muted-foreground", shareType === 'view' && 'text-foreground')}>
+                    View Only
+                </Label>
+                <Switch
+                    id="share-type"
+                    checked={shareType === 'fill'}
+                    onCheckedChange={(checked) => setShareType(checked ? 'fill' : 'view')}
+                    aria-label="Toggle between view-only and fillable link"
+                />
+                <Label htmlFor="share-type" className={cn("text-muted-foreground", shareType === 'fill' && 'text-foreground')}>
+                    Fill & Submit
+                </Label>
+            </div>
+            
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="expires-in" className="text-right">
                 Expires In
@@ -138,27 +169,30 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="view-limit" className="text-right">
-                View Limit
-              </Label>
-              <Input
-                id="view-limit"
-                type="number"
-                value={viewLimit}
-                onChange={(e) => setViewLimit(Math.max(0, Number(e.target.value)))}
-                className="col-span-3"
-                min="0"
-              />
-            </div>
-             <p className="text-xs text-muted-foreground col-span-4 text-right -mt-2">Set to 0 for unlimited views.</p>
+            
+            {shareType === 'view' && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="view-limit" className="text-right">
+                    View Limit
+                </Label>
+                <Input
+                    id="view-limit"
+                    type="number"
+                    value={viewLimit}
+                    onChange={(e) => setViewLimit(Math.max(0, Number(e.target.value)))}
+                    className="col-span-3"
+                    min="0"
+                />
+                </div>
+            )}
+            {shareType === 'view' && <p className="text-xs text-muted-foreground col-span-4 text-right -mt-2">Set to 0 for unlimited views.</p>}
           </div>
         )}
 
         {!generatedLink && (
             <DialogFooter>
                 <Button onClick={handleGenerateLink} disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Link2 className="mr-2 h-4 w-4" />}
                 Generate Link
                 </Button>
             </DialogFooter>
