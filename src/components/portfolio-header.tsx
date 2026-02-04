@@ -154,7 +154,7 @@ export function PortfolioHeader() {
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map(link => renderNavButton(link, false))}
             <Button asChild className="ml-2 shadow-sm">
-              <Link href="/resume.pdf" target="_blank" download>
+              <Link href="/resume" target="_blank" download>
                 CV <Download className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -189,7 +189,7 @@ export function PortfolioHeader() {
                 <nav className="flex flex-col gap-2">
                   {navLinks.map(link => renderNavButton(link, true))}
                   <Button asChild className="w-full justify-start text-lg py-3 mt-4">
-                    <Link href="/resume.pdf" target="_blank" download onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/resume" target="_blank" download onClick={() => setIsMobileMenuOpen(false)}>
                       <Download className="mr-2 h-5 w-5" /> Download CV
                     </Link>
                   </Button>

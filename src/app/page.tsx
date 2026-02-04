@@ -236,7 +236,7 @@ export default function PortfolioPage() {
                       </Link>
                     </Button>
                     <Button size="lg" variant="outline" asChild className="shadow-lg hover:shadow-accent/50 transition-shadow w-full sm:w-auto">
-                      <Link href="/resume.pdf" target="_blank" download>
+                      <Link href="/resume" target="_blank" download>
                         <Download className="mr-2 h-5 w-5" /> Download Resume
                       </Link>
                     </Button>
@@ -274,7 +274,7 @@ export default function PortfolioPage() {
                   As the Technical Head of the IUCEE Student Chapter, I lead initiatives that connect academic concepts with real-world application, orchestrating hackathons and workshops that have engaged hundreds of students. I thrive in environments where I can contribute to product-driven engineering teams and tackle challenging technical problems.
                 </p>
                  <Button variant="link" asChild className="text-primary p-0 h-auto text-lg hover:underline">
-                   <Link href="/resume.pdf" target="_blank" download>
+                   <Link href="/resume" target="_blank" download>
                      View My Full Resume <Download className="ml-2 h-5 w-5" />
                     </Link>
                  </Button>
