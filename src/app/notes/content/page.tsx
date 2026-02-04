@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -10,6 +9,7 @@ import { NoteView } from '@/components/note-view';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
+import { createShareLink } from '@/services/share-note-service';
 import { Notebook, FileText, Loader2, FileArchive } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
@@ -51,6 +51,7 @@ export default function NotesContentPage() {
   const [resolvedServingUrls, setResolvedServingUrls] = useState<Record<string, string | null | undefined>>({});
   const [isLoadingNotes, setIsLoadingNotes] = useState(true);
   const [isSavingNote, setIsSavingNote] = useState(false);
+  const [isGettingLink, setIsGettingLink] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
@@ -110,6 +111,49 @@ export default function NotesContentPage() {
       </div>
     );
   }
+
+  const handleSaveAndGetLink = async (data: NoteFormSubmission) => {
+    setIsGettingLink(true);
+    try {
+      // 1. Save the note as a template
+      const templateNote = await addNoteToFirestore(data);
+      if (!templateNote || !templateNote.id) {
+        throw new Error("Failed to create the note template.");
+      }
+
+      // 2. Create a single-use, fillable share link
+      const link = await createShareLink(templateNote.id, {
+        expiresInHours: 7 * 24, // 7 days
+        viewLimit: 1,
+      }, 'fill');
+      
+      // 3. Copy link to clipboard
+      await navigator.clipboard.writeText(link);
+      
+      // 4. Show success toast and close form
+      toast({
+        title: 'Link Ready!',
+        description: 'A single-use link has been copied to your clipboard.',
+      });
+
+      // 5. Add the template note to the UI temporarily
+      setNotes(prev => [templateNote, ...prev].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      
+      setIsFormOpen(false);
+      setEditingNote(null);
+      setInitialFormValues(null);
+
+    } catch (error) {
+      console.error("Failed to save and get link:", error);
+      toast({
+        title: 'Error Creating Link',
+        description: 'Could not create a shareable link. Please try again.',
+        variant: "destructive",
+      });
+    } finally {
+      setIsGettingLink(false);
+    }
+  };
 
 
   const handleSaveNote = async (data: NoteFormSubmission) => {
@@ -345,6 +389,8 @@ export default function NotesContentPage() {
   const noteFormProps = {
     onSave: handleSaveNote,
     isLoading: isSavingNote,
+    onGetLink: handleSaveAndGetLink,
+    isGettingLink: isGettingLink,
     onFormSubmit: () => {
       setIsFormOpen(false);
       setEditingNote(null);

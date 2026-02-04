@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -30,8 +29,10 @@ interface NoteListProps {
   isFormOpen: boolean;
   onFormOpenChange: (open: boolean) => void;
   noteFormProps: {
-  onSave: (data: NoteFormSubmission) => Promise<void> | void;
+    onSave: (data: NoteFormSubmission) => Promise<void> | void;
     isLoading: boolean;
+    onGetLink?: (data: NoteFormSubmission) => Promise<void> | void;
+    isGettingLink?: boolean;
     onFormSubmit: () => void;
     defaultValues?: NoteFormValues | null;
     isEditing?: boolean;
@@ -118,6 +119,8 @@ export function NoteList({
                 <NoteForm
                   onSave={noteFormProps.onSave}
                   isLoading={noteFormProps.isLoading}
+                  onGetLink={noteFormProps.onGetLink}
+                  isGettingLink={noteFormProps.isGettingLink}
                   onFormSubmit={noteFormProps.onFormSubmit}
                   defaultValues={noteFormProps.defaultValues}
                   isEditing={noteFormProps.isEditing}

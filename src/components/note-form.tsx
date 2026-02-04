@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect } from 'react';
@@ -11,24 +10,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Loader2 } from 'lucide-react';
+import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Loader2, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
   type: z.literal('note'),
-  title: z.string().min(1, { message: "Title is required." }).max(100, { message: "Title must be 100 characters or less." }),
-  content: z.string().min(1, { message: "Content is required." }),
+  title: z.string().max(100, { message: "Title must be 100 characters or less." }).optional(),
+  content: z.string().optional(),
 });
 
 const keyInformationSchema = z.object({
   type: z.literal('keyInformation'),
-  title: z.string().min(1, { message: "Key name is required." }).max(100, { message: "Key name must be 100 characters or less." }),
-  content: z.string().min(1, { message: "Value is required." }),
+  title: z.string().max(100, { message: "Key name must be 100 characters or less." }).optional(),
+  content: z.string().optional(),
 });
 
 const documentSchema = z.object({
   type: z.literal('document'),
-  title: z.string().min(1, { message: "Document name is required." }).max(100, { message: "Document name must be 100 characters or less." }),
+  title: z.string().max(100, { message: "Document name must be 100 characters or less." }).optional(),
   content: z.string().optional(),
 });
 
@@ -53,13 +52,24 @@ export type NoteFormSubmission = NoteFormValues & {
 interface NoteFormProps {
   onSave: (data: NoteFormSubmission) => Promise<void> | void;
   isLoading?: boolean;
+  onGetLink?: (data: NoteFormSubmission) => Promise<void> | void;
+  isGettingLink?: boolean;
   onFormSubmit?: () => void;
   defaultValues?: NoteFormValues | null;
   isEditing?: boolean;
   submitButtonText?: string;
 }
 
-export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValues, isEditing = false, submitButtonText }: NoteFormProps) {
+export function NoteForm({
+  onSave,
+  isLoading = false,
+  onGetLink,
+  isGettingLink = false,
+  onFormSubmit,
+  defaultValues,
+  isEditing = false,
+  submitButtonText,
+}: NoteFormProps) {
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
   });
@@ -87,9 +97,27 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   const [uploadError, setUploadError] = React.useState<string | null>(null);
 
   const onSubmit = async (data: NoteFormValues) => {
+    form.clearErrors(); // Clear previous manual errors
+    let isValid = true;
+    if (!data.title || data.title.trim() === '') {
+      form.setError('title', { type: 'manual', message: `${getTitleLabel()} is required for saving.` });
+      isValid = false;
+    }
+
+    if ((data.type === 'note' || data.type === 'keyInformation') && (!data.content || data.content.trim() === '')) {
+      form.setError('content', { type: 'manual', message: `${getContentLabel()} is required for saving.` });
+      isValid = false;
+    }
+
     if (data.type === 'document' && !selectedFile && !isEditing) {
-      alert('Please select a file to upload for the document.');
-      return;
+      // While we can't set a form error for a native file input easily,
+      // an alert provides clear, immediate feedback.
+      alert('A file is required to save a document item.');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      return; // Stop the submission if validation fails
     }
 
     const submission: NoteFormSubmission = { ...data, file: selectedFile };
@@ -105,10 +133,9 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
           throw new Error('Upload failed to return result.');
         }
       } catch (err) {
-        console.error('Upload failed', err);
+        setUploadInProgress(false);
         setUploadError((err instanceof Error && err.message) || String(err));
         alert('File upload failed. Please try again.');
-        setUploadInProgress(false);
         return;
       }
       setUploadInProgress(false);
@@ -118,6 +145,14 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
 
     if (onFormSubmit) {
       onFormSubmit();
+    }
+  };
+
+  const handleGetLink = async () => {
+    if (onGetLink) {
+      const data = form.getValues();
+      const submission: NoteFormSubmission = { ...data, file: selectedFile };
+      await onGetLink(submission);
     }
   };
 
@@ -323,8 +358,29 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                 />
             )}
 
-            <div className="flex justify-end pt-2 gap-2">
-              <Button type="submit" disabled={isLoading || uploadInProgress} className="w-full sm:w-auto">
+            <div className="flex justify-end pt-2 gap-2 flex-wrap sm:flex-nowrap">
+               {!isEditing && onGetLink && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleGetLink}
+                    disabled={isLoading || isGettingLink}
+                    className="w-full sm:w-auto"
+                  >
+                    {isGettingLink ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <LinkIcon className="mr-2 h-4 w-4" />
+                        Save &amp; Get Link
+                      </>
+                    )}
+                  </Button>
+               )}
+              <Button type="submit" disabled={isLoading || isGettingLink} className="w-full sm:w-auto">
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {isLoading ? 'Submitting...' : (submitButtonText || (isEditing ? 'Update Item' : 'Save Item'))}
               </Button>
