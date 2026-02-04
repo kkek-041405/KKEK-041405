@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -79,6 +78,23 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
     }
     onOpenChange(open);
   }
+  
+  const generatedLinkDescription = () => {
+    const expiryText = expiresInHours > 0 ? `in ${expiresInHours} hour(s)` : 'never expires';
+    const viewLimitText = viewLimit > 0 ? `after ${viewLimit} view(s)` : 'has unlimited views';
+
+    if (expiresInHours > 0 && viewLimit > 0) {
+        return `This link will expire ${expiryText} or ${viewLimitText}, whichever comes first.`;
+    }
+    if (expiresInHours > 0) {
+        return `This link will expire ${expiryText} and has unlimited views.`;
+    }
+    if (viewLimit > 0) {
+        return `This link never expires and will be invalid ${viewLimitText}.`;
+    }
+    return 'This link is permanent and has unlimited views.';
+  };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -99,7 +115,7 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                     {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                  </Button>
              </div>
-             <p className="text-sm text-muted-foreground">This link will expire in {expiresInHours} hour(s) or after {viewLimit} view(s), whichever comes first.</p>
+             <p className="text-sm text-muted-foreground">{generatedLinkDescription()}</p>
           </div>
         ) : (
           <div className="grid gap-4 py-4">
@@ -118,6 +134,7 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                   <SelectItem value="1">1 Hour</SelectItem>
                   <SelectItem value="24">24 Hours</SelectItem>
                   <SelectItem value="168">7 Days</SelectItem>
+                  <SelectItem value="0">Permanent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -129,11 +146,12 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                 id="view-limit"
                 type="number"
                 value={viewLimit}
-                onChange={(e) => setViewLimit(Math.max(1, Number(e.target.value)))}
+                onChange={(e) => setViewLimit(Math.max(0, Number(e.target.value)))}
                 className="col-span-3"
-                min="1"
+                min="0"
               />
             </div>
+             <p className="text-xs text-muted-foreground col-span-4 text-right -mt-2">Set to 0 for unlimited views.</p>
           </div>
         )}
 

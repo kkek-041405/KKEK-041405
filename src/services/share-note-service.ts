@@ -38,7 +38,11 @@ export const createShareLink = async (
   const linkRef = doc(db, SHARED_NOTE_LINKS_COLLECTION, token);
 
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + options.expiresInHours * 60 * 60 * 1000);
+  // If expiresInHours is 0, it's permanent. Set expiry to a far future date.
+  const expiresAt =
+    options.expiresInHours > 0
+      ? new Date(now.getTime() + options.expiresInHours * 60 * 60 * 1000)
+      : new Date('9999-12-31T23:59:59Z');
 
   await setDoc(linkRef, {
     noteId,
@@ -72,6 +76,7 @@ export const getNoteFromShareToken = async (
     shouldDelete = true;
   }
 
+  // Only check view limit if it's greater than 0
   const viewLimitReached =
     linkData.viewLimit > 0 && linkData.viewCount >= linkData.viewLimit;
   if (viewLimitReached) {
@@ -84,12 +89,14 @@ export const getNoteFromShareToken = async (
       return null;
   }
 
+  // Increment view count regardless
   await updateDoc(linkRef, {
     viewCount: increment(1),
   });
 
   const note = await getNoteFromFirestore(linkData.noteId);
   
+  // Check if the link should be deleted AFTER this view
   if (linkData.viewLimit > 0 && (linkData.viewCount + 1) >= linkData.viewLimit) {
       setTimeout(() => {
         deleteDoc(linkRef).catch(e => console.error("Failed to delete share link post-view:", e));
