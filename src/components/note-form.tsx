@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X } from 'lucide-react';
+import { PlusCircle, Info, FileArchive, UploadCloud, File as FileIcon, X, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const noteSchema = z.object({
@@ -52,7 +52,7 @@ export type NoteFormSubmission = NoteFormValues & {
 };
 
 interface NoteFormProps {
-  onSave: (data: NoteFormSubmission) => Promise<void> | void;
+  onSave: (data: NoteFormSubmission, options?: { createFillableLink?: boolean }) => Promise<void> | void;
   isLoading?: boolean;
   onFormSubmit?: () => void; // Callback to notify parent after submission
   defaultValues?: NoteFormValues | null;
@@ -89,14 +89,12 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   const uploadPromiseRef = React.useRef<Promise<any> | null>(null);
 
-  const onSubmit = async (data: NoteFormValues) => {
-    // If creating a document, require either a file or a URL content
+  const processAndSave = async (data: NoteFormValues, options?: { createFillableLink?: boolean }) => {
     if (data.type === 'document' && !selectedFile && (!data.content || data.content.trim() === '') && !isEditing) {
       alert('Please select a file to upload or provide a document URL.');
       return;
     }
 
-    // If the user selected a new file but we haven't uploaded it yet, upload now.
     if (data.type === 'document' && selectedFile && !uploadResult) {
       setUploadInProgress(true);
       const promise = uploadFileToServer(selectedFile).then((res) => {
@@ -120,18 +118,27 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
 
     const submission: NoteFormSubmission = { ...data, file: selectedFile };
 
-    // If it's a document and we have upload metadata, attach it and set a server-download URL
     if (data.type === 'document') {
       if (uploadResult) {
         submission.documentMetadata = uploadResult;
-        submission.file = null; // don't keep File object in the submission
+        submission.file = null;
         submission.content = `/api/notes/download?storageId=${encodeURIComponent(String(uploadResult.storageId))}`;
       }
     }
-    await onSave(submission);
-    // form.reset is handled by useEffect or parent closing the dialog
+    
+    await onSave(submission, options);
+
     if (onFormSubmit) {
       onFormSubmit();
+    }
+  };
+
+  const handleRegularSubmit = form.handleSubmit((data) => processAndSave(data, { createFillableLink: false }));
+
+  const handleShareSubmit = async () => {
+    const isValid = await form.trigger();
+    if (isValid) {
+      await processAndSave(form.getValues(), { createFillableLink: true });
     }
   };
 
@@ -175,11 +182,9 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     setUploadError(null);
 
     if (file) {
-      // If the title field is empty, populate it with the file name without its extension
       if (!form.getValues('title')) {
         const fileName = file.name;
         const lastDotIndex = fileName.lastIndexOf('.');
-        // Check if a dot exists and it's not the first character
         const nameWithoutExtension = (lastDotIndex > 0) ? fileName.substring(0, lastDotIndex) : fileName;
         form.setValue('title', nameWithoutExtension);
       }
@@ -190,7 +195,7 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
   return (
     <div className="pt-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleRegularSubmit} className="space-y-6">
             <FormField
               control={form.control}
               name="type"
@@ -342,9 +347,21 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
                 />
             )}
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-2 gap-2">
+               {!isEditing && (
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleShareSubmit}
+                    disabled={isLoading || uploadInProgress}
+                    className="w-full sm:w-auto"
+                >
+                    <LinkIcon className="mr-2 h-4 w-4" />
+                    {isLoading ? 'Saving...' : 'Save & Get Link'}
+                </Button>
+               )}
               <Button type="submit" disabled={isLoading || uploadInProgress} className="w-full sm:w-auto">
-                {uploadInProgress ? 'Uploading...' : isLoading ? (isEditing ? 'Updating...' : 'Saving...') : (isEditing ? `Update Item` : `Save Item`)}
+                {isLoading ? (isEditing ? 'Updating...' : 'Saving...') : (isEditing ? `Update Item` : `Save Item`)}
               </Button>
             </div>
           </form>

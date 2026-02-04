@@ -10,7 +10,7 @@ import { NoteView } from '@/components/note-view';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
-import { Notebook, FileText, Loader2, FileArchive } from 'lucide-react';
+import { Notebook, FileText, Loader2, FileArchive, Link as LinkIcon } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -22,6 +22,8 @@ import SpotifyView from '@/components/spotify-view';
 import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
 import NotificationsView from '@/components/notifications-view';
 import PhoneView from '@/components/phone-view';
+import { createShareLink } from '@/services/share-note-service';
+
 
 const defaultKeyInfo: Note[] = [
   {
@@ -111,7 +113,7 @@ export default function NotesContentPage() {
   }
 
 
-  const handleSaveNote = async (data: NoteFormSubmission) => {
+  const handleSaveNote = async (data: NoteFormSubmission, options?: { createFillableLink?: boolean }) => {
     setIsSavingNote(true);
     try {
       if (editingNote) {
@@ -185,10 +187,28 @@ export default function NotesContentPage() {
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
         );
-        toast({
-          title: `Item Saved!`,
-          description: `Your item "${addedNoteWithClientTimestamp.title}" has been successfully saved to the cloud.`,
-        });
+        
+        if (options?.createFillableLink) {
+            const link = await createShareLink(addedNoteWithClientTimestamp.id, { expiresInHours: 168, viewLimit: 1 }, 'fill');
+            await navigator.clipboard.writeText(link);
+            toast({
+                title: "Fillable Link Created & Copied!",
+                description: (
+                    <div className="flex flex-col gap-2">
+                        <p>A single-use link has been copied to your clipboard.</p>
+                        <div className="flex items-center gap-2 text-xs bg-muted p-2 rounded-md">
+                            <LinkIcon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{link}</span>
+                        </div>
+                    </div>
+                )
+            });
+        } else {
+            toast({
+              title: `Item Saved!`,
+              description: `Your item "${addedNoteWithClientTimestamp.title}" has been successfully saved to the cloud.`,
+            });
+        }
       }
       setIsFormOpen(false);
       setEditingNote(null);
