@@ -1,17 +1,16 @@
 
 import { getNoteFromShareToken } from '@/services/share-note-server';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { FileWarning, Sparkles } from 'lucide-react';
+import { FileWarning, Sparkles, NotebookText } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import type { Note } from '@/lib/types';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@convex/_generated/api';
+import Link from 'next/link';
 
-// A slimmed-down, read-only version of NoteView, now designed for full-screen display
+// The actual content display, now without its own header.
 function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: string | null }) {
-  const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
-
   const fileType = note.documentMetadata?.fileType;
   const isOfficeDoc = fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
   const isPdf = fileType === 'application/pdf' || note.documentMetadata?.fileName?.endsWith('.pdf');
@@ -21,38 +20,12 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
       finalDocumentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(documentUrl)}&embedded=true`;
   }
   
-  const getFileExtension = () => {
-    if (note.type !== 'document' || !note.documentMetadata?.fileName) {
-      return null;
-    }
-    const parts = note.documentMetadata.fileName.split('.');
-    return parts.length > 1 ? parts.pop()?.toLowerCase() : null;
-  }
-  
-  const fileExtension = getFileExtension();
-
+  // The content area now fills the whole component, with padding inside.
   return (
-    // Changed from Card to a simple div for full-screen layout
     <div className="w-full h-full flex flex-col bg-card text-card-foreground">
-      <CardHeader className="border-b"> {/* Added border for separation */}
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <CardTitle className="text-2xl md:text-3xl">{note.title}</CardTitle>
-            {fileExtension && (
-              <Badge variant="secondary" className="whitespace-nowrap h-fit">
-                {fileExtension}
-              </Badge>
-            )}
-          </div>
-          <Badge variant="secondary">{itemTypeDisplay}</Badge>
-        </div>
-        <CardDescription>
-          Shared on: {format(new Date(), "PPP p")}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col min-h-0 p-6"> {/* Added padding back to content */}
+      <CardContent className="flex-1 flex flex-col min-h-0 p-6 overflow-y-auto">
         {note.type === 'note' && (
-          <div className="prose prose-lg dark:prose-invert max-w-none whitespace-pre-wrap break-words overflow-y-auto">
+          <div className="prose prose-lg dark:prose-invert max-w-none whitespace-pre-wrap break-words">
             {note.content}
           </div>
         )}
@@ -90,6 +63,31 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
 }
 
 
+// The new minimal header strip
+function SharedNoteHeader({ note }: { note: Note }) {
+  const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Info' : 'Document';
+  
+  return (
+      <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
+              <NotebookText className="h-6 w-6" />
+              <span>NoteNest</span>
+          </Link>
+          <div className="w-px h-6 bg-border"></div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-md font-medium text-foreground truncate">{note.title}</h1>
+            <Badge variant="outline">{itemTypeDisplay}</Badge>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground hidden md:block">
+            Shared on {format(new Date(note.createdAt), "PPP")}
+        </p>
+    </header>
+  )
+}
+
+
 export default async function SharedNotePage({ params }: { params: { token: string } }) {
   const { token } = params;
   const note = await getNoteFromShareToken(token);
@@ -115,28 +113,28 @@ export default async function SharedNotePage({ params }: { params: { token: stri
   }
 
   return (
-    // Removed header, footer, and outer padding.
-    <div className="h-screen w-screen bg-background text-foreground">
-      <main className="h-full w-full">
-        {note ? (
-          <SharedNoteDisplay note={note} documentUrl={documentUrl} />
-        ) : (
-          // Center the error card
-          <div className="flex h-full w-full items-center justify-center p-4">
-              <Card className="w-full max-w-md shadow-xl text-center">
-                <CardHeader>
-                    <div className="mx-auto bg-destructive/10 p-4 rounded-full w-fit mb-4">
-                        <FileWarning className="h-10 w-10 text-destructive" />
-                    </div>
-                    <CardTitle className="text-2xl">Link Invalid or Expired</CardTitle>
-                    <CardDescription>
-                        This share link is no longer valid. It may have expired, reached its view limit, or been deleted.
-                    </CardDescription>
-                </CardHeader>
-              </Card>
-          </div>
-        )}
-      </main>
+    <div className="h-screen w-screen flex flex-col bg-background text-foreground">
+        {note && <SharedNoteHeader note={note} />}
+        <main className="flex-1 min-h-0">
+            {note ? (
+            <SharedNoteDisplay note={note} documentUrl={documentUrl} />
+            ) : (
+            // Center the error card
+            <div className="flex h-full w-full items-center justify-center p-4">
+                <Card className="w-full max-w-md shadow-xl text-center">
+                    <CardHeader>
+                        <div className="mx-auto bg-destructive/10 p-4 rounded-full w-fit mb-4">
+                            <FileWarning className="h-10 w-10 text-destructive" />
+                        </div>
+                        <CardTitle className="text-2xl">Link Invalid or Expired</CardTitle>
+                        <CardDescription>
+                            This share link is no longer valid. It may have expired, reached its view limit, or been deleted.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+            )}
+        </main>
     </div>
   );
 }
