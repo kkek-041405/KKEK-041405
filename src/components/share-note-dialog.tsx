@@ -43,15 +43,15 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
   const { toast } = useToast();
 
   useEffect(() => {
-    // When switching to editable link, enforce single-use
+    // When switching to editable link, make it permanent and single-use.
     if (linkType === 'fill') {
       setViewLimit(1);
-      setExpiresInHours(168); // Default to 7 days for editable links
+      setExpiresInHours(0); // 0 makes it permanent until submitted
     } else {
-      // Reset to defaults for view-only if needed, or keep user's choice
-      if(viewLimit === 1 && expiresInHours === 168){
-          setViewLimit(1);
-          setExpiresInHours(24);
+      // When switching back to 'view', restore a sensible default if it was on the 'fill' default
+      if (viewLimit === 1 && expiresInHours === 0) {
+        setViewLimit(1);
+        setExpiresInHours(24); // Default back to 24 hours for view links
       }
     }
   }, [linkType]);
