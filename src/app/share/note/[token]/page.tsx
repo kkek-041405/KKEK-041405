@@ -1,7 +1,5 @@
 
 import { getNoteFromShareToken } from '@/services/share-note-server';
-import { PortfolioHeader } from '@/components/portfolio-header';
-import { PortfolioFooter } from '@/components/portfolio-footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { FileWarning, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
@@ -10,7 +8,7 @@ import type { Note } from '@/lib/types';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@convex/_generated/api';
 
-// A slimmed-down, read-only version of NoteView
+// A slimmed-down, read-only version of NoteView, now designed for full-screen display
 function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: string | null }) {
   const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
 
@@ -33,10 +31,10 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
   
   const fileExtension = getFileExtension();
 
-
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-xl flex flex-col max-h-[90vh]">
-      <CardHeader>
+    // Changed from Card to a simple div for full-screen layout
+    <div className="w-full h-full flex flex-col bg-card text-card-foreground">
+      <CardHeader className="border-b"> {/* Added border for separation */}
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
             <CardTitle className="text-2xl md:text-3xl">{note.title}</CardTitle>
@@ -52,9 +50,9 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
           Shared on: {format(new Date(), "PPP p")}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col min-h-0">
+      <CardContent className="flex-1 flex flex-col min-h-0 p-6"> {/* Added padding back to content */}
         {note.type === 'note' && (
-          <div className="prose prose-lg dark:prose-invert max-w-none whitespace-pre-wrap break-words">
+          <div className="prose prose-lg dark:prose-invert max-w-none whitespace-pre-wrap break-words overflow-y-auto">
             {note.content}
           </div>
         )}
@@ -65,16 +63,16 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
             </div>
         )}
         {note.type === 'document' && (
-            <div className="h-full flex flex-col flex-1">
+            <div className="h-full flex flex-col flex-1 -m-6"> {/* Negative margin to bleed into padding */}
               {finalDocumentUrl ? (
                 <iframe
                   src={finalDocumentUrl}
-                  className="w-full h-full flex-1 border-0 rounded-md bg-white"
+                  className="w-full h-full flex-1 border-0 bg-white"
                   title={`Embedded document: ${note.title}`}
                   allowFullScreen
                 />
               ) : (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30">
                     <span>Document preview is not available for this file type.</span>
                 </div>
               )}
@@ -87,7 +85,7 @@ function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: st
             </div>
         )}
       </CardContent>
-    </Card>
+    </div>
   );
 }
 
@@ -117,26 +115,28 @@ export default async function SharedNotePage({ params }: { params: { token: stri
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <PortfolioHeader />
-      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+    // Removed header, footer, and outer padding.
+    <div className="h-screen w-screen bg-background text-foreground">
+      <main className="h-full w-full">
         {note ? (
           <SharedNoteDisplay note={note} documentUrl={documentUrl} />
         ) : (
-          <Card className="w-full max-w-md shadow-xl text-center">
-            <CardHeader>
-                <div className="mx-auto bg-destructive/10 p-4 rounded-full w-fit mb-4">
-                    <FileWarning className="h-10 w-10 text-destructive" />
-                </div>
-                <CardTitle className="text-2xl">Link Invalid or Expired</CardTitle>
-                <CardDescription>
-                    This share link is no longer valid. It may have expired, reached its view limit, or been deleted.
-                </CardDescription>
-            </CardHeader>
-          </Card>
+          // Center the error card
+          <div className="flex h-full w-full items-center justify-center p-4">
+              <Card className="w-full max-w-md shadow-xl text-center">
+                <CardHeader>
+                    <div className="mx-auto bg-destructive/10 p-4 rounded-full w-fit mb-4">
+                        <FileWarning className="h-10 w-10 text-destructive" />
+                    </div>
+                    <CardTitle className="text-2xl">Link Invalid or Expired</CardTitle>
+                    <CardDescription>
+                        This share link is no longer valid. It may have expired, reached its view limit, or been deleted.
+                    </CardDescription>
+                </CardHeader>
+              </Card>
+          </div>
         )}
       </main>
-      <PortfolioFooter />
     </div>
   );
 }
