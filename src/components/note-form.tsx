@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect } from 'react';
@@ -89,6 +90,7 @@ export function NoteForm({
   }, [isEditing, defaultValues, form]);
 
   const selectedType = form.watch('type');
+  const watchedContent = form.watch('content'); // Watch content for reactive UI
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
@@ -108,15 +110,10 @@ export function NoteForm({
       isValid = false;
     }
 
-    // File validation
-    if (data.type === 'document' && !selectedFile) {
-        const isFillForm = submitButtonText === "Submit Information";
-        // If it's a fillable form OR a new document creation, a file is required.
-        if (isFillForm || !isEditing) {
-            alert('A file is required to submit a document.');
-            isValid = false;
-        }
-        // If we're just editing an existing document, not providing a file is okay.
+    // File validation for NEW documents
+    if (data.type === 'document' && !selectedFile && !watchedContent && !isEditing) {
+        alert('A file is required to submit a document.');
+        isValid = false;
     }
 
     if (!isValid) {
@@ -271,7 +268,7 @@ export function NoteForm({
                       onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
                       className="hidden"
                     />
-                    {!selectedFile && !defaultValues?.content ? (
+                    {!selectedFile && !watchedContent ? (
                        <div
                           className="mt-1 flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-10 cursor-pointer hover:border-primary transition-colors"
                           onClick={() => fileInputRef.current?.click()}
@@ -298,6 +295,7 @@ export function NoteForm({
                               className="h-7 w-7 text-muted-foreground hover:text-destructive"
                               onClick={() => {
                                 handleFileChange(null);
+                                form.setValue('content', '');
                                 if (fileInputRef.current) fileInputRef.current.value = '';
                               }}
                             >

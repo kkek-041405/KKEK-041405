@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -37,10 +38,14 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
             } else {
               throw new Error('File upload failed.');
             }
-          } else {
-            // No new file, preserve existing document info from the original note.
+          } else if (data.content && data.content.length > 0) {
+            // No new file, but content is not empty, so keep the existing file.
             submissionData.content = note.content;
             submissionData.documentMetadata = note.documentMetadata;
+          } else {
+            // No new file and content is empty, so user wants to remove the file.
+            submissionData.content = '';
+            submissionData.documentMetadata = null as any; // Set to null to clear in Firestore
           }
       }
       
