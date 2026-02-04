@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import type { Note } from '@/lib/types';
 import { NoteForm, type NoteFormSubmission, type NoteFormValues } from '@/components/note-form';
-import { addNoteToFirestore, deleteNoteFromFirestore } from '@/services/note-service';
+import { updateNoteInFirestore } from '@/services/note-service';
 import { uploadFileToServer } from '@/services/file-upload-service';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { CheckCircle, CircleDashed } from 'lucide-react';
+import { CheckCircle, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface NoteFillFormProps {
@@ -19,41 +19,47 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmitAndCreateNote = async (data: NoteFormSubmission) => {
+  const handleUpdateNote = async (data: NoteFormSubmission) => {
     setIsSubmitting(true);
     try {
-      if (data.type === 'document' && data.file) {
-        const uploadResult = await uploadFileToServer(data.file);
-        if (uploadResult) {
-          data.content = `/api/notes/download?storageId=${encodeURIComponent(uploadResult.storageId)}`;
-          data.documentMetadata = uploadResult;
-        } else {
-          throw new Error('File upload failed.');
-        }
+      let submissionData: Partial<Omit<Note, 'id' | 'createdAt'>> = {
+        title: data.title,
+        content: data.content,
+        type: data.type,
+      };
+
+      if (data.type === 'document') {
+          if (data.file) { // A new file was uploaded
+            const uploadResult = await uploadFileToServer(data.file);
+            if (uploadResult) {
+              submissionData.content = `/api/notes/download?storageId=${encodeURIComponent(uploadResult.storageId)}`;
+              submissionData.documentMetadata = uploadResult;
+            } else {
+              throw new Error('File upload failed.');
+            }
+          } else {
+            // No new file, preserve existing document info from the original note.
+            submissionData.content = note.content;
+            submissionData.documentMetadata = note.documentMetadata;
+          }
       }
       
-      delete (data as any).file;
-      if ((data as any).documentMetadata === null) {
-          delete (data as any).documentMetadata;
-      }
-      
-      // Create a new note with the submitted information
-      await addNoteToFirestore(data);
-      // Delete the original template note that was used to generate the link
-      await deleteNoteFromFirestore(note.id);
+      // Update the existing note
+      await updateNoteInFirestore(note.id, submissionData);
       
       setIsSubmitted(true);
     } catch (error) {
-      console.error("Failed to submit note:", error);
+      console.error("Failed to update note:", error);
       toast({
-        title: "Submission Failed",
-        description: "There was an error submitting the information. Please try again.",
+        title: "Update Failed",
+        description: "There was an error updating the information. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   if (isSubmitted) {
     return (
@@ -62,9 +68,9 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
                  <div className="mx-auto bg-green-500/10 p-4 rounded-full w-fit mb-4">
                     <CheckCircle className="h-10 w-10 text-green-500" />
                 </div>
-                <CardTitle className="text-2xl">Submission Complete!</CardTitle>
+                <CardTitle className="text-2xl">Update Complete!</CardTitle>
                 <CardDescription>
-                    Thank you. The information has been securely submitted.
+                    Thank you. The item has been successfully updated.
                 </CardDescription>
             </CardHeader>
              <CardContent>
@@ -76,31 +82,30 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
     );
   }
 
-  const initialValues: NoteFormValues = {
-    title: note.title,
-    content: note.content,
-    type: note.type,
-  };
+  // The NoteForm expects `defaultValues` to be of type `NoteFormValues`,
+  // but we also need to pass `documentMetadata` for display purposes.
+  // We can cast the `note` object which has the correct shape.
+  const initialValues = note as NoteFormValues;
 
   return (
     <Card className="w-full max-w-lg shadow-xl">
         <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-3">
-              <CircleDashed className="h-7 w-7 text-primary" />
-              Complete This Item
+              <Edit className="h-7 w-7 text-primary" />
+              Edit Information
             </CardTitle>
             <CardDescription>
-                You've been asked to complete the following item. Please fill in the details and submit.
+                You've been asked to edit the following item. Please make your changes and submit.
             </CardDescription>
         </CardHeader>
         <CardContent>
             <NoteForm
-                onSave={handleSubmitAndCreateNote}
+                onSave={handleUpdateNote}
                 isLoading={isSubmitting}
                 onFormSubmit={() => {}}
                 defaultValues={initialValues}
                 isEditing={true}
-                submitButtonText="Submit Information"
+                submitButtonText="Update Information"
             />
         </CardContent>
     </Card>
