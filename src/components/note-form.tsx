@@ -205,59 +205,56 @@ export function NoteForm({ onSave, isLoading = false, onFormSubmit, defaultValue
     <div className="pt-4">
         <Form {...form}>
           <form onSubmit={handleRegularSubmit} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel className="text-base font-semibold">
-                    Select Item Type
-                  </FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) => {
-                        if (!isEditing) { // Only allow type change if not editing
+            {!isEditing && (
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-base font-semibold">
+                      Select Item Type
+                    </FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) => {
                           field.onChange(value as 'note' | 'keyInformation' | 'document');
                           form.reset({ title: '', content: '', type: value as 'note' | 'keyInformation' | 'document' });
-                        }
-                      }}
-                      defaultValue={field.value}
-                      value={field.value} // Ensure value is controlled
-                      className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1"
-                    >
-                       <fieldset disabled={isEditing} className="contents">
+                        }}
+                        defaultValue={field.value}
+                        value={field.value}
+                        className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1"
+                      >
                         <FormItem className="flex items-center space-x-2 space-y-0 p-2 border rounded-md hover:bg-accent/50 has-[input:checked]:bg-primary/10 has-[input:checked]:border-primary flex-1">
                           <FormControl>
-                            <RadioGroupItem value="note" id="type-note" disabled={isEditing} />
+                            <RadioGroupItem value="note" id="type-note" />
                           </FormControl>
-                          <FormLabel htmlFor="type-note" className={cn("font-normal flex items-center w-full", isEditing ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer")}>
+                          <FormLabel htmlFor="type-note" className="font-normal flex items-center w-full cursor-pointer">
                             <PlusCircle className="mr-2 h-5 w-5 text-primary" /> Note
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-2 space-y-0 p-2 border rounded-md hover:bg-accent/50 has-[input:checked]:bg-primary/10 has-[input:checked]:border-primary flex-1">
                           <FormControl>
-                            <RadioGroupItem value="keyInformation" id="type-keyInformation" disabled={isEditing} />
+                            <RadioGroupItem value="keyInformation" id="type-keyInformation" />
                           </FormControl>
-                          <FormLabel htmlFor="type-keyInformation" className={cn("font-normal flex items-center w-full", isEditing ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer")}>
+                          <FormLabel htmlFor="type-keyInformation" className="font-normal flex items-center w-full cursor-pointer">
                            <Info className="mr-2 h-5 w-5 text-primary" /> Key Info
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-2 space-y-0 p-2 border rounded-md hover:bg-accent/50 has-[input:checked]:bg-primary/10 has-[input:checked]:border-primary flex-1">
                           <FormControl>
-                            <RadioGroupItem value="document" id="type-document" disabled={isEditing} />
+                            <RadioGroupItem value="document" id="type-document" />
                           </FormControl>
-                          <FormLabel htmlFor="type-document" className={cn("font-normal flex items-center w-full", isEditing ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer")}>
+                          <FormLabel htmlFor="type-document" className="font-normal flex items-center w-full cursor-pointer">
                            <FileArchive className="mr-2 h-5 w-5 text-primary" /> Document
                           </FormLabel>
                         </FormItem>
-                       </fieldset>
-                    </RadioGroup>
-                  </FormControl>
-                  {isEditing && <p className="text-xs text-muted-foreground">Item type cannot be changed during editing.</p>}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="title"
