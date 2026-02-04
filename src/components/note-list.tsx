@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -116,15 +117,17 @@ export function NoteList({
                 <DialogHeader>
                   <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
                 </DialogHeader>
-                <NoteForm
-                  onSave={noteFormProps.onSave}
-                  isLoading={noteFormProps.isLoading}
-                  onGetLink={noteFormProps.onGetLink}
-                  isGettingLink={noteFormProps.isGettingLink}
-                  onFormSubmit={noteFormProps.onFormSubmit}
-                  defaultValues={noteFormProps.defaultValues}
-                  isEditing={noteFormProps.isEditing}
-                />
+                <div className="max-h-[70vh] overflow-y-auto pr-4">
+                  <NoteForm
+                    onSave={noteFormProps.onSave}
+                    isLoading={noteFormProps.isLoading}
+                    onGetLink={noteFormProps.onGetLink}
+                    isGettingLink={noteFormProps.isGettingLink}
+                    onFormSubmit={noteFormProps.onFormSubmit}
+                    defaultValues={noteFormProps.defaultValues}
+                    isEditing={noteFormProps.isEditing}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
 

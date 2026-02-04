@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect } from 'react';
@@ -334,14 +333,13 @@ export function NoteForm({
                 />
             )}
 
-            <div className="flex justify-end pt-2 gap-2 flex-wrap sm:flex-nowrap">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-4">
                {!isEditing && onGetLink && (
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handleGetLink}
                     disabled={isLoading || isGettingLink}
-                    className="w-full sm:w-auto"
                   >
                     {isGettingLink ? (
                       <>
@@ -356,7 +354,7 @@ export function NoteForm({
                     )}
                   </Button>
                )}
-              <Button type="submit" disabled={isLoading || isGettingLink} className="w-full sm:w-auto">
+              <Button type="submit" disabled={isLoading || isGettingLink}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {isLoading ? 'Submitting...' : (submitButtonText || (isEditing ? 'Update Item' : 'Save Item'))}
               </Button>
