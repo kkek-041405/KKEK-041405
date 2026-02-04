@@ -1,5 +1,5 @@
 
-import { getNoteFromShareToken } from '@/services/share-note-service';
+import { getNoteFromShareToken } from '@/services/share-note-server';
 import { PortfolioHeader } from '@/components/portfolio-header';
 import { PortfolioFooter } from '@/components/portfolio-footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
