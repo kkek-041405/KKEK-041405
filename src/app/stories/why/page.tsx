@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/animated-section';
 import storiesData from './stories.json';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface StorySection {
   title: string;
@@ -198,13 +199,24 @@ const StoryHero = ({
           "absolute top-6 left-6 z-10 flex gap-2 transition-opacity duration-700",
           showBackButton ? "opacity-100" : "opacity-0"
         )}>
-         <Button 
-            variant="outline" 
-            onClick={() => router.push('/')}
-            className="bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white"
-          >
-            <Home className="mr-2 h-4 w-4" /> Home
-        </Button>
+         <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button 
+                        variant="outline"
+                        size="icon"
+                        onClick={() => router.push('/')}
+                        className="bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-white"
+                        aria-label="Home"
+                    >
+                        <Home className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                    <p>Homepage</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
         <Button 
           variant="outline" 
           onClick={onBackClick} 
@@ -350,11 +362,20 @@ function WhyPageContent() {
   return (
     <div className="py-12 md:py-16">
       <div className="max-w-4xl mx-auto mb-12 relative px-4">
-          <Button asChild variant="outline" className="absolute top-0 left-4 bg-zinc-900/50 border-white/10 hover:bg-zinc-800">
-              <Link href="/">
-                <Home className="mr-2 h-4 w-4" /> Home
-              </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button asChild variant="outline" size="icon" className="absolute top-0 left-4 bg-zinc-900/50 border-white/10 hover:bg-zinc-800">
+                        <Link href="/" aria-label="Home">
+                            <Home className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Go to Homepage</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
           <div className="text-center pt-16 sm:pt-0">
             <h1 className="text-4xl md:text-5xl font-bold">The Reason behind the code</h1>
             <p className="text-lg text-zinc-400 mt-2">Every build started with a problem — not just an idea.</p>
