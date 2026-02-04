@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -352,7 +353,7 @@ export default function PortfolioPage() {
                       )}
                     </CardContent>
                     <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-3 border-t pt-4 pb-4 bg-secondary/20 dark:bg-secondary/10 rounded-b-lg px-4 mt-auto">
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                             {project.githubLink && (
                                 <Button variant="outline" size="sm" asChild>
                                     <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
@@ -368,7 +369,7 @@ export default function PortfolioPage() {
                                 </Button>
                             )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2">
                             {project.storyLink && (
                                 <Button variant="outline" size="sm" asChild>
                                     <Link href={project.storyLink}>
