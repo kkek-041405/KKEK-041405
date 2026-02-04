@@ -19,7 +19,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSave = async (data: NoteFormSubmission) => {
+  const handleSubmitAndCreateNote = async (data: NoteFormSubmission) => {
     setIsSubmitting(true);
     try {
       if (data.type === 'document' && data.file) {
@@ -39,7 +39,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
       
       // Create a new note with the submitted information
       await addNoteToFirestore(data);
-      // Delete the original template note
+      // Delete the original template note that was used to generate the link
       await deleteNoteFromFirestore(note.id);
       
       setIsSubmitted(true);
@@ -95,7 +95,7 @@ export function NoteFillForm({ note }: NoteFillFormProps) {
         </CardHeader>
         <CardContent>
             <NoteForm
-                onSave={handleSave}
+                onSave={handleSubmitAndCreateNote}
                 isLoading={isSubmitting}
                 onFormSubmit={() => {}}
                 defaultValues={initialValues}
