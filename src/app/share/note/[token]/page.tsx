@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import type { Note } from '@/lib/types';
 import { ConvexHttpClient } from 'convex/browser';
-import { api } from '@/convex/_generated/api';
+import { api } from '@convex/_generated/api';
 
 // A slimmed-down, read-only version of NoteView
 function SharedNoteDisplay({ note, documentUrl }: { note: Note, documentUrl?: string | null }) {
