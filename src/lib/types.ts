@@ -3,7 +3,7 @@ export interface Note {
     id: string;
     title: string;
     content: string; // For documents, this will hold the file URL
-    createdAt: string; // ISO Date string
+    createdAt: string; // ISO string
     summary?: string;
     type: 'note' | 'keyInformation' | 'document';
     // For documents, keep structured metadata about the file stored in Convex
@@ -39,3 +39,12 @@ export interface Command {
 }
 
 export type Commands = Record<string, Omit<Command, 'id'>>;
+
+export interface SharedNoteLink {
+  id: string; // The token
+  noteId: string;
+  createdAt: string; // ISO string
+  expiresAt: string; // ISO string
+  viewLimit: number; // 0 for unlimited
+  viewCount: number;
+}

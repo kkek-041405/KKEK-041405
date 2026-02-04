@@ -5,11 +5,12 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Share2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { ShareNoteDialog } from './share-note-dialog';
 
 interface NoteViewProps {
   note: Note;
@@ -23,6 +24,7 @@ interface NoteViewProps {
 export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
   
@@ -154,6 +156,9 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                 </Button>
               </>
             )}
+            <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)} disabled={note.id.startsWith('default-')}>
+                <Share2 className="mr-2 h-4 w-4" /> Share
+            </Button>
             <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
                 <Pencil className="mr-2 h-4 w-4" /> Edit
             </Button>
@@ -268,10 +273,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
           </div>
         )}
       </div>
+       <ShareNoteDialog
+        note={note}
+        isOpen={isShareDialogOpen}
+        onOpenChange={setIsShareDialogOpen}
+      />
     </div>
   );
 }
-
-    
-
-    

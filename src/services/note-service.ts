@@ -13,6 +13,7 @@ import {
   Timestamp,
   query,
   orderBy,
+  getDoc,
 } from 'firebase/firestore';
 
 const NOTES_COLLECTION = 'notes';
@@ -69,6 +70,18 @@ export const getNotesFromFirestore = async (): Promise<Note[]> => {
   const notesQuery = query(collection(db, NOTES_COLLECTION), orderBy('createdAt', 'desc'));
   const querySnapshot = await getDocs(notesQuery);
   return querySnapshot.docs.map(doc => formatNoteTimestamps(doc.data(), doc.id));
+};
+
+export const getNoteFromFirestore = async (noteId: string): Promise<Note | null> => {
+  const noteRef = doc(db, NOTES_COLLECTION, noteId);
+  const docSnap = await getDoc(noteRef);
+
+  if (docSnap.exists()) {
+    return formatNoteTimestamps(docSnap.data(), docSnap.id);
+  } else {
+    console.warn(`Note with id ${noteId} not found.`);
+    return null;
+  }
 };
 
 export const updateNoteInFirestore = async (
