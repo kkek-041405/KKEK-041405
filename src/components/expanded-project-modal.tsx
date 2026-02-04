@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, CaseSensitive, ChevronLeft, ChevronRight } from "lucide-react";
+import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, Feather, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -31,7 +31,7 @@ export interface Project {
   achievements?: string[];
   githubLink?: string;
   liveLink?: string;
-  caseStudyLink?: string;
+  storyLink?: string;
 }
 
 interface ExpandedProjectModalProps {
@@ -183,10 +183,10 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                 </Link>
               </Button>
             )}
-            {project.caseStudyLink && (
+            {project.storyLink && (
               <Button variant="outline" asChild>
-                <Link href={project.caseStudyLink} target="_blank" rel="noopener noreferrer">
-                  <CaseSensitive className="mr-2 h-4 w-4" /> Case Study
+                <Link href={project.storyLink} target="_blank" rel="noopener noreferrer">
+                  <Feather className="mr-2 h-4 w-4" /> Read Story
                 </Link>
               </Button>
             )}
@@ -197,3 +197,5 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
     </Dialog>
   );
 }
+
+    

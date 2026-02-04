@@ -53,7 +53,7 @@ const experiences: ExperienceItem[] = [
 // Projects Data
 const initialProjects: Project[] = [
   {
-    id: "zen-control",
+    id: "zencontrol",
     title: "ZenControl – AI Agent for Headless Android",
     subtitle: "A headless automation framework for Android devices.",
     shortDescription: "An automation layer that enables complete phone operation (calls, navigation, media) without a display, driven by remote commands and AI.",
@@ -69,10 +69,10 @@ const initialProjects: Project[] = [
     achievements: ["Enables full device control without a screen", "Modular AiTool system for scalable tasks"],
     githubLink: "https://github.com/kkek-041405/ZenControl",
     liveLink: undefined,
-    caseStudyLink: undefined,
+    storyLink: "/stories/why?project=zencontrol",
   },
   {
-    id: "online-chess-arena",
+    id: "chess",
     title: "Multiplayer Chess Application",
     subtitle: "Real-time chess with friends or AI.",
     shortDescription: "A production-ready Android chess app with real-time multiplayer, optimized UI, and an integrated Stockfish AI for offline play.",
@@ -88,10 +88,10 @@ const initialProjects: Project[] = [
     achievements: ["Sub-120ms latency on mobile networks", "Published on Google Play Store"],
     githubLink: "https://github.com/kkek-041405/Chess",
     liveLink: "https://play.google.com/store/apps/details?id=com.KKEK.chess",
-    caseStudyLink: undefined,
+    storyLink: "/stories/why?project=chess",
   },
    {
-    id: "portfolio-notenest",
+    id: "notenest",
     title: "Portfolio + NoteNest",
     subtitle: "A personal portfolio with a secure, AI-powered notes module.",
     shortDescription: "A secure workspace with AI-powered summarization for notes, supporting a headless workflow for information management without visual screen usage.",
@@ -106,7 +106,7 @@ const initialProjects: Project[] = [
     achievements: ["AI-powered note summarization", "Secure, real-time data persistence"],
     githubLink: "https://github.com/kkek-041405/",
     liveLink: "https://kkek.vercel.app",
-    caseStudyLink: undefined,
+    storyLink: "/stories/why?project=notenest",
   },
 ];
 
@@ -352,25 +352,35 @@ export default function PortfolioPage() {
                       )}
                     </CardContent>
                     <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-3 border-t pt-4 pb-4 bg-secondary/20 dark:bg-secondary/10 rounded-b-lg px-4 mt-auto">
-                      <div className="flex gap-2">
-                          {project.githubLink && (
-                              <Button variant="outline" size="sm" asChild>
-                                  <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
-                                      <Github className="mr-1.5 h-4 w-4" /> GitHub
-                                  </Link>
-                              </Button>
-                          )}
-                          {project.liveLink && (
-                              <Button variant="outline" size="sm" asChild>
-                                  <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
-                                      <ExternalLink className="mr-1.5 h-4 w-4" /> Live
-                                  </Link>
-                              </Button>
-                          )}
-                      </div>
-                      <Button size="sm" onClick={() => handleOpenModal(project)} className="w-full sm:w-auto">
-                          <Eye className="mr-1.5 h-4 w-4" /> View Details
-                      </Button>
+                        <div className="flex gap-2">
+                            {project.githubLink && (
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                                        <Github className="mr-1.5 h-4 w-4" /> GitHub
+                                    </Link>
+                                </Button>
+                            )}
+                            {project.liveLink && (
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="mr-1.5 h-4 w-4" /> Live
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {project.storyLink && (
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={project.storyLink}>
+                                        <Feather className="mr-1.5 h-4 w-4" />
+                                        Story
+                                    </Link>
+                                </Button>
+                            )}
+                            <Button size="sm" onClick={() => handleOpenModal(project)} className="w-full sm:w-auto">
+                                <Eye className="mr-1.5 h-4 w-4" /> View Details
+                            </Button>
+                        </div>
                     </CardFooter>
                   </Card>
                 </AnimatedSection>
@@ -472,3 +482,5 @@ export default function PortfolioPage() {
     </div>
   );
 }
+
+    

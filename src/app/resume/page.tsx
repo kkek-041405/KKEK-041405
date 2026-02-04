@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Github, Globe, Mail, Phone, ExternalLink } from 'lucide-react';
+import { Github, Globe, Mail, Phone, ExternalLink, Feather } from 'lucide-react';
 
 export default function Resume() {
   return (
@@ -32,9 +32,10 @@ export default function Resume() {
           
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                    ZenControl – AI Agent for Headless Android
+                <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
+                    <span>ZenControl – AI Agent for Headless Android</span>
                     <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Github className="inline h-3 w-3 mr-0.5" /> GitHub</a>
+                    <a href="/stories/why?project=zencontrol" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
                 </h3>
                 <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
             </div>
@@ -48,9 +49,10 @@ export default function Resume() {
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                    Multiplayer Chess
+                <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
+                    <span>Multiplayer Chess</span>
                     <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <ExternalLink className="inline h-3 w-3 mr-0.5" /> Play Store</a>
+                    <a href="/stories/why?project=chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
                 </h3>
               <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets, Stockfish</span>
             </div>
@@ -64,9 +66,10 @@ export default function Resume() {
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                Portfolio + NoteNest
+              <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
+                <span>Portfolio + NoteNest</span>
                 <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Globe className="inline h-3 w-3 mr-0.5" /> Portfolio</a>
+                <a href="/stories/why?project=notenest" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
               </h3>
               <span className="text-xs italic text-gray-600">Next.js, TS, Firebase, Genkit</span>
             </div>
@@ -145,3 +148,5 @@ export default function Resume() {
     </div>
   );
 }
+
+    
