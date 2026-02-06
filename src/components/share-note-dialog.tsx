@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { createShareLink } from '@/services/share-note-service';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Check, Link2, Eye, Edit } from 'lucide-react';
+import { Loader2, Copy, Check, Link2, Eye, Edit, Download } from 'lucide-react';
 import type { Note } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -36,19 +36,19 @@ interface ShareNoteDialogProps {
 export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogProps) {
   const [expiresInHours, setExpiresInHours] = useState(24);
   const [viewLimit, setViewLimit] = useState(1);
-  const [linkType, setLinkType] = useState<'view' | 'fill'>('view');
+  const [linkType, setLinkType] = useState<'view' | 'fill' | 'download'>('view');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    // When switching to editable link, make it permanent and single-use.
-    if (linkType === 'fill') {
+    // When switching to editable or download link, make it permanent and single-use.
+    if (linkType === 'fill' || linkType === 'download') {
       setViewLimit(1);
-      setExpiresInHours(0); // 0 makes it permanent until submitted
+      setExpiresInHours(0); // 0 makes it permanent until submitted/used
     } else {
-      // When switching back to 'view', restore a sensible default if it was on the 'fill' default
+      // When switching back to 'view', restore a sensible default if it was on the 'fill'/'download' default
       if (viewLimit === 1 && expiresInHours === 0) {
         setViewLimit(1);
         setExpiresInHours(24); // Default back to 24 hours for view links
@@ -105,6 +105,9 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
       if (linkType === 'fill') {
           return "This is a single-use editable link. It will be permanently disabled after it's used once.";
       }
+      if (linkType === 'download') {
+        return "This is a single-use download link. It will be permanently disabled after it's used once.";
+      }
 
       const expiryText = expiresInHours > 0 ? `in ${expiresInHours} hour(s)` : 'never expires';
       const viewLimitText = viewLimit > 0 ? `after ${viewLimit} view(s)` : 'has unlimited views';
@@ -153,23 +156,28 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                 </Label>
                  <Select
                     value={linkType}
-                    onValueChange={(value: 'view' | 'fill') => setLinkType(value)}
+                    onValueChange={(value: 'view' | 'fill' | 'download') => setLinkType(value)}
                 >
                     <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select link type" />
                     </SelectTrigger>
                     <SelectContent>
-                    <SelectItem value="view">
-                        <div className="flex items-center"><Eye className="mr-2 h-4 w-4"/>View Only</div>
-                    </SelectItem>
-                    <SelectItem value="fill">
-                        <div className="flex items-center"><Edit className="mr-2 h-4 w-4"/>Editable Link</div>
-                    </SelectItem>
+                      <SelectItem value="view">
+                          <div className="flex items-center"><Eye className="mr-2 h-4 w-4"/>View Only</div>
+                      </SelectItem>
+                      <SelectItem value="fill">
+                          <div className="flex items-center"><Edit className="mr-2 h-4 w-4"/>Editable Link</div>
+                      </SelectItem>
+                      {note.type === 'document' && (
+                        <SelectItem value="download">
+                            <div className="flex items-center"><Download className="mr-2 h-4 w-4"/>Downloadable Link</div>
+                        </SelectItem>
+                      )}
                     </SelectContent>
                 </Select>
             </div>
 
-            <div className={cn("space-y-4", linkType === 'fill' && 'opacity-50')}>
+            <div className={cn("space-y-4", (linkType === 'fill' || linkType === 'download') && 'opacity-50')}>
                 <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="expires-in" className="text-right">
                     Expires In
@@ -177,7 +185,7 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                 <Select
                     value={String(expiresInHours)}
                     onValueChange={(value) => setExpiresInHours(Number(value))}
-                    disabled={linkType === 'fill'}
+                    disabled={linkType === 'fill' || linkType === 'download'}
                 >
                     <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select expiry time" />
@@ -202,11 +210,11 @@ export function ShareNoteDialog({ note, isOpen, onOpenChange }: ShareNoteDialogP
                     onChange={(e) => setViewLimit(Math.max(0, Number(e.target.value)))}
                     className="col-span-3"
                     min="0"
-                    disabled={linkType === 'fill'}
+                    disabled={linkType === 'fill' || linkType === 'download'}
                 />
                 </div>
                 <p className="text-xs text-muted-foreground col-span-4 text-right -mt-2">
-                    {linkType === 'fill' ? "Editable links are single-use." : "Set to 0 for unlimited views."}
+                    {(linkType === 'fill' || linkType === 'download') ? "Single-use links are permanent until used." : "Set to 0 for unlimited views."}
                 </p>
             </div>
           </div>

@@ -47,5 +47,5 @@ export interface SharedNoteLink {
   expiresAt: string; // ISO string
   viewLimit: number; // 0 for unlimited
   viewCount: number;
-  type?: 'view' | 'fill';
+  type?: 'view' | 'fill' | 'download';
 }

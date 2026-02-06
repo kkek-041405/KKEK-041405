@@ -5,7 +5,7 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Share2 } from 'lucide-react';
+import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Share2, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -145,6 +145,12 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </Badge>
             {note.type === 'document' && (
               <>
+                <Button asChild variant="outline" size="sm">
+                  <a href={note.content} download={note.documentMetadata?.fileName || 'download'}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                  </a>
+                </Button>
                 <Button
                     onClick={handleFullscreen}
                     variant="outline"

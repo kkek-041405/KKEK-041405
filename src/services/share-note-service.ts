@@ -27,7 +27,7 @@ interface CreateShareLinkOptions {
 export const createShareLink = async (
   noteId: string,
   options: CreateShareLinkOptions,
-  linkType: 'view' | 'fill' = 'view'
+  linkType: 'view' | 'fill' | 'download' = 'view'
 ): Promise<string> => {
   const token = generateToken(20);
   const linkRef = doc(db, SHARED_NOTE_LINKS_COLLECTION, token);
@@ -38,8 +38,8 @@ export const createShareLink = async (
       ? new Date(now.getTime() + options.expiresInHours * 60 * 60 * 1000)
       : new Date('9999-12-31T23:59:59Z');
 
-  // Fillable links are single-use
-  const finalViewLimit = linkType === 'fill' ? 1 : options.viewLimit;
+  // Fillable & Download links are single-use
+  const finalViewLimit = (linkType === 'fill' || linkType === 'download') ? 1 : options.viewLimit;
 
   await setDoc(linkRef, {
     noteId,
@@ -49,8 +49,11 @@ export const createShareLink = async (
     viewCount: 0,
     type: linkType,
   });
+  
+  let page = 'share';
+  if (linkType === 'fill') page = 'fill';
+  if (linkType === 'download') page = 'download';
 
-  const page = linkType === 'fill' ? 'fill' : 'share';
   const shareUrl = `${window.location.origin}/${page}/note/${token}`;
   return shareUrl;
 };
