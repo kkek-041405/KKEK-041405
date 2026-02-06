@@ -111,13 +111,14 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   
   const getFileExtension = () => {
     if (note.type !== 'document' || !note.documentMetadata?.fileName) {
-      return null;
+      return '';
     }
     const parts = note.documentMetadata.fileName.split('.');
-    return parts.length > 1 ? parts.pop()?.toLowerCase() : null;
+    return parts.length > 1 ? `.${parts.pop()?.toLowerCase()}` : '';
   }
   
   const fileExtension = getFileExtension();
+  const downloadFilename = `${note.title || 'document'}${fileExtension}`;
 
 
   return (
@@ -130,7 +131,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
               </h2>
               {fileExtension && (
                 <Badge variant="secondary" className="whitespace-nowrap h-fit">
-                  {fileExtension}
+                  {fileExtension.replace('.', '')}
                 </Badge>
               )}
             </div>
@@ -146,7 +147,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             {note.type === 'document' && (
               <>
                 <Button asChild variant="outline" size="sm">
-                  <a href={note.content} download={note.documentMetadata?.fileName || 'download'}>
+                  <a href={`${note.content}&filename=${encodeURIComponent(downloadFilename)}`} download={downloadFilename}>
                       <Download className="mr-2 h-4 w-4" />
                       Download
                   </a>

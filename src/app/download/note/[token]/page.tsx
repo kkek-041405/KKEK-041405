@@ -37,8 +37,20 @@ export default async function DownloadNotePage({ params }: { params: { token: st
     // Consume the token
     await consumeTokenOnServer(token);
     
-    // Redirect to the actual download URL
-    redirect(note.content);
+    const getFileExtension = (fileName?: string) => {
+        if (!fileName) return '';
+        const parts = fileName.split('.');
+        if (parts.length > 1) {
+            return `.${parts.pop()}`;
+        }
+        return '';
+    };
+
+    const extension = getFileExtension(note.documentMetadata?.fileName);
+    const downloadFilename = `${note.title}${extension}`;
+
+    // Redirect to the download URL with the desired filename
+    redirect(`${note.content}&filename=${encodeURIComponent(downloadFilename)}`);
   }
 
   // If we reach here, the note is invalid or not a document.
