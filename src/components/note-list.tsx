@@ -6,7 +6,7 @@ import type { NoteFormValues, NoteFormSubmission } from '@/components/note-form'
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { ListChecks, FileText, Info, PlusCircle, FileArchive } from 'lucide-react';
+import { ListChecks, FileText, Info, PlusCircle, FileArchive, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { NoteForm } from '@/components/note-form';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Input } from './ui/input';
 
 
 interface NoteListProps {
@@ -36,6 +37,8 @@ interface NoteListProps {
     defaultValues?: NoteFormValues | null;
     isEditing?: boolean;
   };
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 export function NoteList({ 
@@ -48,6 +51,8 @@ export function NoteList({
   isFormOpen,
   onFormOpenChange,
   noteFormProps,
+  searchQuery,
+  onSearchChange,
 }: NoteListProps) {
   const displayedNotesList = filteredNotes.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   
@@ -131,13 +136,26 @@ export function NoteList({
         </div>
       </div>
       
+      <div className="p-3 border-b">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search items..."
+            className="w-full rounded-lg bg-background pl-8"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+        </div>
+      </div>
+
       {notes.length === 0 ? (
         <div className="p-4 flex-1 flex flex-col justify-center items-center text-center">
           <p className="text-muted-foreground">You haven't created any items yet. Click "Add New Item" to get started!</p>
         </div>
       ) : displayedNotesList.length === 0 ? (
          <div className="p-4 flex-1 flex flex-col justify-center items-center text-center">
-          <p className="text-muted-foreground">No items of type "{sortTypeConfig[sortType].label}" found.</p>
+          <p className="text-muted-foreground">No items match your search for "{searchQuery}" in {sortTypeConfig[sortType].label}.</p>
         </div>
       ) : (
         <ScrollArea className="flex-1">

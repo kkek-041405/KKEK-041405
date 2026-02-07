@@ -39,6 +39,7 @@ export default function NotesContentPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
   const [sortType, setSortType] = useState<'note' | 'keyInformation' | 'document'>('note');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [initialFormValues, setInitialFormValues] = useState<NoteFormValues | null>(null);
@@ -364,7 +365,23 @@ export default function NotesContentPage() {
   };
   
   const filteredNotes = notes.filter(note => {
-    return note.type === sortType;
+    const typeMatch = note.type === sortType;
+    if (!typeMatch) return false;
+
+    if (searchQuery.trim() === '') {
+      return true; // No search query, so just filter by type
+    }
+    
+    const lowercasedQuery = searchQuery.toLowerCase();
+
+    // Check title (all types have a title)
+    const titleMatch = note.title?.toLowerCase().includes(lowercasedQuery);
+
+    // Check content only for notes and key information
+    const contentMatch = (note.type === 'note' || note.type === 'keyInformation') 
+      && note.content?.toLowerCase().includes(lowercasedQuery);
+
+    return titleMatch || contentMatch;
   });
 
   if (isLoadingNotes && activeView === 'notes') {
@@ -400,6 +417,8 @@ export default function NotesContentPage() {
           isFormOpen={isFormOpen}
           onFormOpenChange={handleDialogValidOpenChange}
           noteFormProps={noteFormProps}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
       </section>
 
