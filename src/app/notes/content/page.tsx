@@ -23,6 +23,7 @@ import SpotifyView from '@/components/spotify-view';
 import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
 import NotificationsView from '@/components/notifications-view';
 import PhoneView from '@/components/phone-view';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function NotesContentPage() {
@@ -386,14 +387,57 @@ export default function NotesContentPage() {
 
   if (isLoadingNotes && activeView === 'notes') {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col h-screen">
         <AppBar
           activeView={activeView}
           onViewChange={setActiveView}
         />
-        <main className="flex-1 flex items-center justify-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="ml-4 text-lg text-muted-foreground">Loading your items...</p>
+        <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
+          {/* Skeleton for NoteList */}
+          <section className="md:w-80 flex flex-col border-r bg-card">
+            <div className="p-4 border-b flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-5" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+              <div className="flex items-center gap-1">
+                <Skeleton className="h-9 w-9" />
+                <Skeleton className="h-9 w-9" />
+              </div>
+            </div>
+            <div className="p-3 border-b">
+              <Skeleton className="h-9 w-full" />
+            </div>
+            <div className="space-y-1 p-3">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-3 p-3 rounded-lg">
+                  <Skeleton className="h-5 w-5 rounded-md" />
+                  <Skeleton className="h-4 w-4/5" />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Skeleton for NoteView */}
+          <div className="flex-1 flex-col hidden md:flex">
+            <div className="flex items-start justify-between gap-4 p-6 border-b">
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-7 w-3/5" />
+                <Skeleton className="h-4 w-2/5" />
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Skeleton className="h-9 w-24" />
+                <Skeleton className="h-9 w-20" />
+                <Skeleton className="h-9 w-9" />
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-4/5" />
+            </div>
+          </div>
         </main>
         <Toaster />
       </div>
