@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -50,7 +49,7 @@ export default function NotesContentPage() {
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
-  const [sortType, setSortType] = useState<'note' | 'keyInformation' | 'document'>('note');
+  const [sortType, setSortType] = useState<'all' | 'note' | 'keyInformation' | 'document'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -363,7 +362,7 @@ export default function NotesContentPage() {
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
 
   const filteredNotes = notes.filter(note => {
-    const typeMatch = note.type === sortType;
+    const typeMatch = sortType === 'all' || note.type === sortType;
     if (!typeMatch) return false;
 
     if (searchQuery.trim() === '') {

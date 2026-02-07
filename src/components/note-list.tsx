@@ -1,16 +1,16 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { ListChecks, FileText, Info, PlusCircle, FileArchive, Search } from 'lucide-react';
+import { ListChecks, PlusCircle, Search } from 'lucide-react';
 import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Input } from './ui/input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 
 interface NoteListProps {
@@ -18,8 +18,8 @@ interface NoteListProps {
   filteredNotes: Note[]; // Notes filtered by sortType for display
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
-  sortType: 'note' | 'keyInformation' | 'document';
-  onSortChange: (value: 'note' | 'keyInformation' | 'document') => void;
+  sortType: 'all' | 'note' | 'keyInformation' | 'document';
+  onSortChange: (value: 'all' | 'note' | 'keyInformation' | 'document') => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
@@ -37,17 +37,11 @@ export function NoteList({
   const displayedNotesList = filteredNotes.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   
   const sortTypeConfig = {
-      note: { label: 'Notes', icon: FileText, next: 'keyInformation' as const },
-      keyInformation: { label: 'Key Info', icon: Info, next: 'document' as const },
-      document: { label: 'Docs', icon: FileArchive, next: 'note' as const },
-  }
-  
-  const CurrentSortIcon = sortTypeConfig[sortType].icon;
-
-  const handleCycleFilter = () => {
-    onSortChange(sortTypeConfig[sortType].next);
+      all: { label: 'All Items' },
+      note: { label: 'Notes' },
+      keyInformation: { label: 'Key Info' },
+      document: { label: 'Docs' },
   };
-
 
   return (
     <TooltipProvider>
@@ -59,41 +53,23 @@ export function NoteList({
                 Your Items
             </h3>
         </div>
-        <div className="flex items-center gap-1">
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={handleCycleFilter}
-                      aria-label={`Filter by ${sortTypeConfig[sortTypeConfig[sortType].next].label}`}
-                      className="h-9 w-9"
-                    >
-                      <CurrentSortIcon className="h-5 w-5" />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Filter by {sortTypeConfig[sortTypeConfig[sortType].next].label}</p>
-                </TooltipContent>
-            </Tooltip>
-             <DialogTrigger asChild>
-              <Tooltip>
-                  <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Add New Item"
-                        className="h-9 w-9"
-                      >
-                        <PlusCircle className="h-5 w-5" />
-                      </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                      <p>Add New Item</p>
-                  </TooltipContent>
-              </Tooltip>
-            </DialogTrigger>
-        </div>
+        <DialogTrigger asChild>
+          <Tooltip>
+              <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Add New Item"
+                    className="h-9 w-9"
+                  >
+                    <PlusCircle className="h-5 w-5" />
+                  </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                  <p>Add New Item</p>
+              </TooltipContent>
+          </Tooltip>
+        </DialogTrigger>
       </div>
       
       <div className="p-3 border-b">
@@ -107,6 +83,23 @@ export function NoteList({
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
+      </div>
+      
+       <div className="p-3 border-b">
+         <ToggleGroup
+            type="single"
+            size="sm"
+            value={sortType}
+            onValueChange={(value: 'all' | 'note' | 'keyInformation' | 'document') => {
+                if (value) onSortChange(value);
+            }}
+            className="w-full justify-start"
+        >
+            <ToggleGroupItem value="all" aria-label="Filter by All" className="flex-1">All</ToggleGroupItem>
+            <ToggleGroupItem value="note" aria-label="Filter by Notes" className="flex-1">Notes</ToggleGroupItem>
+            <ToggleGroupItem value="keyInformation" aria-label="Filter by Key Info" className="flex-1">Key Info</ToggleGroupItem>
+            <ToggleGroupItem value="document" aria-label="Filter by Documents" className="flex-1">Docs</ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       {notes.length === 0 ? (
