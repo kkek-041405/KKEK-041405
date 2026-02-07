@@ -29,7 +29,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
       onClick={onSelect}
       onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       className={cn(
-        "flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
+        "group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
         isSelected ? "bg-primary/10 border border-primary" : "border border-transparent"
       )}
     >
@@ -40,7 +40,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+        className="h-8 w-8 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
         onClick={handleDelete}
         aria-label={`Delete item titled ${note.title}`}
       >
@@ -49,3 +49,5 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
     </div>
   );
 }
+
+    

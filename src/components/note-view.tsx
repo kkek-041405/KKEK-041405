@@ -95,9 +95,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
     }
   };
 
-  const itemTypeDisplay = note.type === 'note' ? 'Note' : note.type === 'keyInformation' ? 'Key Information' : 'Document';
-  const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
-
   const fileType = note.documentMetadata?.fileType;
   const isOfficeDoc = fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || note.documentMetadata?.fileName?.endsWith('.docx');
   const isPdf = fileType === 'application/pdf' || note.documentMetadata?.fileName?.endsWith('.pdf');
@@ -140,10 +137,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-             <Badge variant={note.type === 'note' ? "secondary" : "outline"} className="whitespace-nowrap h-fit hidden">
-              <ItemIcon className="mr-1 h-4 w-4" />
-              {itemTypeDisplay}
-            </Badge>
             {note.type === 'document' && (
               <>
                 <Button asChild variant="outline" size="sm">
@@ -163,7 +156,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                 </Button>
               </>
             )}
-            <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)} disabled={note.id.startsWith('default-')}>
+            <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)}>
                 <Share2 className="mr-2 h-4 w-4" /> Share
             </Button>
             <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
@@ -249,9 +242,9 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </div>
         )}
         
-        {note.summary && note.type === 'note' && (
+        {note.summary && (
           <div>
-            {note.type === 'note' && note.content && <Separator className="my-6" />}
+            {(note.type === 'note' && note.content) && <Separator className="my-6" />}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-semibold flex items-center">
@@ -288,3 +281,5 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
     </div>
   );
 }
+
+    

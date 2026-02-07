@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -10,7 +11,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
 import { createShareLink } from '@/services/share-note-service';
-import { Notebook, FileText, Loader2, FileArchive } from 'lucide-react';
+import { Notebook, FileText, Loader2 } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -22,24 +23,6 @@ import SpotifyView from '@/components/spotify-view';
 import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-service';
 import NotificationsView from '@/components/notifications-view';
 import PhoneView from '@/components/phone-view';
-
-
-const defaultKeyInfo: Note[] = [
-  {
-    id: 'default-spotify-placeholder',
-    title: 'Spotify',
-    content: 'Connect your Spotify account to manage playback.',
-    type: 'keyInformation',
-    createdAt: new Date(0).toISOString(),
-  },
-  {
-    id: 'default-notifications-placeholder',
-    title: 'Notifications',
-    content: 'View your real-time notifications from connected devices.',
-    type: 'keyInformation',
-    createdAt: new Date(0).toISOString(),
-  },
-];
 
 
 export default function NotesContentPage() {
@@ -123,7 +106,7 @@ export default function NotesContentPage() {
 
       // 2. Create a single-use, fillable share link
       const link = await createShareLink(templateNote.id, {
-        expiresInHours: 7 * 24, // 7 days
+        expiresInHours: 0, // Permanent until used
         viewLimit: 1,
       }, 'fill');
       
@@ -248,14 +231,6 @@ export default function NotesContentPage() {
   };
 
   const handleRequestEdit = (noteToEdit: Note) => {
-    if (noteToEdit.id.startsWith('default-')) {
-        toast({
-            title: "Cannot Edit Default Item",
-            description: "Default items are not editable.",
-            variant: "destructive"
-        });
-        return;
-    }
     setEditingNote(noteToEdit);
     setInitialFormValues({
       title: noteToEdit.title,
@@ -280,7 +255,7 @@ export default function NotesContentPage() {
 
     // If this is a document note, pre-resolve the serving URL so View Document
     // can open a direct URL synchronously when clicked
-    const noteToResolve = notes.find((n) => n.id === id) || defaultKeyInfo.find((n) => n.id === id);
+    const noteToResolve = notes.find((n) => n.id === id);
     if (noteToResolve && noteToResolve.type === 'document') {
       // if we haven't resolved this one yet (value undefined), start resolving
       if (resolvedServingUrls[id] === undefined) {
@@ -318,15 +293,6 @@ export default function NotesContentPage() {
   };
 
   const handleDeleteNote = async (id: string) => {
-    if (id.startsWith('default-')) {
-        toast({
-            title: "Cannot Delete Default Item",
-            description: "Default items cannot be deleted.",
-            variant: "destructive"
-        });
-        return;
-    }
-
     const itemToDelete = notes.find(note => note.id === id);
     if (!itemToDelete) return;
 
@@ -397,9 +363,7 @@ export default function NotesContentPage() {
     isEditing: !!editingNote,
   };
   
-  const allNotesWithDefaults = [...defaultKeyInfo, ...notes];
-
-  const filteredNotes = allNotesWithDefaults.filter(note => {
+  const filteredNotes = notes.filter(note => {
     return note.type === sortType;
   });
 
@@ -427,7 +391,7 @@ export default function NotesContentPage() {
       >
         <h2 id="items-list-heading" className="sr-only">Your Items</h2>
         <NoteList
-          notes={allNotesWithDefaults}
+          notes={notes}
           filteredNotes={filteredNotes}
           selectedNoteId={selectedNoteId}
           onSelectNote={handleSelectNote}
@@ -456,7 +420,7 @@ export default function NotesContentPage() {
             />
           </section>
         ) : (
-          !isLoadingNotes && allNotesWithDefaults.length > 0 && (
+          !isLoadingNotes && notes.length > 0 && (
             <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
               <FileText className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
@@ -464,7 +428,7 @@ export default function NotesContentPage() {
             </div>
           )
         )}
-         { !selectedNote && !isLoadingNotes && allNotesWithDefaults.length === 0 && (
+         { !selectedNote && !isLoadingNotes && notes.length === 0 && (
             <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
               <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
@@ -503,3 +467,5 @@ export default function NotesContentPage() {
     </div>
   );
 }
+
+    

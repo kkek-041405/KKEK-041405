@@ -15,7 +15,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { NoteForm } from '@/components/note-form';
-import { cn } from '@/lib/utils';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 
@@ -117,7 +116,7 @@ export function NoteList({
                 <DialogHeader>
                   <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
                 </DialogHeader>
-                <div className="max-h-[70vh] overflow-y-auto pr-4">
+                <ScrollArea className="max-h-[70vh] -mr-6 pr-6">
                   <NoteForm
                     onSave={noteFormProps.onSave}
                     isLoading={noteFormProps.isLoading}
@@ -127,7 +126,7 @@ export function NoteList({
                     defaultValues={noteFormProps.defaultValues}
                     isEditing={noteFormProps.isEditing}
                   />
-                </div>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
 
@@ -161,3 +160,5 @@ export function NoteList({
     </TooltipProvider>
   );
 }
+
+    
