@@ -34,6 +34,7 @@ import {
 import { NoteForm } from '@/components/note-form';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 
 export default function NotesContentPage() {
@@ -444,7 +445,10 @@ export default function NotesContentPage() {
     <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
       <section
         aria-labelledby="items-list-heading"
-        className="md:w-80 flex flex-col border-r"
+        className={cn(
+          "border-r md:flex md:w-80 flex-col",
+          selectedNoteId ? "hidden" : "flex"
+        )}
       >
         <h2 id="items-list-heading" className="sr-only">Your Items</h2>
         <NoteList
@@ -459,7 +463,10 @@ export default function NotesContentPage() {
         />
       </section>
 
-      <div className="flex-1 flex flex-col">
+      <div className={cn(
+          "flex-1 flex-col",
+          selectedNoteId ? "flex" : "hidden md:flex"
+        )}>
         {selectedNote ? (
           <section
             aria-labelledby="view-item-heading"
@@ -473,6 +480,7 @@ export default function NotesContentPage() {
               isLoadingSummary={isLoadingSummary}
               onEditRequest={handleRequestEdit}
               onDelete={handleDeleteNote}
+              onBack={() => setSelectedNoteId(null)}
             />
           </section>
         ) : (

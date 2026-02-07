@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff, ExternalLink, ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -26,9 +26,10 @@ interface NoteViewProps {
   isLoadingSummary: boolean;
   onEditRequest: (note: Note) => void;
   onDelete: (noteId: string) => void;
+  onBack: () => void;
 }
 
-export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest, onDelete }: NoteViewProps) {
+export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest, onDelete, onBack }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -172,21 +173,29 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   return (
     <div className="bg-card text-card-foreground border-0 flex flex-col flex-1 h-full">
       <div className="flex items-start justify-between gap-4 p-6 border-b">
-        <div className="flex-1 space-y-1.5">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-semibold leading-none tracking-tight break-words">
-                {note.title}
-              </h2>
-              {fileExtension && (
-                <Badge variant="secondary" className="whitespace-nowrap h-fit">
-                  {fileExtension.replace('.', '')}
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Created on: {format(new Date(note.createdAt), "PPP p")}
-            </p>
+        <div className="flex-1 flex items-center gap-3 min-w-0">
+          <Button variant="ghost" size="icon" onClick={onBack} className="md:hidden h-9 w-9 -ml-2 shrink-0">
+            <ChevronLeft className="h-5 w-5" />
+            <span className="sr-only">Back to list</span>
+          </Button>
+
+          <div className="space-y-1.5 flex-1 min-w-0">
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-semibold leading-none tracking-tight break-words truncate">
+                  {note.title}
+                </h2>
+                {fileExtension && (
+                  <Badge variant="secondary" className="whitespace-nowrap h-fit shrink-0">
+                    {fileExtension.replace('.', '')}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground truncate">
+                Created on: {format(new Date(note.createdAt), "PPP p")}
+              </p>
+          </div>
         </div>
+
         <div className="flex items-center gap-2 flex-shrink-0">
             {note.type === 'note' && (
               <Button size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
