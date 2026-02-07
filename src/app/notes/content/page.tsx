@@ -11,7 +11,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import { summarizeNote, type SummarizeNoteInput } from '@/ai/flows/summarize-note';
 import { createShareLink } from '@/services/share-note-service';
-import { Notebook, FileText, Loader2 } from 'lucide-react';
+import { Notebook, FileText, Loader2, Info, FileArchive, PlusCircle } from 'lucide-react';
 import { AppBar } from '@/components/app-bar';
 import { 
   addNoteToFirestore, 
@@ -24,6 +24,16 @@ import { uploadFileToServer, getFileServingUrl } from '@/services/file-upload-se
 import NotificationsView from '@/components/notifications-view';
 import PhoneView from '@/components/phone-view';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { NoteForm } from '@/components/note-form';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 export default function NotesContentPage() {
@@ -351,20 +361,6 @@ export default function NotesContentPage() {
 
   const selectedNote = notes.find((note) => note.id === selectedNoteId);
 
-  const noteFormProps = {
-    onSave: handleSaveNote,
-    isLoading: isSavingNote,
-    onGetLink: handleSaveAndGetLink,
-    isGettingLink: isGettingLink,
-    onFormSubmit: () => {
-      setIsFormOpen(false);
-      setEditingNote(null);
-      setInitialFormValues(null);
-    },
-    defaultValues: initialFormValues,
-    isEditing: !!editingNote,
-  };
-  
   const filteredNotes = notes.filter(note => {
     const typeMatch = note.type === sortType;
     if (!typeMatch) return false;
@@ -458,9 +454,6 @@ export default function NotesContentPage() {
           onSelectNote={handleSelectNote}
           sortType={sortType}
           onSortChange={setSortType}
-          isFormOpen={isFormOpen}
-          onFormOpenChange={handleDialogValidOpenChange}
-          noteFormProps={noteFormProps}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
@@ -483,22 +476,49 @@ export default function NotesContentPage() {
             />
           </section>
         ) : (
-          !isLoadingNotes && notes.length > 0 && (
-            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-              <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
-              <p className="text-muted-foreground">Select an item from the list to view its details.</p>
-            </div>
+          !isLoadingNotes && (
+            notes.length > 0 ? (
+              // State when notes exist, but none are selected
+              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
+                <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
+                <p className="text-muted-foreground max-w-sm mx-auto">Select an item from the list to view its details, or create a new one.</p>
+                
+                <div className="mt-8 w-full max-w-sm">
+                  <h4 className="text-sm font-semibold text-muted-foreground mb-3">Recently Added</h4>
+                  <div className="space-y-2 text-left">
+                    {notes.slice(0, 3).map(note => (
+                      <Button
+                        key={note.id}
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => handleSelectNote(note.id)}
+                      >
+                        {note.type === 'note' && <FileText className="mr-2 h-4 w-4 text-muted-foreground" />}
+                        {note.type === 'keyInformation' && <Info className="mr-2 h-4 w-4 text-muted-foreground" />}
+                        {note.type === 'document' && <FileArchive className="mr-2 h-4 w-4 text-muted-foreground" />}
+                        <span className="truncate">{note.title}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // State when there are no notes at all
+              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
+                <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground">Your NoteNest is Empty</h3>
+                <p className="text-muted-foreground mb-6">Get started by creating your first item.</p>
+                <DialogTrigger asChild>
+                  <Button onClick={() => handleDialogValidOpenChange(true)}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Your First Item
+                  </Button>
+                </DialogTrigger>
+              </div>
+            )
           )
         )}
-         { !selectedNote && !isLoadingNotes && notes.length === 0 && (
-            <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-              <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold text-foreground">No Items Yet</h3>
-              <p className="text-muted-foreground">Click "Add New Item" to create your first note or key information.</p>
-            </div>
-          )
-        }
       </div>
     </main>
   );
@@ -518,15 +538,38 @@ export default function NotesContentPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <AppBar
-        activeView={activeView}
-        onViewChange={setActiveView}
-      />
-      
-      {renderActiveView()}
-      
-      <Toaster />
-    </div>
+    <Dialog open={isFormOpen} onOpenChange={handleDialogValidOpenChange}>
+      <div className="flex flex-col h-screen">
+        <AppBar
+          activeView={activeView}
+          onViewChange={setActiveView}
+        />
+        
+        {renderActiveView()}
+        
+        <Toaster />
+        
+        <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>{editingNote ? 'Edit Item' : 'Create New Item'}</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh] -mr-6 pr-6">
+            <NoteForm
+              onSave={handleSaveNote}
+              isLoading={isSavingNote}
+              onGetLink={handleSaveAndGetLink}
+              isGettingLink={isGettingLink}
+              onFormSubmit={() => {
+                setIsFormOpen(false);
+                setEditingNote(null);
+                setInitialFormValues(null);
+              }}
+              defaultValues={initialFormValues}
+              isEditing={!!editingNote}
+            />
+          </ScrollArea>
+        </DialogContent>
+      </div>
+    </Dialog>
   );
 }

@@ -2,19 +2,13 @@
 "use client";
 
 import type { Note } from '@/lib/types';
-import type { NoteFormValues, NoteFormSubmission } from '@/components/note-form';
 import { NoteListItem } from './note-list-item';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { ListChecks, FileText, Info, PlusCircle, FileArchive, Search } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { NoteForm } from '@/components/note-form';
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Input } from './ui/input';
 
@@ -26,17 +20,6 @@ interface NoteListProps {
   onSelectNote: (id: string) => void;
   sortType: 'note' | 'keyInformation' | 'document';
   onSortChange: (value: 'note' | 'keyInformation' | 'document') => void;
-  isFormOpen: boolean;
-  onFormOpenChange: (open: boolean) => void;
-  noteFormProps: {
-    onSave: (data: NoteFormSubmission) => Promise<void> | void;
-    isLoading: boolean;
-    onGetLink?: (data: NoteFormSubmission) => Promise<void> | void;
-    isGettingLink?: boolean;
-    onFormSubmit: () => void;
-    defaultValues?: NoteFormValues | null;
-    isEditing?: boolean;
-  };
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
@@ -48,9 +31,6 @@ export function NoteList({
   onSelectNote, 
   sortType, 
   onSortChange,
-  isFormOpen,
-  onFormOpenChange,
-  noteFormProps,
   searchQuery,
   onSearchChange,
 }: NoteListProps) {
@@ -96,43 +76,23 @@ export function NoteList({
                     <p>Filter by {sortTypeConfig[sortTypeConfig[sortType].next].label}</p>
                 </TooltipContent>
             </Tooltip>
-             <Dialog open={isFormOpen} onOpenChange={onFormOpenChange}>
-              <DialogTrigger asChild>
-                 <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button 
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onFormOpenChange(true)}
-                          aria-label="Add New Item"
-                          className="h-9 w-9"
-                        >
-                          <PlusCircle className="h-5 w-5" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Add New Item</p>
-                    </TooltipContent>
-                 </Tooltip>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
-                <DialogHeader>
-                  <DialogTitle>{noteFormProps.isEditing ? 'Edit Item' : 'Create New Item'}</DialogTitle>
-                </DialogHeader>
-                <ScrollArea className="max-h-[70vh] -mr-6 pr-6">
-                  <NoteForm
-                    onSave={noteFormProps.onSave}
-                    isLoading={noteFormProps.isLoading}
-                    onGetLink={noteFormProps.onGetLink}
-                    isGettingLink={noteFormProps.isGettingLink}
-                    onFormSubmit={noteFormProps.onFormSubmit}
-                    defaultValues={noteFormProps.defaultValues}
-                    isEditing={noteFormProps.isEditing}
-                  />
-                </ScrollArea>
-              </DialogContent>
-            </Dialog>
-
+             <DialogTrigger asChild>
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Add New Item"
+                        className="h-9 w-9"
+                      >
+                        <PlusCircle className="h-5 w-5" />
+                      </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                      <p>Add New Item</p>
+                  </TooltipContent>
+              </Tooltip>
+            </DialogTrigger>
         </div>
       </div>
       
