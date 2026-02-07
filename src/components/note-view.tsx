@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2 } from 'lucide-react';
+import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -32,6 +32,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [isValueVisible, setIsValueVisible] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
   
@@ -39,6 +40,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   useEffect(() => {
     setCanCopy(typeof navigator !== 'undefined' && !!navigator.clipboard);
   }, []);
+
+  // Reset visibility state when the note changes
+  useEffect(() => {
+    setIsValueVisible(false);
+  }, [note.id]);
 
 
   const handleSummarize = () => {
@@ -212,23 +218,36 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             <div className="space-y-1">
               <h3 className="text-sm font-medium text-muted-foreground">Value:</h3>
               <div className="flex items-center justify-between gap-2 bg-muted/50 p-3 rounded-md">
-                <p className="flex-1 text-base text-foreground whitespace-pre-wrap break-words">{note.content}</p>
-                {canCopy && (
-                  <Button 
-                    onClick={handleCopyValue} 
-                    disabled={isCopyingValue || !note.content}
-                    variant="ghost" 
-                    size="icon"
-                    className="shrink-0 h-8 w-8"
-                    aria-label="Copy value"
-                  >
-                    {isCopyingValue ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
+                <p className="flex-1 font-mono text-base text-foreground whitespace-pre-wrap break-words">
+                  {isValueVisible ? note.content : '••••••••••••••••'}
+                </p>
+                <div className="flex items-center">
+                   <Button 
+                      onClick={() => setIsValueVisible(!isValueVisible)} 
+                      variant="ghost" 
+                      size="icon"
+                      className="shrink-0 h-8 w-8"
+                      aria-label={isValueVisible ? "Hide value" : "Show value"}
+                    >
+                      {isValueVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  {canCopy && (
+                    <Button 
+                      onClick={handleCopyValue} 
+                      disabled={isCopyingValue || !note.content}
+                      variant="ghost" 
+                      size="icon"
+                      className="shrink-0 h-8 w-8"
+                      aria-label="Copy value"
+                    >
+                      {isCopyingValue ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
