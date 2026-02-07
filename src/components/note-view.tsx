@@ -1,9 +1,7 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -12,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff, ExternalLink, ChevronLeft } from 'lucide-react';
+import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff, ExternalLink, ChevronLeft, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -31,7 +29,7 @@ interface NoteViewProps {
 
 export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest, onDelete, onBack }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
-  const [isCopyingSummary, setIsCopyingSummary] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isValueVisible, setIsValueVisible] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -123,28 +121,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         variant: "destructive",
       });
     } finally {
-      setIsCopyingValue(false);
-    }
-  };
-
-  const handleCopySummary = async () => {
-    if (!canCopy || !note.summary) return;
-    setIsCopyingSummary(true);
-    try {
-      await navigator.clipboard.writeText(note.summary);
-      toast({
-        title: "Summary Copied!",
-        description: "The AI summary has been copied to your clipboard.",
-      });
-    } catch (err) {
-      console.error('Failed to copy summary: ', err);
-      toast({
-        title: "Copy Failed",
-        description: "Could not copy summary to clipboard.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsCopyingSummary(false);
+      setTimeout(() => setIsCopyingValue(false), 2000);
     }
   };
 
@@ -171,211 +148,172 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
 
 
   return (
-    <div className="bg-card text-card-foreground border-0 flex flex-col flex-1 h-full">
-      <div className="flex items-start justify-between gap-4 p-6 border-b">
-        <div className="flex-1 flex items-center gap-3 min-w-0">
-          <Button variant="ghost" size="icon" onClick={onBack} className="md:hidden h-9 w-9 -ml-2 shrink-0">
-            <ChevronLeft className="h-5 w-5" />
-            <span className="sr-only">Back to list</span>
+    <div className="flex flex-col h-full bg-card relative">
+      
+      <div className="flex items-center justify-between px-6 py-4 z-10">
+        <Button variant="ghost" size="sm" onClick={onBack} className="md:hidden -ml-2 text-muted-foreground">
+          <ChevronLeft className="h-4 w-4 mr-1" /> Back
+        </Button>
+        <div className="flex-1" />
+        
+        <div className="flex items-center gap-1">
+          {note.type === 'note' && (
+             <Button variant="ghost" size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content} className="text-muted-foreground hover:text-primary">
+               {isLoadingSummary ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />} 
+               {isLoadingSummary ? 'Analyzing...' : 'AI Summary'}
+             </Button>
+          )}
+
+          <Button variant="ghost" size="sm" onClick={() => setIsShareDialogOpen(true)} className="text-muted-foreground hover:text-primary">
+            <Share2 className="h-4 w-4 mr-2" /> Share
           </Button>
 
-          <div className="space-y-1.5 flex-1 min-w-0">
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-semibold leading-none tracking-tight break-words truncate">
-                  {note.title}
-                </h2>
-                {fileExtension && (
-                  <Badge variant="secondary" className="whitespace-nowrap h-fit shrink-0">
-                    {fileExtension.replace('.', '')}
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground truncate">
-                Created on: {format(new Date(note.createdAt), "PPP p")}
-              </p>
-          </div>
-        </div>
+          <div className="h-4 w-[1px] bg-border mx-2" />
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-            {note.type === 'note' && (
-              <Button size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
-                  {isLoadingSummary ? (
+          <Button variant="ghost" size="icon" onClick={() => onEditRequest(note)} className="h-8 w-8 text-muted-foreground">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <MoreVertical className="h-4 w-4" />
+               </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                {note.type === 'document' && (
                   <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Summarizing...
+                    <DropdownMenuItem onSelect={() => window.open(`${note.content}&filename=${encodeURIComponent(downloadFilename)}`, '_blank')}>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleFullscreen} disabled={!finalDocumentUrl}>
+                        <Maximize className="mr-2 h-4 w-4" />
+                        Fullscreen
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                   </>
-                  ) : (
-                  <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Summarize
-                  </>
-                  )}
-              </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)}>
-                <Share2 className="mr-2 h-4 w-4" /> Share
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
-                <Pencil className="mr-2 h-4 w-4" /> Edit
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
-                      <MoreVertical className="h-4 w-4" />
-                      <span className="sr-only">More actions</span>
-                  </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                  {note.type === 'document' && (
-                    <>
-                      <DropdownMenuItem onSelect={() => window.open(`${note.content}&filename=${encodeURIComponent(downloadFilename)}`, '_blank')}>
-                          <Download className="mr-2 h-4 w-4" />
-                          Download
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onSelect={handleFullscreen} disabled={!finalDocumentUrl}>
-                          <Maximize className="mr-2 h-4 w-4" />
-                          Fullscreen
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem onSelect={() => onDelete(note.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                  </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                )}
+                <DropdownMenuItem onSelect={() => onDelete(note.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-      <div className={cn(
-        "flex-1 overflow-y-auto",
-        note.type !== 'document' && "p-6"
-      )}>
-        {note.type === 'note' && note.content && (
-          <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
-            {note.content}
-          </div>
-        )}
 
-        {note.type === 'keyInformation' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Key Name:</h3>
-              <p className="text-lg text-foreground break-words">{note.title}</p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium text-muted-foreground">Value:</h3>
-              <div className="flex items-center justify-between gap-2 bg-muted/50 p-3 rounded-md">
-                <p className="flex-1 font-mono text-base text-foreground whitespace-pre-wrap break-words">
-                  {isValueVisible ? note.content : '••••••••••••••••'}
-                </p>
-                <div className="flex items-center">
-                   <Button 
-                      onClick={() => setIsValueVisible(!isValueVisible)} 
-                      variant="ghost" 
-                      size="icon"
-                      className="shrink-0 h-8 w-8"
-                      aria-label={isValueVisible ? "Hide value" : "Show value"}
-                    >
-                      {isValueVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  {canCopy && (
-                    <Button 
-                      onClick={handleCopyValue} 
-                      disabled={isCopyingValue || !note.content}
-                      variant="ghost" 
-                      size="icon"
-                      className="shrink-0 h-8 w-8"
-                      aria-label="Copy value"
-                    >
-                      {isCopyingValue ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {note.type === 'document' && (
-            <div className="h-full flex flex-col flex-1 relative">
-              {resolvedServingUrl === undefined ? (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                   <p className="ml-4">Resolving document URL...</p>
-                 </div>
-              ) : iframeLoadFailed ? (
-                 <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground bg-muted/30 rounded-md p-4">
-                    <p className="mb-4">Document preview failed to load.</p>
-                    <Button asChild>
-                        <a href={resolvedServingUrl ?? '#'} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="mr-2 h-4 w-4" /> Open in New Tab
-                        </a>
-                    </Button>
-                 </div>
-              ) : !finalDocumentUrl ? (
-                 <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md p-4 text-center">
-                   <span>Document preview is not available for this file type.</span>
-                </div>
-              ) : (
-                <>
-                  {isIframeLoading && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-card z-10">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="mt-4 text-muted-foreground">Loading document...</p>
-                    </div>
-                  )}
-                  <iframe
-                    ref={iframeRef}
-                    src={finalDocumentUrl}
-                    onLoad={handleIframeLoad}
-                    className={cn(
-                        "w-full h-full flex-1 border-0 rounded-md bg-white",
-                        isIframeLoading && "opacity-0"
-                    )}
-                    title={`Embedded document: ${note.title}`}
-                    allowFullScreen
-                  />
-                </>
+      <div className="flex-1 overflow-y-auto px-8 pb-10">
+        <div className="max-w-3xl mx-auto space-y-8">
+          
+          <div className="space-y-2 border-b pb-6">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">{note.title}</h1>
+              {note.type !== 'note' && (
+                <Badge variant="outline" className="mt-1 font-normal text-muted-foreground">
+                  {note.type === 'keyInformation' ? 'Secure Info' : getFileExtension()}
+                </Badge>
               )}
             </div>
-        )}
-        
-        {note.summary && (
-          <>
-            {(note.type === 'note' || note.type === 'keyInformation') && note.content && <Separator className="my-6" />}
-            <div className="rounded-lg border bg-secondary/50 p-4 space-y-2">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold flex items-center text-secondary-foreground">
-                  <Sparkles className="mr-2 h-5 w-5 text-primary" />
-                  AI Summary
-                </h3>
-                {canCopy && (
-                  <Button
-                    onClick={handleCopySummary}
-                    disabled={isCopyingSummary || !note.summary}
-                    variant="ghost"
-                    size="icon"
-                    className="shrink-0 h-8 w-8 text-secondary-foreground/70 hover:text-secondary-foreground"
-                    aria-label="Copy AI summary"
-                  >
-                    {isCopyingSummary ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
+            <p className="text-sm text-muted-foreground">
+              Last edited {format(new Date(note.createdAt), "PPP")}
+            </p>
+          </div>
+          
+          {note.type === 'note' && (
+            <div className="prose dark:prose-invert max-w-none leading-7 text-foreground/90 whitespace-pre-wrap break-words">
+              {note.content}
+            </div>
+          )}
+
+          {note.type === 'keyInformation' && (
+            <div className="bg-secondary/20 border border-border rounded-xl p-6 max-w-md">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-primary font-medium">
+                   <Info className="h-4 w-4" /> Secure Value
+                </div>
+                <Button size="icon" variant="ghost" onClick={handleCopyValue} disabled={isCopyingValue}>
+                   {isCopyingValue ? <Loader2 className="h-4 w-4 animate-spin"/> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              
+              <div className="relative group cursor-pointer" onClick={() => setIsValueVisible(!isValueVisible)}>
+                <div className={cn(
+                  "p-4 rounded-lg bg-background border font-mono text-lg transition-all",
+                  isValueVisible ? "text-foreground" : "text-muted-foreground tracking-widest blur-[2px] select-none"
+                )}>
+                  {isValueVisible ? note.content : "•••• •••• •••• ••••"}
+                </div>
+                {!isValueVisible && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="bg-foreground text-background text-xs px-2 py-1 rounded shadow-lg font-bold">Click to Reveal</span>
+                  </div>
                 )}
               </div>
-              <p className="text-secondary-foreground/90 whitespace-pre-wrap break-words">{note.summary}</p>
             </div>
-          </>
-        )}
+          )}
+
+          {note.type === 'document' && (
+             <div className="aspect-[4/3] w-full border rounded-xl overflow-hidden shadow-sm bg-muted/20 relative group">
+                {resolvedServingUrl === undefined ? (
+                    <div className="flex-1 flex h-full items-center justify-center text-muted-foreground">
+                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                       <p className="ml-4">Resolving document URL...</p>
+                     </div>
+                ) : iframeLoadFailed ? (
+                     <div className="flex-1 flex h-full flex-col items-center justify-center text-center text-muted-foreground p-4">
+                        <p className="mb-4">Document preview failed to load.</p>
+                        <Button asChild>
+                            <a href={resolvedServingUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="mr-2 h-4 w-4" /> Open in New Tab
+                            </a>
+                        </Button>
+                     </div>
+                ) : !finalDocumentUrl ? (
+                     <div className="flex-1 flex h-full items-center justify-center text-muted-foreground text-center p-4">
+                       <span>Document preview is not available for this file type.</span>
+                    </div>
+                ) : (
+                    <>
+                        {isIframeLoading && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-card z-10">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                <p className="mt-4 text-muted-foreground">Loading document...</p>
+                            </div>
+                        )}
+                        <iframe
+                            ref={iframeRef}
+                            src={finalDocumentUrl}
+                            onLoad={handleIframeLoad}
+                            className={cn("w-full h-full flex-1 border-0 bg-white", isIframeLoading && "opacity-0")}
+                            title={`Embedded document: ${note.title}`}
+                            allowFullScreen
+                        />
+                    </>
+                )}
+                {finalDocumentUrl && (
+                    <Button 
+                      className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                      onClick={handleFullscreen}
+                      variant="secondary"
+                    >
+                      <Maximize className="mr-2 h-4 w-4" /> Expand
+                    </Button>
+                )}
+             </div>
+          )}
+          
+          {note.summary && (
+             <div className="bg-gradient-to-br from-primary/5 to-transparent rounded-xl p-6 border border-primary/10 mt-8">
+               <h3 className="font-semibold text-primary flex items-center gap-2 mb-3">
+                 <Sparkles className="h-4 w-4" /> AI Summary
+               </h3>
+               <p className="text-sm leading-relaxed text-muted-foreground">{note.summary}</p>
+             </div>
+          )}
+
+        </div>
       </div>
+
        <ShareNoteDialog
         note={note}
         isOpen={isShareDialogOpen}

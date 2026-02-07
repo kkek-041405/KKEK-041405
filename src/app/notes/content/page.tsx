@@ -24,12 +24,12 @@ import NotificationsView from '@/components/notifications-view';
 import PhoneView from '@/components/phone-view';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { NoteForm } from '@/components/note-form';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -390,7 +390,7 @@ export default function NotesContentPage() {
         />
         <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
           {/* Skeleton for NoteList */}
-          <section className="md:w-80 flex flex-col border-r bg-card">
+          <aside className="md:w-80 flex flex-col border-r bg-muted/10">
             <div className="p-4 border-b flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-5 w-5" />
@@ -412,10 +412,10 @@ export default function NotesContentPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </aside>
 
           {/* Skeleton for NoteView */}
-          <div className="flex-1 flex-col hidden md:flex">
+          <section className="flex-1 flex-col hidden md:flex bg-card">
             <div className="flex items-start justify-between gap-4 p-6 border-b">
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-7 w-3/5" />
@@ -433,7 +433,7 @@ export default function NotesContentPage() {
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-4/5" />
             </div>
-          </div>
+          </section>
         </main>
         <Toaster />
       </div>
@@ -442,11 +442,11 @@ export default function NotesContentPage() {
 
   const renderNotesView = () => (
     <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
-      <section
+      <aside
         aria-labelledby="items-list-heading"
         className={cn(
-          "border-r md:flex md:w-80 flex-col",
-          selectedNoteId ? "hidden" : "flex"
+          "flex-col md:w-80 border-r bg-muted/10 md:flex",
+          selectedNoteId ? "hidden md:flex" : "flex w-full"
         )}
       >
         <h2 id="items-list-heading" className="sr-only">Your Items</h2>
@@ -460,14 +460,14 @@ export default function NotesContentPage() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
-      </section>
+      </aside>
 
-      <div className={cn(
-          "flex-1 flex-col",
+      <section className={cn(
+          "flex-1 flex-col bg-card",
           selectedNoteId ? "flex" : "hidden md:flex"
         )}>
         {selectedNote ? (
-          <section
+          <div
             aria-labelledby="view-item-heading"
             className="flex flex-col flex-1 min-w-0"
           >
@@ -481,7 +481,7 @@ export default function NotesContentPage() {
               onDelete={handleDeleteNote}
               onBack={() => setSelectedNoteId(null)}
             />
-          </section>
+          </div>
         ) : (
           !isLoadingNotes && (
             notes.length > 0 ? (
@@ -516,17 +516,17 @@ export default function NotesContentPage() {
                 <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
                 <h3 className="text-xl font-semibold text-foreground">Your NoteNest is Empty</h3>
                 <p className="text-muted-foreground mb-6">Get started by creating your first item.</p>
-                <DialogTrigger asChild>
+                <SheetTrigger asChild>
                   <Button onClick={() => handleDialogValidOpenChange(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Add Your First Item
                   </Button>
-                </DialogTrigger>
+                </SheetTrigger>
               </div>
             )
           )
         )}
-      </div>
+      </section>
     </main>
   );
 
@@ -545,8 +545,8 @@ export default function NotesContentPage() {
   };
 
   return (
-    <Dialog open={isFormOpen} onOpenChange={handleDialogValidOpenChange}>
-      <div className="flex flex-col h-screen">
+    <Sheet open={isFormOpen} onOpenChange={handleDialogValidOpenChange}>
+      <div className="flex flex-col h-screen bg-background">
         <AppBar
           activeView={activeView}
           onViewChange={setActiveView}
@@ -556,11 +556,11 @@ export default function NotesContentPage() {
         
         <Toaster />
         
-        <DialogContent className="sm:max-w-[425px] md:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>{editingNote ? 'Edit Item' : 'Create New Item'}</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[70vh] -mr-6 pr-6">
+        <SheetContent className="sm:max-w-[425px] md:max-w-[550px] flex flex-col">
+          <SheetHeader>
+            <SheetTitle>{editingNote ? 'Edit Item' : 'Create New Item'}</SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="flex-grow -mr-6 pr-6">
             <NoteForm
               onSave={handleSaveNote}
               isLoading={isSavingNote}
@@ -575,8 +575,8 @@ export default function NotesContentPage() {
               isEditing={!!editingNote}
             />
           </ScrollArea>
-        </DialogContent>
+        </SheetContent>
       </div>
-    </Dialog>
+    </Sheet>
   );
 }
