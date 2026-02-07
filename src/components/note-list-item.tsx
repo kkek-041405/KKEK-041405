@@ -3,22 +3,16 @@
 
 import type * as React from 'react';
 import type { Note } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Trash2, FileText, Info, FileArchive } from 'lucide-react';
+import { FileText, Info, FileArchive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NoteListItemProps {
   note: Note;
   isSelected: boolean;
   onSelect: () => void;
-  onDelete: () => void;
 }
 
-export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListItemProps) {
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent selection when deleting
-    onDelete();
-  };
+export function NoteListItem({ note, isSelected, onSelect }: NoteListItemProps) {
 
   const ItemIcon = note.type === 'note' ? FileText : note.type === 'keyInformation' ? Info : FileArchive;
   
@@ -29,7 +23,7 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
       onClick={onSelect}
       onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       className={cn(
-        "group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
+        "flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors hover:bg-accent/50",
         isSelected ? "bg-primary/10 border border-primary" : "border border-transparent"
       )}
     >
@@ -37,17 +31,6 @@ export function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListI
         <ItemIcon className={cn("h-5 w-5 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
         <span className={cn("font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>{note.title}</span>
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
-        onClick={handleDelete}
-        aria-label={`Delete item titled ${note.title}`}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
     </div>
   );
 }
-
-    

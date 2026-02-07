@@ -5,7 +5,14 @@ import type { Note } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, FileText, Info, Copy, Pencil, Maximize, FileArchive, Share2, Download } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -14,14 +21,14 @@ import { ShareNoteDialog } from './share-note-dialog';
 
 interface NoteViewProps {
   note: Note;
-  /** If provided, a pre-resolved short-lived serving URL (from Convex) for the document. */
   resolvedServingUrl?: string | null | undefined;
   onSummarize: (noteId: string, noteContent: string) => Promise<void>;
   isLoadingSummary: boolean;
   onEditRequest: (note: Note) => void;
+  onDelete: (noteId: string) => void;
 }
 
-export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest }: NoteViewProps) {
+export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSummary, onEditRequest, onDelete }: NoteViewProps) {
   const [isCopyingValue, setIsCopyingValue] = useState(false);
   const [isCopyingSummary, setIsCopyingSummary] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -101,7 +108,6 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
 
   let finalDocumentUrl = resolvedServingUrl;
 
-  // Use Google Docs viewer for both PDF and DOCX for consistent UI and better compatibility.
   if (finalDocumentUrl && (isOfficeDoc || isPdf)) {
     finalDocumentUrl = `https://docs.google.com/gview?url=${encodeURIComponent(finalDocumentUrl)}&embedded=true`;
   }
@@ -137,24 +143,20 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-            {note.type === 'document' && (
-              <>
-                <Button asChild variant="outline" size="sm">
-                  <a href={`${note.content}&filename=${encodeURIComponent(downloadFilename)}`} download={downloadFilename}>
-                      <Download className="mr-2 h-4 w-4" />
-                      Download
-                  </a>
-                </Button>
-                <Button
-                    onClick={handleFullscreen}
-                    variant="outline"
-                    size="sm"
-                    disabled={!finalDocumentUrl}
-                >
-                    <Maximize className="mr-2 h-4 w-4" />
-                    Fullscreen
-                </Button>
-              </>
+            {note.type === 'note' && (
+              <Button size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
+                  {isLoadingSummary ? (
+                  <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Summarizing...
+                  </>
+                  ) : (
+                  <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Summarize
+                  </>
+                  )}
+              </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => setIsShareDialogOpen(true)}>
                 <Share2 className="mr-2 h-4 w-4" /> Share
@@ -162,21 +164,33 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
             <Button variant="outline" size="sm" onClick={() => onEditRequest(note)}>
                 <Pencil className="mr-2 h-4 w-4" /> Edit
             </Button>
-            {note.type === 'note' && (
-            <Button size="sm" onClick={handleSummarize} disabled={isLoadingSummary || !note.content}>
-                {isLoadingSummary ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Summarizing...
-                </>
-                ) : (
-                <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Summarize
-                </>
-                )}
-            </Button>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">More actions</span>
+                  </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                  {note.type === 'document' && (
+                    <>
+                      <DropdownMenuItem onSelect={() => window.open(`${note.content}&filename=${encodeURIComponent(downloadFilename)}`, '_blank')}>
+                          <Download className="mr-2 h-4 w-4" />
+                          Download
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={handleFullscreen} disabled={!finalDocumentUrl}>
+                          <Maximize className="mr-2 h-4 w-4" />
+                          Fullscreen
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onSelect={() => onDelete(note.id)} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                  </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       </div>
       <div className={cn(
@@ -281,5 +295,3 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
     </div>
   );
 }
-
-    

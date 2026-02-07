@@ -395,7 +395,6 @@ export default function NotesContentPage() {
           filteredNotes={filteredNotes}
           selectedNoteId={selectedNoteId}
           onSelectNote={handleSelectNote}
-          onDeleteNote={handleDeleteNote}
           sortType={sortType}
           onSortChange={setSortType}
           isFormOpen={isFormOpen}
@@ -417,6 +416,7 @@ export default function NotesContentPage() {
               onSummarize={handleSummarizeNote}
               isLoadingSummary={isLoadingSummary}
               onEditRequest={handleRequestEdit}
+              onDelete={handleDeleteNote}
             />
           </section>
         ) : (
@@ -467,5 +467,3 @@ export default function NotesContentPage() {
     </div>
   );
 }
-
-    

@@ -23,7 +23,6 @@ interface NoteListProps {
   filteredNotes: Note[]; // Notes filtered by sortType for display
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
-  onDeleteNote: (id: string) => void;
   sortType: 'note' | 'keyInformation' | 'document';
   onSortChange: (value: 'note' | 'keyInformation' | 'document') => void;
   isFormOpen: boolean;
@@ -44,7 +43,6 @@ export function NoteList({
   filteredNotes, 
   selectedNoteId, 
   onSelectNote, 
-  onDeleteNote, 
   sortType, 
   onSortChange,
   isFormOpen,
@@ -150,7 +148,6 @@ export function NoteList({
                 note={note}
                 isSelected={note.id === selectedNoteId}
                 onSelect={() => onSelectNote(note.id)}
-                onDelete={() => onDeleteNote(note.id)}
               />
             ))}
           </div>
@@ -160,5 +157,3 @@ export function NoteList({
     </TooltipProvider>
   );
 }
-
-    
