@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -336,11 +337,11 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
         
         {note.summary && (
-          <div>
-            {(note.type === 'note' && note.content) && <Separator className="my-6" />}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold flex items-center">
+          <>
+            {(note.type === 'note' || note.type === 'keyInformation') && note.content && <Separator className="my-6" />}
+            <div className="rounded-lg border bg-secondary/50 p-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold flex items-center text-secondary-foreground">
                   <Sparkles className="mr-2 h-5 w-5 text-primary" />
                   AI Summary
                 </h3>
@@ -350,7 +351,7 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                     disabled={isCopyingSummary || !note.summary}
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 h-8 w-8"
+                    className="shrink-0 h-8 w-8 text-secondary-foreground/70 hover:text-secondary-foreground"
                     aria-label="Copy AI summary"
                   >
                     {isCopyingSummary ? (
@@ -361,9 +362,9 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
                   </Button>
                 )}
               </div>
-              <p className="text-muted-foreground whitespace-pre-wrap break-words">{note.summary}</p>
+              <p className="text-secondary-foreground/90 whitespace-pre-wrap break-words">{note.summary}</p>
             </div>
-          </div>
+          </>
         )}
       </div>
        <ShareNoteDialog
