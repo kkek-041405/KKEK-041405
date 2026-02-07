@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Note } from '@/lib/types';
@@ -12,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Loader2, Copy, Pencil, Maximize, Download, Share2, MoreVertical, Trash2, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect, useRef } from 'react';
@@ -36,6 +35,10 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
   
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
+  const [iframeLoadFailed, setIframeLoadFailed] = useState(false);
+  const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [canCopy, setCanCopy] = useState(false);
   useEffect(() => {
     setCanCopy(typeof navigator !== 'undefined' && !!navigator.clipboard);
@@ -45,6 +48,41 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
   useEffect(() => {
     setIsValueVisible(false);
   }, [note.id]);
+
+  useEffect(() => {
+    // Reset iframe states when the note changes or url is resolved
+    if (note.type === 'document' && resolvedServingUrl) {
+      setIsIframeLoading(true);
+      setIframeLoadFailed(false);
+
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current);
+      }
+
+      loadTimeoutRef.current = setTimeout(() => {
+        setIsIframeLoading(false);
+        setIframeLoadFailed(true);
+      }, 15000); // 15-second timeout
+    } else if (note.type === 'document') {
+       // Reset if URL is not yet resolved
+       setIsIframeLoading(false);
+       setIframeLoadFailed(false);
+    }
+
+    return () => {
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current);
+      }
+    };
+  }, [note.id, note.type, resolvedServingUrl]);
+
+  const handleIframeLoad = () => {
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+    }
+    setIsIframeLoading(false);
+    setIframeLoadFailed(false);
+  };
 
 
   const handleSummarize = () => {
@@ -254,23 +292,45 @@ export function NoteView({ note, resolvedServingUrl, onSummarize, isLoadingSumma
         )}
 
         {note.type === 'document' && (
-            <div className="h-full flex flex-col flex-1">
+            <div className="h-full flex flex-col flex-1 relative">
               {resolvedServingUrl === undefined ? (
-                 <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                   <Loader2 className="h-8 w-8 animate-spin" />
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                   <p className="ml-4">Resolving document URL...</p>
                  </div>
-              ) : finalDocumentUrl ? (
-                <iframe
-                  ref={iframeRef}
-                  src={finalDocumentUrl}
-                  className="w-full h-full flex-1 border-0 rounded-md bg-white"
-                  title={`Embedded document: ${note.title}`}
-                  allowFullScreen
-                />
-              ) : (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md">
+              ) : iframeLoadFailed ? (
+                 <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground bg-muted/30 rounded-md p-4">
+                    <p className="mb-4">Document preview failed to load.</p>
+                    <Button asChild>
+                        <a href={resolvedServingUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" /> Open in New Tab
+                        </a>
+                    </Button>
+                 </div>
+              ) : !finalDocumentUrl ? (
+                 <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/30 rounded-md p-4 text-center">
                    <span>Document preview is not available for this file type.</span>
                 </div>
+              ) : (
+                <>
+                  {isIframeLoading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-card z-10">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="mt-4 text-muted-foreground">Loading document...</p>
+                    </div>
+                  )}
+                  <iframe
+                    ref={iframeRef}
+                    src={finalDocumentUrl}
+                    onLoad={handleIframeLoad}
+                    className={cn(
+                        "w-full h-full flex-1 border-0 rounded-md bg-white",
+                        isIframeLoading && "opacity-0"
+                    )}
+                    title={`Embedded document: ${note.title}`}
+                    allowFullScreen
+                  />
+                </>
               )}
             </div>
         )}
