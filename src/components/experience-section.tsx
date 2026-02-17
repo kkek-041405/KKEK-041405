@@ -1,12 +1,12 @@
 
 "use client";
 
-import { Briefcase, Zap } from 'lucide-react'; // Import specific icons needed
+import { Briefcase, Zap, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 // Define a type for known icon names for better type safety
-type KnownIconName = "Briefcase" | "Zap";
+type KnownIconName = "Briefcase" | "Zap" | "Crown";
 
 export interface ExperienceItem {
   role: string;
@@ -34,6 +34,8 @@ const IconRenderer = ({ name, className }: { name?: KnownIconName; className?: s
       return <Briefcase className={className} />;
     case "Zap":
       return <Zap className={className} />;
+    case "Crown":
+      return <Crown className={className} />;
     default:
       // Optionally, log a warning for unhandled icon names in development
       if (process.env.NODE_ENV === 'development') {

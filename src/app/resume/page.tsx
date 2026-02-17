@@ -1,152 +1,142 @@
 
 import React from 'react';
 import { Github, Globe, Mail, Phone, ExternalLink, Feather } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Resume() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8 flex justify-center print:p-0 print:bg-white">
-      <div className="bg-white w-full max-w-[210mm] p-8 shadow-lg print:shadow-none print:w-full print:max-w-none">
+    <div className="min-h-screen bg-secondary/30 p-4 sm:p-8 flex justify-center print:p-0 print:bg-card">
+      <div className="bg-card w-full max-w-[210mm] p-6 sm:p-8 shadow-lg print:shadow-none print:w-full print:max-w-none text-card-foreground">
         
         {/* Header */}
-        <header className="border-b-2 border-gray-800 pb-4 mb-4 text-center">
-          <h1 className="text-4xl font-bold uppercase tracking-wide text-gray-900">K.K.Eshwara Kumar</h1>
-          <div className="mt-2 text-sm text-gray-700 flex flex-wrap justify-center gap-x-4 gap-y-1">
-            <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> +91 76719 45929</span>
-            <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> komalkonatham@gmail.com</a>
-            <a href="https://github.com/kkek-041405/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Github className="h-4 w-4" /> github.com/kkek-041405</a>
-            <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Globe className="h-4 w-4" /> kkek.vercel.app</a>
+        <header className="border-b-2 border-foreground pb-4 mb-4 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold uppercase tracking-wide text-foreground">Komal Eshwara Kumar Konatham</h1>
+          <div className="mt-2 text-xs sm:text-sm text-muted-foreground flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-1">
+            <span className="flex items-center gap-1.5"><Phone className="h-4 w-4" /> Tenali, AP, India (Open to Relocation)</span>
+            <a href="mailto:komaleshwarakumarkonatham@gmail.com" className="flex items-center gap-1.5 hover:text-primary"><Mail className="h-4 w-4" /> komaleshwarakumarkonatham@gmail.com</a>
+            <a href="https://kkek.me" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-primary"><Globe className="h-4 w-4" /> kkek.me</a>
+            <a href="https://github.com/kkek-041405/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-primary"><Github className="h-4 w-4" /> github.com/kkek-041405</a>
+            <a href="https://linkedin.com/in/kkek" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-primary"><Globe className="h-4 w-4" /> linkedin.com/in/kkek</a>
           </div>
         </header>
 
         {/* Professional Summary */}
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Summary</h2>
-          <p className="text-gray-800 text-sm leading-relaxed">
-          Software Engineer with strong foundations in Data Structures \& Algorithms, object-oriented design, and full-stack development. Experienced in building production-grade systems, real-time applications, and automation tools. Passionate about problem-solving and delivering reliable, user-focused products. Seeking the SDE Intern role  to contribute to high-impact engineering teams.
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Professional Overview</h2>
+          <p className="text-foreground/90 text-sm leading-relaxed">
+            Computer Science engineer building production-ready Android and web systems with real-time synchronization and scalable backend architecture. Experienced in deploying live applications, designing Firebase-based infrastructures, and leading technical initiatives at university scale. <strong>I build software to solve real problems — not just to complete assignments.</strong>
           </p>
         </section>
 
-        {/* Projects */}
+        {/* Technical Competencies */}
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Projects</h2>
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Technical Competencies</h2>
+          <div className="text-sm text-foreground/90 space-y-1">
+            <p><strong className="font-semibold">Programming:</strong> Java · Kotlin · Python · JavaScript</p>
+            <p><strong className="font-semibold">Mobile Development:</strong> Android (Kotlin, Jetpack Compose) · Play Store deployment · Realtime multiplayer systems · Accessibility-based control systems</p>
+            <p><strong className="font-semibold">Web & Full Stack:</strong> React.js · Next.js · Firebase Authentication · Firestore / Realtime Database · REST-style architecture</p>
+            <p><strong className="font-semibold">Tools & Workflow:</strong> Git · GitHub · Firebase Hosting · Vercel</p>
+          </div>
+        </section>
+
+        {/* Selected Engineering Projects */}
+        <section className="mb-4">
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Selected Engineering Projects</h2>
           
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-                <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
-                    <span>ZenControl – AI Agent for Headless Android</span>
-                    <a href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Github className="inline h-3 w-3 mr-0.5" /> GitHub</a>
-                    <a href="/stories/why?project=zencontrol" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
+                <h3 className="font-bold text-foreground flex items-center flex-wrap gap-x-2">
+                    <span>Multiplayer Chess Application (Published on Play Store)</span>
                 </h3>
-                <span className="text-xs italic text-gray-600">Kotlin, Hilt, Accessibility API</span>
+                <span className="text-xs italic text-muted-foreground">Kotlin · Jetpack Compose · Firebase</span>
             </div>
-            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Built an automation layer that enables complete phone operation without a display (calls, navigation, media).</li>
-              <li>Custom Accessibility Service for view traversal & gesture injection across OS versions.</li>
-              <li>Modular AiTool architecture for scalable task execution.</li>
-              <li>Result: Converts a standard Android phone into a fully usable display-less device.</li>
+            <p className="text-sm text-muted-foreground font-semibold">Developed and deployed a real-time multiplayer chess application enabling synchronized gameplay across devices.</p>
+            <ul className="list-disc list-inside text-sm text-foreground/90 mt-1 pl-2 space-y-0.5">
+              <li>Implemented real-time move synchronization using Firebase Realtime Database.</li>
+              <li>Designed game state validation logic to prevent illegal moves and built matchmaking for online players.</li>
+              <li>Managed production deployment on Google Play Store. <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">[Live]</Link></li>
             </ul>
           </div>
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-                <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
-                    <span>Multiplayer Chess</span>
-                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <ExternalLink className="inline h-3 w-3 mr-0.5" /> Play Store</a>
-                    <a href="/stories/why?project=chess" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
+                <h3 className="font-bold text-foreground flex items-center flex-wrap gap-x-2">
+                    <span>ZenControl – Hardware-Constraint Accessibility App</span>
                 </h3>
-              <span className="text-xs italic text-gray-600">Kotlin, Jetpack Compose, WebSockets, Stockfish</span>
+              <span className="text-xs italic text-muted-foreground">Kotlin · Android Accessibility Services</span>
             </div>
-            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-              <li>Real-time multiplayer sync with sub-120ms latency on mobile networks.</li>
-              <li>Optimized Compose UI for uninterrupted gameplay during rapid state updates.</li>
-              <li>Integrated adaptive Stockfish AI for offline mode.</li>
-              <li>Result: Production-ready Android app demonstrating end-to-end product delivery.</li>
+            <p className="text-sm text-muted-foreground font-semibold">Developed an Android application enabling device control using volume buttons when touch input is non-functional. Built to solve a real personal hardware failure problem.</p>
+            <ul className="list-disc list-inside text-sm text-foreground/90 mt-1 pl-2 space-y-0.5">
+              <li>Implemented background service for system-level interaction and used Accessibility APIs to trigger navigation commands.</li>
+              <li>Designed lightweight event-based control logic with a focus on minimal resource consumption. <Link href="https://github.com/kkek-041405/ZenControl" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">[GitHub]</Link></li>
             </ul>
           </div>
 
           <div className="mb-3">
             <div className="flex justify-between items-baseline">
-              <h3 className="font-bold text-gray-900 flex items-center flex-wrap gap-x-2">
-                <span>Portfolio + NoteNest</span>
-                <a href="https://kkek.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Globe className="inline h-3 w-3 mr-0.5" /> Portfolio</a>
-                <a href="/stories/why?project=notenest" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 hover:underline font-normal flex items-center gap-1">| <Feather className="inline h-3 w-3 mr-0.5" /> Story</a>
+              <h3 className="font-bold text-foreground flex items-center flex-wrap gap-x-2">
+                <span>Campus Companion – University Collaboration Platform</span>
               </h3>
-              <span className="text-xs italic text-gray-600">Next.js, TS, Firebase, Genkit</span>
+              <span className="text-xs italic text-muted-foreground">React · Firebase</span>
             </div>
-            <ul className="list-disc list-inside text-sm text-gray-800 mt-1">
-                <li>Secure workspace with summaries and insights for display-less usage.</li>
-                <li>Real-time sync and Firestore security rules for safe access.</li>
-                <li>Purpose: Supports headless workflow by enabling information management without visual screen usage.</li>
+            <p className="text-sm text-muted-foreground font-semibold">A web platform for university students to collaborate, share resources, and participate in structured discussions.</p>
+            <ul className="list-disc list-inside text-sm text-foreground/90 mt-1 pl-2 space-y-0.5">
+                <li>System design includes role-based authentication, public/private resource visibility model, and structured discussion forums.</li>
+                <li>Firebase-backed storage and database integration with a modular React component architecture. <Link href="https://github.com/kkek-041405/CampusCompanion" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">[GitHub]</Link></li>
             </ul>
           </div>
         </section>
 
         {/* Leadership */}
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Leadership & Experience</h2>
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Leadership & Impact</h2>
           <div className="mb-2">
-            <div className="flex justify-between font-semibold text-gray-900">
-              <span>IUCEE Student Chapter</span>
-              <span>Aug 2024 – Present</span>
+            <div className="flex justify-between font-semibold text-foreground">
+              <span>Technical Head, VVISC (VVIT IUCEE Student Chapter)</span>
+              <span className="text-sm">Aug 2024 – Present</span>
             </div>
-            <div className="flex justify-between text-sm italic text-gray-700 mb-1">
-              <span>Technical Head</span>
-              <span>VVIT</span>
-            </div>
-            <ul className="list-disc list-inside text-sm text-gray-800">
-              <li>Orchestrated a 24-hour Inter-College Hackathon 300+ participants and multiple intra-college technical events, managing logistics and mentorship for student participants.</li>
-              <li>Represented the institute at external summits and led workshops to foster technical excellence and cross-campus collaboration.</li>
+            <ul className="list-disc list-inside text-sm text-foreground/90 pl-2">
+              <li>Orchestrated a 24-hour inter-college hackathon with 300+ participants and organized multiple intra-college events.</li>
+              <li>Represented chapter at inter-college hackathons, winning a Special Mention at Ideathon, Malnad College of Engineering.</li>
             </ul>
           </div>
         </section>
 
-        {/* Technical Skills */}
-        <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Technical Skills</h2>
-          <ul className="text-sm text-gray-800 space-y-1">
-            <li><span className="font-bold">Languages:</span> Kotlin, TypeScript, JavaScript, Java, Python, SQL</li>
-            <li><span className="font-bold">Android:</span> Jetpack Compose, Hilt, Accessibility Services, Room, Retrofit</li>
-            <li><span className="font-bold">Web & Cloud:</span> React.js, Next.js, Firebase, WebSockets, Google Genkit</li>
-            <li><span className="font-bold">Tools:</span> Git, GitHub, Android Studio, VS Code</li>
-          </ul>
-        </section>
-
         {/* Education */}
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Education</h2>
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Education</h2>
           <div className="mb-2">
-            <div className="flex justify-between font-semibold text-gray-900">
-              <span>Vasireddy Venkatadri Institute of Technology (VVIT)</span>
-              <span>Nambur, India</span>
+            <div className="flex justify-between font-semibold text-foreground">
+              <span>B.Tech, Computer Science & Engineering</span>
+              <span className="text-sm">2023 – 2026</span>
             </div>
-            <div className="flex justify-between text-sm italic text-gray-700">
-              <span>B.Tech, Computer Science and Engineering</span>
-              <span>Graduation: 2026</span>
+            <div className="flex justify-between text-sm italic text-muted-foreground">
+              <span>Vasireddy Venkatadri Institute of Technology (VVIT), Guntur</span>
+              <span>CGPA: 6.86</span>
             </div>
           </div>
           <div>
-            <div className="flex justify-between font-semibold text-gray-900">
-              <span>M.B.T.S Govt. Polytechnic</span>
-              <span>Guntur, India</span>
-            </div>
-            <div className="flex justify-between text-sm italic text-gray-700">
+            <div className="flex justify-between font-semibold text-foreground">
               <span>Diploma, Computer Engineering</span>
-              <span>2020 – 2023</span>
+               <span className="text-sm">2020 – 2023</span>
+            </div>
+            <div className="flex justify-between text-sm italic text-muted-foreground">
+              <span>M.B.T.S Government Polytechnic, Nallapadu</span>
+              <span>75%</span>
             </div>
           </div>
         </section>
 
-        {/* Coding Profiles */}
+        {/* Certifications */}
         <section>
-          <h2 className="text-lg font-bold uppercase border-b border-gray-400 mb-2">Coding Profiles</h2>
-          <p className="text-sm text-gray-800">
-            <span className="font-bold">Platforms:</span> LeetCode · Codeforces – Regular participation in contests
-          </p>
+          <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Certifications</h2>
+          <ul className="list-disc list-inside text-sm text-foreground/90 pl-2">
+            <li>Google Android Developer Certification (EduSkills – Kotlin & Jetpack Compose)</li>
+            <li>Java Full Stack Developer Certification (EduSkills)</li>
+          </ul>
         </section>
 
       </div>
     </div>
   );
 }
-
-    
