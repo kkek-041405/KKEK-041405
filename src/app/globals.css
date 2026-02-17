@@ -8,79 +8,70 @@ body {
 
 @layer base {
   :root {
-    --background: 120 60% 97%; /* Very light, slightly desaturated green */
-    --foreground: 120 25% 15%; /* Dark, desaturated green-gray */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.75rem;
 
-    --card: 0 0% 100%; /* White for card background */
-    --card-foreground: 120 25% 15%; /* Dark, desaturated green-gray for card text */
-
-    --popover: 0 0% 100%; /* White for popover background */
-    --popover-foreground: 120 25% 15%; /* Dark, desaturated green-gray for popover text */
-
-    --primary: 145 63% 42%; /* Vibrant Green */
-    --primary-foreground: 145 63% 95%; /* Very light for contrast on primary green */
-
-    --secondary: 120 30% 90%; /* Light gray-green */
-    --secondary-foreground: 120 25% 25%; /* Darker gray-green */
-
-    --muted: 120 20% 85%; /* Muted gray-green */
-    --muted-foreground: 120 15% 50%; /* Gray-green text */
-
-    --accent: 145 63% 49%; /* Slightly lighter/brighter primary green for hover */
-    --accent-foreground: 145 63% 98%; /* Very light for contrast on accent */
-
-    --destructive: 0 84.2% 60.2%; /* Standard red for destructive actions */
-    --destructive-foreground: 0 0% 98%; /* Light text on destructive red */
-
-    --border: 120 20% 80%; /* Subtle green-gray border */
-    --input: 120 20% 80%; /* Input border, same as border */
-    --ring: 145 63% 42%; /* Primary green for focus rings */
-
-    --radius: 0.5rem;
-
-    --chart-1: 145 70% 45%; /* Primary Green variant */
-    --chart-2: 130 60% 55%; /* Lighter Green */
-    --chart-3: 160 50% 35%; /* Darker Teal/Green */
-    --chart-4: 100 50% 60%; /* Lime Greenish */
-    --chart-5: 150 40% 70%; /* Pastel Green */
+    --chart-1: 145 70% 45%;
+    --chart-2: 130 60% 55%;
+    --chart-3: 160 50% 35%;
+    --chart-4: 100 50% 60%;
+    --chart-5: 150 40% 70%;
   }
 
   .dark {
-    --background: 145 15% 12%; /* Very dark desaturated green */
-    --foreground: 145 30% 90%; /* Light, slightly desaturated green for text */
+    --background: 224 71% 4%; /* Dark Blue/Black */
+    --foreground: 210 40% 98%; /* Almost White */
 
-    --card: 145 15% 16%; /* Slightly lighter dark green for cards */
-    --card-foreground: 145 30% 90%; /* Light, slightly desaturated green for card text */
+    --card: 224 71% 6%; /* Slightly lighter than background */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 145 15% 16%; /* Slightly lighter dark green for popovers */
-    --popover-foreground: 145 30% 90%; /* Light, slightly desaturated green for popover text */
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 145 55% 55%; /* Brighter green for dark mode */
-    --primary-foreground: 145 20% 10%; /* Dark for contrast on primary green */
+    --primary: 217 91% 60%; /* Bright Blue */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 145 15% 20%; /* Darker gray-green */
-    --secondary-foreground: 145 30% 80%; /* Lighter gray-green text */
+    --secondary: 217 32.6% 17.5%; /* Darker Blue */
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 145 12% 25%; /* Muted dark gray-green */
-    --muted-foreground: 145 20% 65%; /* Gray-green text */
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%; /* Grayish Blue */
 
-    --accent: 145 55% 62%; /* Slightly lighter/brighter primary green for hover */
-    --accent-foreground: 145 15% 5%; /* Very dark for contrast on accent */
+    --accent: 217 91% 65%; /* Lighter blue for hover */
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%; /* Standard dark red for destructive actions */
-    --destructive-foreground: 0 0% 98%; /* Light text on destructive red */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 145 15% 28%; /* Subtle dark green-gray border */
-    --input: 145 15% 28%; /* Input border, same as border */
-    --ring: 145 55% 55%; /* Primary green for focus rings */
+    --border: 217 32.6% 17.5%; /* Dark Blue Border */
+    --input: 217 32.6% 17.5%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
-
-    --chart-1: 145 60% 60%;
-    --chart-2: 130 50% 70%;
-    --chart-3: 160 45% 50%;
-    --chart-4: 100 40% 75%;
-    --chart-5: 150 35% 80%;
+    --radius: 0.75rem;
+    
+    --chart-1: 217 91% 60%;
+    --chart-2: 197 89% 51%;
+    --chart-3: 177 78% 39%;
+    --chart-4: 257 89% 68%;
+    --chart-5: 297 89% 68%;
   }
 }
 
@@ -93,7 +84,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* Smooth scrolling for anchor links */
   html {
     scroll-behavior: smooth;
   }
@@ -104,27 +94,30 @@ body {
     display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  /* Custom Scrollbar for Webkit browsers */
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: hsl(var(--background));
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted));
-    border-radius: 6px;
-    border: 3px solid hsl(var(--background));
+    background-color: hsl(var(--border));
+    border-radius: 5px;
+    border: 2px solid hsl(var(--background));
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--accent));
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent;
   }
 }

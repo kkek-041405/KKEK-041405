@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, Feather, ChevronLeft, ChevronRight } from "lucide-react";
+import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, Feather, ChevronLeft, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -60,18 +60,25 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="p-6 pb-4 border-b">
-          <DialogTitle className="text-2xl font-bold">{project.title}</DialogTitle>
-          <DialogDescription className="text-base text-primary">{project.subtitle}</DialogDescription>
-        </DialogHeader>
-
+      <DialogContent className="sm:max-w-3xl max-h-[90dvh] flex flex-col p-0 bg-card border-border">
+         <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="absolute top-3 right-3 z-50 h-8 w-8"
+        >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+        </Button>
         <ScrollArea className="flex-grow">
+          <DialogHeader className="p-6 pb-4 border-b">
+            <DialogTitle className="text-2xl font-bold">{project.title}</DialogTitle>
+            <DialogDescription className="text-base text-primary">{project.subtitle}</DialogDescription>
+          </DialogHeader>
+
           <div className="px-6 py-4 space-y-6">
-            {/* Screenshots and Video Section */}
             {project.screenshots && project.screenshots.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center"><ImageIcon className="mr-2 h-5 w-5 text-primary" /> Screenshots</h3>
                 <div className="relative group">
                   <Image
                     src={project.screenshots[currentScreenshotIndex].src}
@@ -134,7 +141,6 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
             
             <Separator />
 
-            {/* Detailed Description */}
             <div>
               <h3 className="text-lg font-semibold mb-2">About this project</h3>
               <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -144,15 +150,13 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
 
             <Separator />
 
-            {/* Tech Stack */}
             <div>
               <h3 className="text-lg font-semibold mb-2">Technology Stack</h3>
               <div className="flex flex-wrap gap-2">
-                {project.tech.map(tech => <Badge key={tech} variant="secondary" className="text-sm px-3 py-1">{tech}</Badge>)}
+                {project.tech.map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
               </div>
             </div>
 
-            {/* Achievements */}
             {project.achievements && project.achievements.length > 0 && (
               <>
                 <Separator />
@@ -165,37 +169,35 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
               </>
             )}
           </div>
+        
+          <DialogFooter className="p-6 mt-4 border-t sticky bottom-0 bg-card/95 backdrop-blur-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div className="flex flex-wrap gap-2">
+              {project.githubLink && (
+                <Button variant="outline" asChild>
+                  <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                    <Github className="mr-2 h-4 w-4" /> View on GitHub
+                  </Link>
+                </Button>
+              )}
+              {project.liveLink && (
+                <Button variant="outline" asChild>
+                  <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
+                  </Link>
+                </Button>
+              )}
+              {project.storyLink && (
+                <Button variant="outline" asChild>
+                  <Link href={project.storyLink} target="_blank" rel="noopener noreferrer">
+                    <Feather className="mr-2 h-4 w-4" /> Read Story
+                  </Link>
+                </Button>
+              )}
+            </div>
+            <Button onClick={onClose} variant="default">Close</Button>
+          </DialogFooter>
         </ScrollArea>
-
-        <DialogFooter className="p-6 border-t flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-          <div className="flex flex-wrap gap-2">
-            {project.githubLink && (
-              <Button variant="outline" asChild>
-                <Link href={project.githubLink} target="_blank" rel="noopener noreferrer">
-                  <Github className="mr-2 h-4 w-4" /> View on GitHub
-                </Link>
-              </Button>
-            )}
-            {project.liveLink && (
-              <Button variant="outline" asChild>
-                <Link href={project.liveLink} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
-                </Link>
-              </Button>
-            )}
-            {project.storyLink && (
-              <Button variant="outline" asChild>
-                <Link href={project.storyLink} target="_blank" rel="noopener noreferrer">
-                  <Feather className="mr-2 h-4 w-4" /> Read Story
-                </Link>
-              </Button>
-            )}
-          </div>
-          <Button onClick={onClose} variant="default">Close</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-    

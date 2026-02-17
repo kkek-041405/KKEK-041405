@@ -1,8 +1,5 @@
 
 import type {Metadata} from 'next';
-// Geist isn't a Google font; Turbopack can fail resolving it. Use supported
-// Google fonts but keep the same CSS variable names so the rest of the app
-// (tailwind + globals.css) continues to use the same variables.
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; 
@@ -32,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`} suppressHydrationWarning>
       <body className={`font-sans antialiased h-screen w-screen overflow-hidden flex flex-col`} suppressHydrationWarning={true}>
         <div className={cn("flex-1 overflow-auto no-scrollbar")}>
           {children}

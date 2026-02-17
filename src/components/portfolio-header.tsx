@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -6,7 +7,6 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetClose,
 } from "@/components/ui/sheet";
 import {
   Dialog,
@@ -21,12 +21,14 @@ import {
   Code2,
   Download,
   NotebookText,
-  UserCircle,
+  User,
   LayoutGrid,
   Phone,
   Home,
   LockKeyhole,
   Feather,
+  Cpu,
+  X
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -46,16 +48,15 @@ export function PortfolioHeader() {
 
   const navLinks = [
     { href: "/#home", label: "Home", icon: Home },
-    { href: "/#about", label: "About", icon: UserCircle },
+    { href: "/#about", label: "About", icon: User },
+    { href: "/#skills", label: "Skills", icon: Cpu },
     { href: "/#projects", label: "Projects", icon: LayoutGrid },
-    { href: "/#skills", label: "Skills", icon: Code2 },
     { href: "/stories/why", label: "Stories", icon: Feather },
     { href: "/#contact", label: "Contact", icon: Phone },
     { href: "/notes", label: "Notes", icon: NotebookText, isAuthTrigger: true },
   ];
 
   useEffect(() => {
-    // Close mobile menu on path change, but not if only the auth dialog state changes
     if (isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
     }
@@ -72,7 +73,6 @@ export function PortfolioHeader() {
       }
       return pathname === "/" && href === "/#home";
     }
-     // For the "Notes" button, consider it active if on any /notes/* path
     if (href === "/notes") {
       return pathname.startsWith('/notes');
     }
@@ -88,8 +88,8 @@ export function PortfolioHeader() {
         sessionStorage.setItem("notesAuthenticated", "true");
       }
       router.push("/notes/content");
-      setIsAuthDialogOpen(false); // Close dialog on success
-      setIsMobileMenuOpen(false); // Close mobile menu if open
+      setIsAuthDialogOpen(false);
+      setIsMobileMenuOpen(false);
     } else {
       toast({
         title: "Access Denied",
@@ -102,8 +102,8 @@ export function PortfolioHeader() {
 
   const renderNavButton = (link: (typeof navLinks)[0], isMobile: boolean) => {
     const buttonProps = {
-      variant: isActive(link.href!) ? "secondary" : ("ghost" as "secondary" | "ghost"),
-      className: isMobile ? "w-full justify-start text-lg py-3" : "",
+      variant: "ghost" as "ghost",
+      className: isMobile ? "w-full justify-start text-lg py-3" : `text-muted-foreground hover:text-foreground ${isActive(link.href) ? 'text-foreground' : ''}`,
     };
 
     if (link.isAuthTrigger) {
@@ -111,7 +111,7 @@ export function PortfolioHeader() {
         <Dialog key={`${link.label}-dialog-${isMobile ? 'mobile' : 'desktop'}`} open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
           <DialogTrigger asChild>
             <Button {...buttonProps}>
-              {link.icon && <link.icon className={isMobile ? "mr-2 h-5 w-5" : "mr-2 h-4 w-4"} />}
+              {isMobile && link.icon && <link.icon className="mr-2 h-5 w-5" />}
               {link.label}
             </Button>
           </DialogTrigger>
@@ -134,16 +134,15 @@ export function PortfolioHeader() {
     return (
       <Button {...buttonProps} asChild key={link.href} onClick={() => isMobile && setIsMobileMenuOpen(false)}>
         <Link href={link.href!}>
-          {link.icon && <link.icon className={isMobile ? "mr-2 h-5 w-5" : "mr-2 h-4 w-4"} />}
+          {isMobile && link.icon && <link.icon className="mr-2 h-5 w-5" />}
           {link.label}
         </Link>
       </Button>
     );
   };
 
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
         <Link href="/#home" className="flex items-center gap-2">
           <Code2 className="h-7 w-7 text-primary" />
@@ -151,19 +150,12 @@ export function PortfolioHeader() {
         </Link>
 
         <div className="flex items-center gap-1">
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map(link => renderNavButton(link, false))}
-            <Button asChild className="ml-2 shadow-sm">
-              <Link href="/resume" target="_blank" download>
-                CV <Download className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
           </nav>
 
           <ThemeToggleButton />
 
-          {/* Mobile Navigation */}
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
@@ -172,28 +164,20 @@ export function PortfolioHeader() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm">
-                 <div className="flex justify-between items-center mb-6 pr-6"> {/* Added pr-6 to avoid overlap with potential close button if not using default SheetClose */}
+              <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm p-0">
+                 <div className="flex justify-between items-center p-6 border-b">
                     <Link href="/#home" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
                         <Code2 className="h-7 w-7 text-primary" />
                         <span className="font-bold text-xl tracking-tight">KKEK</span>
                     </Link>
-                     <SheetClose asChild>
-                        <Button variant="ghost" size="icon" className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-                           {/* Using X from lucide-react if available, or text */}
-                           {/* <X className="h-4 w-4" /> */}
-                           <span className="text-2xl">&times;</span>
-                           <span className="sr-only">Close</span>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                           <X className="h-4 w-4" />
                         </Button>
-                    </SheetClose>
+                    </SheetTrigger>
                 </div>
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2 p-4">
                   {navLinks.map(link => renderNavButton(link, true))}
-                  <Button asChild className="w-full justify-start text-lg py-3 mt-4">
-                    <Link href="/resume" target="_blank" download onClick={() => setIsMobileMenuOpen(false)}>
-                      <Download className="mr-2 h-5 w-5" /> Download CV
-                    </Link>
-                  </Button>
                 </nav>
               </SheetContent>
             </Sheet>
