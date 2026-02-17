@@ -268,7 +268,7 @@ export default function PortfolioPage() {
         </section>
 
         <section id="education" className="py-16 md:py-24">
-          <div className="container mx-auto px-4 max-w-3xl">
+          <div className="container mx-auto px-4">
             <AnimatedSection>
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Education</h2>
               <div className="space-y-6">
