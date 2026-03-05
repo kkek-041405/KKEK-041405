@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -41,7 +40,15 @@ interface ExpandedProjectModalProps {
 export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProjectModalProps) {
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = React.useState(0);
 
-  if (!project) return null;
+  React.useEffect(() => {
+    if (isOpen) {
+      setCurrentScreenshotIndex(0); // Reset when modal opens
+    }
+  }, [isOpen]);
+
+  if (!project) {
+    return null;
+  }
 
   const nextScreenshot = () => {
     setCurrentScreenshotIndex((prevIndex) => (prevIndex + 1) % project.screenshots.length);
@@ -50,12 +57,6 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
   const prevScreenshot = () => {
     setCurrentScreenshotIndex((prevIndex) => (prevIndex - 1 + project.screenshots.length) % project.screenshots.length);
   };
-
-  React.useEffect(() => {
-    if (isOpen) {
-      setCurrentScreenshotIndex(0); // Reset when modal opens
-    }
-  }, [isOpen]);
 
 
   return (
