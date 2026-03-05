@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const projects: Project[] = [
     {
@@ -84,7 +82,7 @@ const skills = [
 
 const Section: React.FC<{title: string; children: React.ReactNode; className?: string}> = ({ title, children, className }) => (
     <section className={className}>
-        <h2 className="text-sm font-semibold uppercase text-zinc-400 tracking-widest mb-6">{title}</h2>
+        <h2 className="text-xs font-semibold uppercase text-zinc-400 tracking-widest mb-4">{title}</h2>
         {children}
     </section>
 );
@@ -106,23 +104,20 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="bg-black text-white h-screen font-sans">
-        <main className="container mx-auto px-4 sm:px-8 h-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 h-full">
+      <div className="bg-black text-white h-screen font-sans overflow-hidden">
+        <main className="container mx-auto px-6 h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 h-full">
                 
-                {/* Left Column */}
-                <ScrollArea className="h-full">
-                <div className="flex flex-col gap-12 py-16 lg:py-24 pr-8">
+                <div className="flex flex-col gap-8 py-12 pr-8 justify-center">
                     
-                    {/* Hero Section */}
                     <header>
-                        <h1 className="text-4xl sm:text-5xl font-bold text-zinc-100 leading-tight">
+                        <h1 className="text-4xl font-bold text-zinc-100 leading-tight">
                             Hi, I'm K. K. Eshwara Kumar. I build high-impact Android applications.
                         </h1>
-                        <p className="mt-4 text-zinc-400 max-w-lg">
+                        <p className="mt-3 text-zinc-400 max-w-lg text-base">
                            Hello, I'm a final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
                         </p>
-                        <div className="flex gap-4 mt-8">
+                        <div className="flex gap-4 mt-6">
                             <Button size="lg" asChild className="bg-blue-600 hover:bg-blue-700 text-white">
                                 <a href="#projects">View Projects</a>
                             </Button>
@@ -132,64 +127,58 @@ export default function PortfolioPage() {
                         </div>
                     </header>
                     
-                    {/* Experience Section */}
                     <Section title="EXPERIENCE">
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-1 gap-3">
                              {experiences.map(exp => (
-                                <div key={exp.role} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                                <div key={exp.role} className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3">
                                     <div className="flex justify-between items-start">
-                                        <h3 className="font-semibold text-zinc-100">{exp.role}</h3>
+                                        <h3 className="font-semibold text-zinc-100 text-base">{exp.role}</h3>
                                         <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
                                     </div>
                                     <p className="text-sm text-zinc-400 font-medium">{exp.organization}</p>
-                                    <div className="flex flex-wrap gap-2 mt-3">
-                                        {exp.tech.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}
+                                    <div className="flex flex-wrap gap-1.5 mt-2">
+                                        {exp.tech.map(t => <Badge key={t} variant="secondary" className="px-2 py-0.5 text-[10px]">{t}</Badge>)}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </Section>
 
-                    {/* Education Section */}
                     <Section title="EDUCATION">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                              {education.map(edu => (
                                 <div key={edu.degree}>
-                                  <h3 className="font-semibold text-zinc-100">{edu.degree}</h3>
+                                  <h3 className="font-semibold text-zinc-100 text-base">{edu.degree}</h3>
                                   <p className="text-zinc-500 text-sm">{edu.institution}</p>
                                 </div>
                               ))}
                         </div>
                     </Section>
 
-                     {/* Skills Section */}
                     <Section title="SKILLS">
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2">
                             {skills.map(skill => (
-                                <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
+                                <Badge key={skill} className="px-2.5 py-0.5 text-xs" variant="secondary">{skill}</Badge>
                             ))}
                         </div>
                     </Section>
                 </div>
-                </ScrollArea>
 
-                {/* Right Column (Projects) */}
-                <ScrollArea className="h-full">
-                <div id="projects" className="py-16 lg:py-24">
+                <div id="projects" className="py-12 flex flex-col justify-center">
                     <Section title="PROJECTS">
-                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {projects.map(project => (
                               <div 
                                 key={project.id} 
-                                className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 flex flex-col group hover:border-zinc-700 transition-colors cursor-pointer"
+                                className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex flex-col group hover:border-zinc-700 transition-colors cursor-pointer"
                                 onClick={() => handleProjectClick(project)}
                               >
-                                <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                                <p className="text-zinc-400 text-sm mt-2 mb-4 flex-grow">{project.shortDescription}</p>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                  {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}
+                                <h3 className="font-semibold text-base text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                <p className="text-zinc-400 text-xs mt-1 mb-3 flex-grow">{project.shortDescription}</p>
+                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                  {project.tech.map(t => <Badge key={t} variant="secondary" className="text-[10px] px-2 py-0.5">{t}</Badge>)}
                                 </div>
-                                <div className="flex items-center gap-4 text-sm font-medium">
+                                <div className="flex items-center gap-4 text-xs font-medium">
                                     {project.githubLink && <Link href={project.githubLink} onClick={e => e.stopPropagation()} target="_blank" className="text-blue-400 hover:underline">GitHub</Link>}
                                     {project.liveLink && <Link href={project.liveLink} onClick={e => e.stopPropagation()} target="_blank" className="text-blue-400 hover:underline">Live Demo</Link>}
                                 </div>
@@ -198,7 +187,6 @@ export default function PortfolioPage() {
                         </div>
                     </Section>
                 </div>
-                </ScrollArea>
             </div>
         </main>
       </div>
