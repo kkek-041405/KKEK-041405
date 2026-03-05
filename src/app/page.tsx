@@ -165,7 +165,7 @@ export default function PortfolioPage() {
                     </Section>
                 </div>
 
-                <div id="projects" className="py-12 flex flex-col justify-center overflow-hidden">
+                <div id="projects" className="py-12 flex flex-col justify-start overflow-hidden">
                     <Section title="PROJECTS">
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {projects.map(project => (
