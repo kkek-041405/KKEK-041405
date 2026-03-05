@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
-  Mail, Download, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight, BookOpenCheck
+  Mail, Download, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, BookOpenCheck
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -92,8 +92,23 @@ const education = [
     }
 ];
 
-const skills = [
-  "Kotlin", "Jetpack Compose", "Firebase", "Android SDK", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python", "Node.js", "Git"
+const skillGroups = [
+  {
+    category: "Mobile",
+    items: ["Kotlin", "Jetpack Compose", "Android SDK"],
+  },
+  {
+    category: "Web",
+    items: ["React", "Next.js", "Node.js"],
+  },
+  {
+    category: "CS Fundamentals",
+    items: ["Data Structures", "Algorithms"],
+  },
+  {
+    category: "Tools",
+    items: ["Git", "Firebase", "TypeScript", "Python"],
+  },
 ];
 
 export default function PortfolioPage() {
@@ -114,115 +129,141 @@ export default function PortfolioPage() {
     <>
       <div className="flex flex-col h-screen bg-black text-white p-3 sm:p-4 md:p-6 gap-3 sm:gap-4 md:gap-5">
         {/* Main 2-Column Layout */}
-        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 md:grid-rows-3 gap-3 sm:gap-4 md:gap-5 min-h-0">
-          
-          {/* Top-Left: Hero */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col justify-center text-left">
-            <h1 className="text-3xl font-bold tracking-tighter">
-              K. K. Eshwara Kumar
-            </h1>
-            <h2 className="text-lg text-blue-400 font-semibold mt-0.5">
-              Android Developer
-            </h2>
-            <p className="mt-2 text-sm text-zinc-400 max-w-md leading-relaxed">
-              Final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
-            </p>
-            <div className="flex gap-3 mt-4">
-              <Button size="default" asChild>
-                <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
-                  Get in Touch <Mail className="ml-2 h-3.5 w-3.5"/>
-                </Link>
-              </Button>
-              <Button size="default" variant="outline" asChild>
-                <Link href="/resume" target="_blank">
-                  View Resume <Download className="ml-2 h-3.5 w-3.5"/>
-                </Link>
-              </Button>
-            </div>
-          </AnimatedSection>
-          
-          {/* Right Column, Rows 1 & 2: Projects */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0 md:row-span-2" delay="delay-100">
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Code className="h-5 w-5 text-blue-400"/> Projects</h2>
-            <ScrollArea className="-mr-4 pr-4">
-              <div className="space-y-1">
-                {projects.map(project => (
-                  <div 
-                    key={project.id} 
-                    className="px-3 py-3 border-b border-zinc-800/60 last:border-b-0 flex flex-col group hover:bg-zinc-900/40 transition-colors cursor-pointer rounded-lg"
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <h3 className="font-semibold text-base text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                    <div className="flex flex-wrap gap-1.5 my-1.5">
-                      {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2 py-0">{t}</Badge>)}
-                    </div>
-                    <p className="text-zinc-500 text-sm flex-grow">{project.shortDescription}</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <div className="flex gap-1">
-                          {project.githubLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-1 h-3 w-3"/></Link></Button>}
-                          {project.liveLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs ml-3" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-1 h-3 w-3"/></Link></Button>}
-                        </div>
-                        <span className="text-xs text-zinc-600 group-hover:text-blue-400 transition-colors flex items-center gap-1">Details <ArrowRight className="h-3 w-3"/></span>
-                    </div>
-                  </div>
-                ))}
+        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 min-h-0">
+          <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 min-h-0">
+            {/* Top-Left: Hero */}
+            <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col justify-center text-left">
+              <h1 className="text-3xl font-bold tracking-tighter">
+                K. K. Eshwara Kumar
+              </h1>
+              <h2 className="text-lg text-blue-400 font-semibold mt-0.5">
+                Android Developer
+              </h2>
+              <p className="mt-2 text-sm text-zinc-400 max-w-md leading-relaxed">
+                Final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
+              </p>
+              <div className="flex gap-3 mt-4">
+                <Button size="default" asChild>
+                  <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
+                    Get in Touch <Mail className="ml-2 h-3.5 w-3.5"/>
+                  </Link>
+                </Button>
+                <Button size="default" variant="outline" asChild>
+                  <Link href="/resume" target="_blank">
+                    View Resume <Download className="ml-2 h-3.5 w-3.5"/>
+                  </Link>
+                </Button>
               </div>
-            </ScrollArea>
-          </AnimatedSection>
+            </AnimatedSection>
 
-          {/* Middle-Left: Experience */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-300">
-              <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Briefcase className="h-5 w-5 text-blue-400"/> Experience</h2>
-               <ScrollArea className="-mr-4 pr-4">
-                <div className="space-y-4">
-                    {experiences.map(exp => (
-                        <div key={exp.role} className="border-l-2 border-blue-400/30 pl-3">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-semibold text-base text-zinc-100">{exp.role}</h3>
-                            <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
+            {/* Middle-Left: Experience */}
+            <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0 flex-1" delay="delay-300">
+                <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Briefcase className="h-5 w-5 text-blue-400"/> Experience</h2>
+                <ScrollArea className="-mr-4 pr-4">
+                  <div className="space-y-4">
+                      {experiences.map(exp => (
+                          <div key={exp.role} className="border-l-2 border-blue-400/30 pl-3">
+                            <div className="flex justify-between items-start">
+                              <h3 className="font-semibold text-base text-zinc-100">{exp.role}</h3>
+                              <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
+                            </div>
+                            <p className="text-zinc-400 text-sm font-medium">{exp.organization}</p>
+                            <ul className="list-disc pl-5 mt-1.5 space-y-0.5 text-zinc-500 text-sm">
+                              {exp.details.map(detail => <li key={detail}>{detail}</li>)}
+                            </ul>
                           </div>
-                          <p className="text-zinc-400 text-sm font-medium">{exp.organization}</p>
-                          <ul className="list-disc pl-5 mt-1.5 space-y-0.5 text-zinc-500 text-sm">
-                            {exp.details.map(detail => <li key={detail}>{detail}</li>)}
-                          </ul>
-                        </div>
-                    ))}
-                </div>
-              </ScrollArea>
-          </AnimatedSection>
-
-          {/* Bottom-Left: Education */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-200">
-            <ScrollArea className="-mr-4 pr-4">
-              <div>
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-blue-400"/> Education</h2>
-                  <div className="space-y-3">
-                      {education.map(edu => (
-                        <div key={edu.degree} className="border-l-2 border-blue-400/30 pl-3">
-                          <h3 className="font-semibold text-base text-zinc-100">{edu.degree}</h3>
-                          <p className="text-zinc-500 text-sm">{edu.institution} &bull; {edu.dates}</p>
-                          <p className="font-mono text-xs text-zinc-400 mt-0.5">{edu.score}</p>
-                        </div>
                       ))}
                   </div>
-              </div>
-            </ScrollArea>
-          </AnimatedSection>
-          
-          {/* Bottom-Right: Skills */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-400">
-             <ScrollArea className="-mr-4 pr-4">
-                 <div>
-                    <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><BookOpenCheck className="h-5 w-5 text-blue-400"/> Skills</h2>
-                     <div className="flex flex-wrap gap-2">
-                        {skills.map(skill => (
-                            <Badge key={skill} className="px-2.5 py-0.5 text-xs" variant="secondary">{skill}</Badge>
+                </ScrollArea>
+            </AnimatedSection>
+
+            {/* Bottom-Left: Education */}
+            <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-200">
+              <ScrollArea className="-mr-4 pr-4">
+                <div>
+                    <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-blue-400"/> Education</h2>
+                    <div className="space-y-3">
+                        {education.map(edu => (
+                          <div key={edu.degree} className="border-l-2 border-blue-400/30 pl-3">
+                            <h3 className="font-semibold text-base text-zinc-100">{edu.degree}</h3>
+                            <p className="text-zinc-500 text-sm">{edu.institution} &bull; {edu.dates}</p>
+                            <p className="font-mono text-xs text-zinc-400 mt-0.5">{edu.score}</p>
+                          </div>
                         ))}
                     </div>
                 </div>
               </ScrollArea>
-          </AnimatedSection>
+            </AnimatedSection>
+          </div>
 
+          <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 min-h-0">
+            {/* Right: Projects */}
+            <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0 flex-1" delay="delay-100">
+              <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Code className="h-5 w-5 text-blue-400"/> Projects</h2>
+              <ScrollArea className="-mr-4 pr-4">
+                <div>
+                  {projects.map(project => (
+                    <div 
+                      key={project.id} 
+                      className="bg-white/[0.02] border border-white/[0.06] rounded-[14px] p-[18px] mb-5 last:mb-0 flex flex-col cursor-pointer transition-all duration-200 hover:-translate-y-[3px] hover:border-[rgba(120,160,255,0.35)]"
+                      onClick={() => handleProjectClick(project)}
+                    >
+                      <h3 className="font-semibold text-base text-zinc-100">{project.title}</h3>
+                      <div className="flex flex-wrap gap-1.5 mt-[6px]">
+                        {project.tech.slice(0, 3).map(tech => (
+                          <Badge key={tech} variant="secondary" className="text-xs px-2 py-0 bg-white/[0.04] border border-white/[0.06] text-zinc-300">
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-zinc-400 text-sm mt-[10px] leading-relaxed">{project.shortDescription}</p>
+                      <div className="flex items-center gap-4 mt-[12px]">
+                        {project.githubLink && (
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="h-auto p-0 text-xs text-zinc-300 hover:text-blue-400"
+                            asChild
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Link href={project.githubLink} target="_blank">
+                              <Github className="mr-1 h-3.5 w-3.5" /> GitHub
+                            </Link>
+                          </Button>
+                        )}
+                        {project.liveLink && (
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="h-auto p-0 text-xs text-zinc-300 hover:text-blue-400"
+                            asChild
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Link href={project.liveLink} target="_blank">
+                              <ExternalLink className="mr-1 h-3.5 w-3.5" /> Play Store
+                            </Link>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </AnimatedSection>
+
+            {/* Right: Skills */}
+            <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col" delay="delay-400">
+              <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><BookOpenCheck className="h-5 w-5 text-blue-400"/> Skills</h2>
+              <div className="space-y-3">
+                {skillGroups.map(group => (
+                  <div key={group.category} className="border-l-2 border-blue-400/25 pl-3">
+                    <p className="text-xs uppercase tracking-wide text-zinc-500">{group.category}</p>
+                    <p className="text-sm text-zinc-300 mt-1">{group.items.join(" • ")}</p>
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+          </div>
         </main>
         
         {/* Footer */}
