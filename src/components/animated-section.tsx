@@ -7,14 +7,14 @@ import { cn } from '@/lib/utils';
 interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
-  initialClassName?: string; // Renamed from initialClass to avoid conflict with React's className
-  animateClassName?: string; // Renamed from animateClass
+  initialClassName?: string;
+  animateClassName?: string;
   threshold?: number;
   triggerOnce?: boolean;
-  delay?: string; // e.g., 'delay-100', 'delay-200' (Tailwind classes)
-  duration?: string; // e.g., 'duration-500', 'duration-700' (Tailwind classes)
+  delay?: string;
+  duration?: string;
   rootMargin?: string;
-  as?: keyof JSX.IntrinsicElements; // Allow specifying the element type
+  as?: keyof JSX.IntrinsicElements;
 }
 
 const AnimatedSection: React.FC<AnimatedSectionProps> = ({
@@ -24,13 +24,13 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({
   animateClassName = 'opacity-100 translate-y-0',
   threshold = 0.1,
   triggerOnce = true,
-  delay = 'delay-0', // Default to no delay
-  duration = 'duration-700', // Default duration
+  delay = 'delay-0',
+  duration = 'duration-700',
   rootMargin = '0px',
-  as: Element = 'div', // Default to 'div'
+  as: Element = 'div',
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null); // Keep as HTMLDivElement for simplicity, specific element type via 'as' prop
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,7 +67,7 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({
 
   return (
     <Element
-      ref={sectionRef as any} // Cast to any because ref type depends on Element type
+      ref={sectionRef as any}
       className={cn(
         'transition-all ease-out',
         duration,

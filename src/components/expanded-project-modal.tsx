@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Github, ExternalLink, Trophy, Film, Image as ImageIcon, Feather, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Github, ExternalLink, Trophy, ChevronLeft, ChevronRight, X } from "lucide-react";
 import Link from "next/link";
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -26,12 +26,10 @@ export interface Project {
   imageSrc: string;
   imageHint: string;
   screenshots: ProjectScreenshot[];
-  videoUrl?: string;
   tech: string[];
   achievements?: string[];
   githubLink?: string;
   liveLink?: string;
-  storyLink?: string;
 }
 
 interface ExpandedProjectModalProps {
@@ -54,8 +52,10 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
   };
 
   React.useEffect(() => {
-    setCurrentScreenshotIndex(0); // Reset when project changes
-  }, [project]);
+    if (isOpen) {
+      setCurrentScreenshotIndex(0); // Reset when modal opens
+    }
+  }, [isOpen]);
 
 
   return (
@@ -65,7 +65,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="absolute top-3 right-3 z-50 h-8 w-8"
+            className="absolute top-3 right-3 z-50 h-8 w-8 bg-black/50 hover:bg-black/70"
         >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
@@ -121,23 +121,6 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                 </div>
               </div>
             )}
-
-            {project.videoUrl && (
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center"><Film className="mr-2 h-5 w-5 text-primary" /> Demo Video</h3>
-                <div className="aspect-video rounded-lg overflow-hidden border">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={project.videoUrl}
-                    title="Project Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="border-0"
-                  ></iframe>
-                </div>
-              </div>
-            )}
             
             <Separator />
 
@@ -170,7 +153,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
             )}
           </div>
         
-          <DialogFooter className="p-6 mt-4 border-t sticky bottom-0 bg-card/95 backdrop-blur-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+          <DialogFooter className="p-6 mt-4 border-t sticky bottom-0 bg-card/95 backdrop-blur-sm flex-wrap justify-start sm:justify-between gap-3">
             <div className="flex flex-wrap gap-2">
               {project.githubLink && (
                 <Button variant="outline" asChild>
@@ -186,15 +169,8 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                   </Link>
                 </Button>
               )}
-              {project.storyLink && (
-                <Button variant="outline" asChild>
-                  <Link href={project.storyLink} target="_blank" rel="noopener noreferrer">
-                    <Feather className="mr-2 h-4 w-4" /> Read Story
-                  </Link>
-                </Button>
-              )}
             </div>
-            <Button onClick={onClose} variant="default">Close</Button>
+            <Button onClick={onClose} variant="default" className="sm:ml-auto">Close</Button>
           </DialogFooter>
         </ScrollArea>
       </DialogContent>
