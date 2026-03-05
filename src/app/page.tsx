@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Image from 'next/image';
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import { Github, ExternalLink, Code, Smartphone, GitBranch, Network, Palette, Server, FileText } from 'lucide-react';
@@ -107,6 +107,12 @@ const experiences = [
         organization: "VVISC (VVIT IUCEE Student Chapter)",
         dates: "Aug 2024 – Present",
         tags: ["Hackathon Organizing", "Event Management", "Leadership"],
+    },
+    {
+        role: "Android Developer (Freelance)",
+        organization: "Personal Projects",
+        dates: "2023 - Present",
+        tags: ["App Development", "UI/UX Design", "Play Store"],
     }
 ];
 
@@ -131,9 +137,21 @@ const skills = [
   { name: "REST APIs", icon: Network },
   { name: "Material Design", icon: Palette },
   { name: "React", icon: ReactIcon },
-  { name: "TypeScript", icon: FileText },
-  { name: "Node.js", icon: Server },
 ];
+
+const FloatingRobot = () => (
+    <div className="fixed bottom-10 right-10 w-56 h-auto z-10 hidden lg:block animate-float">
+        <Image 
+            src="https://picsum.photos/seed/robot/220/280" 
+            alt="AI Robot Mascot" 
+            width={220}
+            height={280}
+            className="opacity-90"
+            data-ai-hint="robot mascot illustration"
+        />
+    </div>
+);
+
 
 export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -152,7 +170,7 @@ export default function PortfolioPage() {
   return (
     <>
       <div className="container mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 min-h-screen">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-16 lg:gap-8 min-h-screen">
           
           {/* LEFT COLUMN */}
           <div className="flex flex-col justify-center py-24">
@@ -172,7 +190,7 @@ export default function PortfolioPage() {
 
               <section id="experience">
                 <h2 className="text-sm font-semibold uppercase text-slate-500 tracking-widest mb-6">Experience</h2>
-                <div className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
                   {experiences.map(exp => (
                     <div key={exp.role} className="glass-card p-6">
                       <div className="flex justify-between items-start mb-2">
@@ -202,10 +220,10 @@ export default function PortfolioPage() {
 
               <section id="skills">
                  <h2 className="text-sm font-semibold uppercase text-slate-500 tracking-widest mb-6">Skills</h2>
-                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                 <div className="flex flex-wrap items-center gap-4">
                     {skills.map(skill => (
-                      <div key={skill.name} className="flex flex-col items-center gap-2 text-center">
-                        <div className="glass-card h-20 w-20 p-4 flex items-center justify-center">
+                      <div key={skill.name} className="flex flex-col items-center gap-2 text-center group">
+                        <div className="h-16 w-16 p-4 flex items-center justify-center rounded-xl bg-slate-800/50 border border-slate-700/50 transition-all duration-300 group-hover:bg-primary/10 group-hover:border-primary/50">
                             <skill.icon />
                         </div>
                         <p className="text-xs font-medium text-slate-400">{skill.name}</p>
@@ -218,53 +236,32 @@ export default function PortfolioPage() {
 
           {/* RIGHT COLUMN */}
           <div className="hidden lg:flex flex-col justify-center py-24">
-            <section id="projects" className="space-y-6">
-                {projects.map(project => (
-                  <div 
-                    key={project.id} 
-                    className="glass-card p-6 group cursor-pointer"
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <h3 className="font-bold text-lg text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
-                    <p className="text-slate-400 text-sm mt-2 mb-4 flex-grow">{project.shortDescription}</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2.5 py-1">{t}</Badge>)}
+            <section id="projects">
+              <h2 className="text-sm font-semibold uppercase text-slate-500 tracking-widest mb-6">Projects</h2>
+                <div className="grid grid-cols-2 gap-6">
+                  {projects.map(project => (
+                    <div 
+                      key={project.id} 
+                      className="glass-card p-6 group cursor-pointer flex flex-col h-full"
+                      onClick={() => handleProjectClick(project)}
+                    >
+                      <h3 className="font-bold text-lg text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
+                      <p className="text-slate-400 text-sm mt-2 mb-4 flex-grow">{project.shortDescription}</p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2.5 py-1">{t}</Badge>)}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm font-medium mt-auto">
+                          {project.githubLink && <a href={project.githubLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><Github size={16} /> GitHub</a>}
+                          {project.liveLink && <a href={project.liveLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><ExternalLink size={16} /> Live Demo</a>}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm font-medium">
-                        {project.githubLink && <a href={project.githubLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><Github size={16} /> GitHub</a>}
-                        {project.liveLink && <a href={project.liveLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><ExternalLink size={16} /> Live Demo</a>}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
             </section>
           </div>
-          
-          {/* Projects section for mobile */}
-          <div className="lg:hidden pb-24">
-             <section id="projects-mobile" className="space-y-6">
-               <h2 className="text-sm font-semibold uppercase text-slate-500 tracking-widest mb-6">Projects</h2>
-                {projects.map(project => (
-                  <div 
-                    key={project.id} 
-                    className="glass-card p-6 group cursor-pointer"
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <h3 className="font-bold text-lg text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
-                    <p className="text-slate-400 text-sm mt-2 mb-4 flex-grow">{project.shortDescription}</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2.5 py-1">{t}</Badge>)}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm font-medium">
-                        {project.githubLink && <a href={project.githubLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><Github size={16} /> GitHub</a>}
-                        {project.liveLink && <a href={project.liveLink} onClick={e => e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors"><ExternalLink size={16} /> Live Demo</a>}
-                    </div>
-                  </div>
-                ))}
-            </section>
-          </div>
-
         </div>
       </div>
+      <FloatingRobot />
       <ExpandedProjectModal project={selectedProject} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   );
