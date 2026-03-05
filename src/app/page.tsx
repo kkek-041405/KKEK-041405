@@ -108,13 +108,13 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-black text-white p-6 md:p-8 gap-8">
-        <main className="grid md:grid-cols-2 gap-8 flex-1 overflow-hidden">
+      <div className="flex flex-col h-screen bg-black text-white p-6 gap-6">
+        <main className="grid md:grid-cols-2 gap-6 flex-1 overflow-hidden">
           {/* Left Column */}
-          <div className="flex flex-col gap-8 min-h-0">
+          <div className="flex flex-col gap-6 min-h-0">
             {/* Top-Left: Bio */}
-            <AnimatedSection as="div" className="p-6 bg-zinc-900/30 rounded-xl flex flex-col justify-start">
-              <div className="mb-6">
+            <AnimatedSection as="div" className="p-5 bg-zinc-900/30 rounded-xl flex flex-col justify-start">
+              <div className="mb-4">
                 <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-zinc-50 to-zinc-400">
                   K.K. Eshwara kumar
                 </h1>
@@ -137,12 +137,12 @@ export default function PortfolioPage() {
             </AnimatedSection>
 
             {/* Bottom-Left: Education */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-100">
-              <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><GraduationCap className="mr-2"/>Education</h2>
-              <ScrollArea className="flex-1 -mr-4 pr-4">
-                <div className="space-y-4">
+            <AnimatedSection as="div" className="flex-1 p-5 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-100">
+              <h2 className="text-xl font-bold mb-3 flex items-center shrink-0"><GraduationCap className="mr-2"/>Education</h2>
+              <ScrollArea className="flex-1 -mr-3 pr-3">
+                <div className="space-y-3">
                   {education.map(edu => (
-                    <div key={edu.degree} className="p-4 rounded-lg">
+                    <div key={edu.degree} className="p-3 rounded-lg">
                        <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
                         <p className="text-sm text-zinc-400 text-right shrink-0 ml-4">{edu.dates}</p>
@@ -159,12 +159,12 @@ export default function PortfolioPage() {
           </div>
 
           {/* Right Column */}
-          <div className="flex flex-col gap-8 min-h-0">
+          <div className="flex flex-col gap-6 min-h-0">
             {/* Top-Right: Projects */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-200">
-              <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><Code className="mr-2"/>Projects</h2>
-              <ScrollArea className="flex-1 -mr-4 pr-4">
-                <div className="space-y-3">
+            <AnimatedSection as="div" className="flex-1 p-5 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-200">
+              <h2 className="text-xl font-bold mb-3 flex items-center shrink-0"><Code className="mr-2"/>Projects</h2>
+              <ScrollArea className="flex-1 -mr-3 pr-3">
+                <div className="space-y-2">
                   {projects.map(project => (
                     <div 
                       key={project.id} 
@@ -180,12 +180,12 @@ export default function PortfolioPage() {
             </AnimatedSection>
 
             {/* Bottom-Right: Experience */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-300">
-              <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><Briefcase className="mr-2"/>Experience</h2>
-              <ScrollArea className="flex-1 -mr-4 pr-4">
-                <div className="space-y-4">
+            <AnimatedSection as="div" className="flex-1 p-5 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-300">
+              <h2 className="text-xl font-bold mb-3 flex items-center shrink-0"><Briefcase className="mr-2"/>Experience</h2>
+              <ScrollArea className="flex-1 -mr-3 pr-3">
+                <div className="space-y-3">
                   {experiences.map(exp => (
-                    <div key={exp.role} className="p-4 rounded-lg">
+                    <div key={exp.role} className="p-3 rounded-lg">
                       <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-zinc-100">{exp.role}</h3>
                         <p className="text-sm text-zinc-400 text-right shrink-0 ml-4">{exp.dates}</p>
@@ -202,7 +202,7 @@ export default function PortfolioPage() {
           </div>
         </main>
 
-        <footer className="flex-shrink-0 py-4">
+        <footer className="flex-shrink-0 py-2">
           <div className="flex justify-center gap-x-6">
             <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors">
               <Linkedin className="h-6 w-6" />
