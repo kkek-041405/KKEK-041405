@@ -71,7 +71,7 @@ export default function PortfolioPage() {
         <div>
           <div className="mb-8">
             <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-zinc-50 to-zinc-400">
-              Komal Eshwara Kumar Konatham
+              K.K. Eshwara kumar
             </h1>
             <p className="mt-2 text-lg text-zinc-400">
               A final-year CSE student and passionate Android Developer creating polished, production-ready mobile applications.
