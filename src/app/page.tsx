@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -225,18 +224,6 @@ export default function PortfolioPage() {
                 </a>
             </div>
         </footer>
-
-        {/* Robot */}
-        <div className="fixed bottom-10 right-10 w-48 h-auto z-10 hidden lg:block animate-float">
-            <Image 
-                src="https://picsum.photos/seed/robot/220/280" 
-                alt="AI Robot Mascot" 
-                width={192}
-                height={256}
-                className="opacity-90"
-                data-ai-hint="robot mascot illustration"
-            />
-        </div>
     </main>
   );
 }
