@@ -97,14 +97,14 @@ const projects: Project[] = [
 
 const skillsData = [
   {
-    category: "Programming",
-    icon: Code2,
-    items: ["Java", "Kotlin", "Python", "JavaScript"],
-  },
-  {
     category: "Mobile Development",
     icon: TabletSmartphone,
     items: ["Android (Kotlin, Jetpack Compose)", "Play Store deployment", "Realtime multiplayer systems", "Accessibility-based control systems"],
+  },
+  {
+    category: "Programming",
+    icon: Code2,
+    items: ["Java", "Kotlin", "Python", "JavaScript"],
   },
   {
     category: "Web & Full Stack",
@@ -146,20 +146,20 @@ export default function PortfolioPage() {
         
         <section id="home" className="w-full py-24 md:py-32 lg:py-40 relative isolate">
           <div 
-            className="absolute inset-0 -z-10 h-full w-full bg-background 
+            className="absolute inset-x-0 -z-10 h-full w-full bg-background 
             bg-[radial-gradient(theme(colors.primary)_1px,transparent_1px)] 
             [background-size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]"
           ></div>
           <div className="container mx-auto px-4 text-center">
             <AnimatedSection delay="delay-100">
               <Badge variant="outline" className="mb-6 border-primary/50 text-primary">
-                Seeking Full-Time Roles & Internships
+                Seeking Android Development Internships
               </Badge>
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent">
                 Komal Eshwara Kumar Konatham
               </h1>
               <p className="max-w-2xl mx-auto mt-4 text-lg md:text-xl text-muted-foreground">
-                A product-focused engineer who builds reliable Android and web systems to solve tangible problems, with experience in real-time sync, scalable backends, and production deployment.
+                A final-year CSE student and passionate Android Developer creating polished, production-ready mobile applications. Seeking an internship to apply and grow my skills in a professional environment.
               </p>
             </AnimatedSection>
             <AnimatedSection delay="delay-200">
@@ -180,11 +180,11 @@ export default function PortfolioPage() {
         </section>
 
         <section id="about" className="py-16 md:py-24">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Engineering Overview</h2>
-              <p className="text-lg text-muted-foreground text-center mb-12">
-                I build software to solve real problems — not just to complete assignments. My focus is on creating production-ready systems that are scalable, reliable, and provide a tangible value. I enjoy tackling the full lifecycle of a product, from backend architecture to frontend polish.
+          <div className="container mx-auto px-4">
+            <AnimatedSection className="max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-4">Engineering Overview</h2>
+              <p className="text-lg text-muted-foreground text-left">
+                As an aspiring Android Engineer, I focus on building native applications that are not only functional but also intuitive and reliable. My approach is to tackle the full development lifecycle, from initial concept and backend integration to UI polish and Play Store deployment.
               </p>
             </AnimatedSection>
           </div>
@@ -193,8 +193,8 @@ export default function PortfolioPage() {
         <section id="skills" className="py-16 md:py-24 bg-card/5">
           <div className="container mx-auto px-4">
             <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Core Competencies</h2>
-              <p className="text-lg text-muted-foreground text-center mb-12 max-w-2xl mx-auto">The toolkit I use to transform ideas into functional, production-ready applications.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-4 max-w-4xl mx-auto">Core Competencies</h2>
+              <p className="text-lg text-muted-foreground text-left mb-12 max-w-4xl mx-auto">The toolkit I use to transform ideas into functional, production-ready applications.</p>
             </AnimatedSection>
             <AnimatedSection delay="delay-200" className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
               {skillsData.map((skillCategory) => (
@@ -221,13 +221,13 @@ export default function PortfolioPage() {
         <section id="projects" className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Featured Projects</h2>
-              <p className="text-lg text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-4 max-w-4xl mx-auto">Featured Projects</h2>
+              <p className="text-lg text-muted-foreground text-left mb-12 max-w-4xl mx-auto">
                 A selection of my work, from production Android apps to full-stack web platforms.
               </p>
             </AnimatedSection>
             
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {projects.map((project, index) => (
                 <AnimatedSection key={project.id} as="div" delay={`delay-${(index + 1) * 100}`}>
                   <div 
@@ -260,8 +260,8 @@ export default function PortfolioPage() {
 
         <section id="experience" className="py-16 md:py-24 bg-card/5">
           <div className="container mx-auto px-4">
-            <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Leadership & Impact</h2>
+            <AnimatedSection className="max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-12">Leadership & Impact</h2>
               <ExperienceSection experiences={experiences} />
             </AnimatedSection>
           </div>
@@ -269,8 +269,8 @@ export default function PortfolioPage() {
 
         <section id="education" className="py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Education</h2>
+            <AnimatedSection className="max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-12">Education</h2>
               <div className="space-y-6">
                 <Card className="bg-card/50">
                   <CardHeader>
@@ -296,10 +296,10 @@ export default function PortfolioPage() {
         </section>
 
         <section id="philosophy" className="py-16 md:py-24">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <AnimatedSection>
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Engineering Philosophy</h2>
-              <div className="grid md:grid-cols-2 gap-4 text-center">
+          <div className="container mx-auto px-4">
+            <AnimatedSection className="max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-left mb-12">Engineering Philosophy</h2>
+              <div className="grid md:grid-cols-2 gap-4 text-left">
                 <Card className="p-6 bg-card/50 border-border/50"><p>Functional reliability over cosmetic complexity.</p></Card>
                 <Card className="p-6 bg-card/50 border-border/50"><p>End-to-end systems over isolated components.</p></Card>
                 <Card className="p-6 bg-card/50 border-border/50"><p>Production deployment and real-user validation.</p></Card>
@@ -314,7 +314,7 @@ export default function PortfolioPage() {
             <AnimatedSection>
               <h2 className="text-3xl md:text-4xl font-bold">Let's Build Together</h2>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto mt-4 mb-8">
-                I'm actively seeking opportunities to contribute to product-driven engineering teams. If you have a project in mind or just want to connect, feel free to reach out.
+                I'm actively seeking an Android development internship where I can contribute to building great mobile experiences. If you have an opportunity or just want to connect, please reach out.
               </p>
               <Button size="lg" asChild>
                 <Link href="mailto:komaleshwarakumarkonatham@gmail.com">

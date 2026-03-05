@@ -24,7 +24,7 @@ export default function Resume() {
         <section className="mb-4">
           <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Professional Overview</h2>
           <p className="text-foreground/90 text-sm leading-relaxed">
-            Computer Science engineer building production-ready Android and web systems with real-time synchronization and scalable backend architecture. Experienced in deploying live applications, designing Firebase-based infrastructures, and leading technical initiatives at university scale. <strong>I build software to solve real problems — not just to complete assignments.</strong>
+            Final-year Computer Science engineer specializing in Android development. Passionate about building production-ready mobile applications with a focus on real-time synchronization, scalable architecture, and intuitive user experiences. Actively seeking an Android development internship to contribute my skills to a product-driven team.
           </p>
         </section>
 
@@ -32,8 +32,8 @@ export default function Resume() {
         <section className="mb-4">
           <h2 className="text-lg font-bold uppercase border-b border-border mb-2 text-primary">Technical Competencies</h2>
           <div className="text-sm text-foreground/90 space-y-1">
-            <p><strong className="font-semibold">Programming:</strong> Java · Kotlin · Python · JavaScript</p>
             <p><strong className="font-semibold">Mobile Development:</strong> Android (Kotlin, Jetpack Compose) · Play Store deployment · Realtime multiplayer systems · Accessibility-based control systems</p>
+            <p><strong className="font-semibold">Programming:</strong> Java · Kotlin · Python · JavaScript</p>
             <p><strong className="font-semibold">Web & Full Stack:</strong> React.js · Next.js · Firebase Authentication · Firestore / Realtime Database · REST-style architecture</p>
             <p><strong className="font-semibold">Tools & Workflow:</strong> Git · GitHub · Firebase Hosting · Vercel</p>
           </div>
