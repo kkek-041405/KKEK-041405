@@ -29,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`} suppressHydrationWarning>
-      <body className={`font-sans antialiased bg-black overflow-hidden`} suppressHydrationWarning={true}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark overflow-hidden`} suppressHydrationWarning>
+      <body className={`font-sans antialiased bg-black`} suppressHydrationWarning={true}>
         <div className={cn("flex-1")}>
           {children}
         </div>

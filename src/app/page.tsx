@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -108,7 +109,7 @@ export default function PortfolioPage() {
         <main className="container mx-auto px-6 h-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 h-full">
                 
-                <div className="flex flex-col gap-8 py-12 pr-8 justify-center">
+                <div className="flex flex-col gap-8 py-12 pr-8 justify-center overflow-hidden">
                     
                     <header>
                         <h1 className="text-4xl font-bold text-zinc-100 leading-tight">
@@ -164,7 +165,7 @@ export default function PortfolioPage() {
                     </Section>
                 </div>
 
-                <div id="projects" className="py-12 flex flex-col justify-center">
+                <div id="projects" className="py-12 flex flex-col justify-center overflow-hidden">
                     <Section title="PROJECTS">
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {projects.map(project => (
