@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -49,7 +50,7 @@ const projects: Project[] = [
     {
         id: "campus-companion",
         title: "Campus Companion",
-        subtitle: "University collaboration platform with role-based auth, resource sharing, and structured discussion forums.",
+        subtitle: "AI-powered student collaboration platform for sharing resources and academic discussions.",
         shortDescription: "AI-powered student collaboration platform for sharing resources and academic discussions.",
         detailedDescription: "A web platform designed for university students to collaborate, share resources, and participate in structured discussions.\n\nSystem Design Features:\n- Role-based authentication system\n- Public/private resource visibility model\n- Structured discussion forums (no anonymous posting)\n- Firebase-backed storage and database integration\n- Modular React component architecture",
         imageSrc: "https://picsum.photos/seed/campus/800/450",
@@ -92,7 +93,7 @@ const education = [
 ];
 
 const skills = [
-  "Kotlin", "Jetpack Compose", "Firebase", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python",
+  "Kotlin", "Jetpack Compose", "Firebase", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python", "Node.js", "Git"
 ];
 
 export default function PortfolioPage() {
