@@ -4,8 +4,6 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; 
 import { cn } from '@/lib/utils';
-import { PortfolioHeader } from '@/components/portfolio-header';
-import { PortfolioFooter } from '@/components/portfolio-footer';
 
 const inter = Inter({ 
   variable: '--font-inter',
@@ -32,12 +30,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning>
-      <body className={`font-sans antialiased`} suppressHydrationWarning={true}>
-        <PortfolioHeader />
-        <div className={cn("flex-1")}>
-          {children}
-        </div>
-        <PortfolioFooter />
+      <body className={cn(
+          "font-sans antialiased",
+          "h-screen w-screen overflow-hidden md:overflow-hidden" // Non-scrollable on desktop
+        )}
+        suppressHydrationWarning={true}
+      >
+        {children}
         <Toaster />
       </body>
     </html>

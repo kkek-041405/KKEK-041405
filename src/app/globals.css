@@ -85,34 +85,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300;
+    @apply bg-background text-foreground;
     font-family: var(--font-inter), Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
 @layer utilities {
-  .glass-card {
-    @apply bg-slate-800/20 backdrop-blur-lg border border-slate-700/50 rounded-2xl transition-all duration-300;
-  }
-  .glass-card:hover {
-    @apply border-slate-600/80 shadow-2xl shadow-slate-950/50 transform -translate-y-1;
-  }
-  
-  .nav-link-underline::after {
-    content: '';
-    @apply absolute bottom-0 left-0 h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-300 ease-out;
-  }
-
-  .nav-link-underline:hover::after,
-  .nav-link-underline.active::after {
-    @apply scale-x-100;
-  }
-
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
