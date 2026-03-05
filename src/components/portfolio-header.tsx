@@ -9,179 +9,101 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Menu,
-  Code2,
-  Download,
-  NotebookText,
-  User,
-  LayoutGrid,
-  Phone,
-  Home,
-  LockKeyhole,
-  Feather,
-  Cpu,
-  X
+  Menu
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { ThemeToggleButton } from "./theme-toggle-button";
-import { NoteAuthForm, type NoteAuthFormValues } from "@/components/note-auth-form";
-import { useToast } from "@/hooks/use-toast";
-import { getAccessCodeFromFirestore } from "@/services/config-service";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function PortfolioHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
-  
+  const [activeSection, setActiveSection] = useState('about');
   const pathname = usePathname();
-  const router = useRouter();
-  const { toast } = useToast();
 
   const navLinks = [
-    { href: "/#home", label: "Home", icon: Home },
-    { href: "/#about", label: "About", icon: User },
-    { href: "/#skills", label: "Skills", icon: Cpu },
-    { href: "/#projects", label: "Projects", icon: LayoutGrid },
-    { href: "/stories/why", label: "Stories", icon: Feather },
-    { href: "/#contact", label: "Contact", icon: Phone },
-    { href: "/notes", label: "Notes", icon: NotebookText, isAuthTrigger: true },
+    { href: '#about', label: 'About' },
+    { href: '#experience', label: 'Experience' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#education', label: 'Education' },
+    { href: '#contact', label: 'Contact' },
   ];
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+    if (pathname !== '/') return;
 
+    const handleScroll = () => {
+      const sections = navLinks.map(link => document.getElementById(link.href.substring(1))).filter(Boolean);
+      let currentSection = '';
 
-  const isActive = (href: string) => {
-    if (href.startsWith("/#")) {
-      if (typeof window !== "undefined") {
-        const currentHash = window.location.hash;
-        if (href === "/#home" && pathname === "/" && !currentHash) return true;
-        return currentHash === href.substring(1);
+      for (const section of sections) {
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            currentSection = section.id;
+            break;
+          }
+        }
       }
-      return pathname === "/" && href === "/#home";
-    }
-    if (href === "/notes") {
-      return pathname.startsWith('/notes');
-    }
-    return pathname.startsWith(href);
-  };
-
-  const handleAuthSubmit = async (data: NoteAuthFormValues) => {
-    setIsAuthLoading(true);
-    const correctAccessCode = await getAccessCodeFromFirestore();
-
-    if (correctAccessCode && data.accessCode === correctAccessCode) {
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("notesAuthenticated", "true");
+      if(currentSection) {
+        setActiveSection(currentSection);
       }
-      router.push("/notes/content");
-      setIsAuthDialogOpen(false);
-      setIsMobileMenuOpen(false);
-    } else {
-      toast({
-        title: "Access Denied",
-        description: "The access code you entered is incorrect. Please try again.",
-        variant: "destructive",
-      });
-    }
-    setIsAuthLoading(false);
-  };
-
-  const renderNavButton = (link: (typeof navLinks)[0], isMobile: boolean) => {
-    const buttonProps = {
-      variant: "ghost" as "ghost",
-      className: isMobile ? "w-full justify-start text-lg py-3" : `text-muted-foreground hover:text-foreground ${isActive(link.href) ? 'text-foreground' : ''}`,
     };
 
-    if (link.isAuthTrigger) {
-      return (
-        <Dialog key={`${link.label}-dialog-${isMobile ? 'mobile' : 'desktop'}`} open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-          <DialogTrigger asChild>
-            <Button {...buttonProps}>
-              {isMobile && link.icon && <link.icon className="mr-2 h-5 w-5" />}
-              {link.label}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader className="items-center text-center">
-              <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit mb-3">
-                <LockKeyhole className="h-8 w-8 text-primary" />
-              </div>
-              <DialogTitle className="text-2xl">Access Protected Notes</DialogTitle>
-              <DialogDescription>
-                Please enter the access code to view your notes.
-              </DialogDescription>
-            </DialogHeader>
-            <NoteAuthForm onAuthenticate={handleAuthSubmit} isLoading={isAuthLoading} />
-          </DialogContent>
-        </Dialog>
-      );
-    }
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); 
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
 
+  const renderNavLinks = (isMobile = false) => {
     return (
-      <Button {...buttonProps} asChild key={link.href} onClick={() => isMobile && setIsMobileMenuOpen(false)}>
-        <Link href={link.href!}>
-          {isMobile && link.icon && <link.icon className="mr-2 h-5 w-5" />}
-          {link.label}
-        </Link>
-      </Button>
-    );
+        <>
+            {navLinks.map(link => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => isMobile && setIsMobileMenuOpen(false)}
+                className={cn(
+                  "nav-link-underline relative text-sm font-medium transition-colors hover:text-primary",
+                  activeSection === link.href.substring(1) ? "text-primary active" : "text-muted-foreground",
+                  isMobile ? "block p-4 text-lg" : "px-3 py-2"
+                )}
+              >
+                {link.label}
+              </a>
+            ))}
+             <Button asChild variant="outline" className="ml-2 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary rounded-full">
+                <a href="/resume" target="_blank" rel="noopener noreferrer">Resume</a>
+            </Button>
+        </>
+    )
   };
+  
+  if (pathname !== '/') return null;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-lg">
-      <div className="container flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
-        <Link href="/#home" className="flex items-center gap-2">
-          <Code2 className="h-7 w-7 text-primary" />
-          <span className="font-bold text-xl tracking-tight">KKEK</span>
-        </Link>
-
-        <div className="flex items-center gap-1">
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map(link => renderNavButton(link, false))}
-          </nav>
-
-          <ThemeToggleButton />
-
-          <div className="md:hidden">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm p-0">
-                 <div className="flex justify-between items-center p-6 border-b">
-                    <Link href="/#home" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Code2 className="h-7 w-7 text-primary" />
-                        <span className="font-bold text-xl tracking-tight">KKEK</span>
-                    </Link>
-                    <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                           <X className="h-4 w-4" />
-                        </Button>
-                    </SheetTrigger>
-                </div>
-                <nav className="flex flex-col gap-2 p-4">
-                  {navLinks.map(link => renderNavButton(link, true))}
+    <header className="sticky top-0 z-50 w-full bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/50">
+      <div className="container flex h-20 items-center justify-between">
+        <a href="#about" className="text-lg font-bold">
+          K. K. Eshwara Kumar <span className="text-primary font-normal hidden sm:inline">| Android Developer</span>
+        </a>
+        <nav className="hidden md:flex items-center">
+          {renderNavLinks()}
+        </nav>
+        <div className="md:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="bg-slate-900 border-l-slate-800 w-full">
+                <nav className="flex flex-col pt-10">
+                    {renderNavLinks(true)}
                 </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

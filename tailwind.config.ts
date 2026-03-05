@@ -18,8 +18,8 @@ export default {
     },
   	extend: {
       fontFamily: { // Added fontFamily
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-        mono: ["var(--font-geist-mono)", ...fontFamily.mono],
+        sans: ["var(--font-inter)", ...fontFamily.sans],
+        mono: ["var(--font-jetbrains-mono)", ...fontFamily.mono],
       },
   		colors: {
   			background: 'hsl(var(--background))',

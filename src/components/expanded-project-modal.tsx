@@ -61,18 +61,18 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl max-h-[90dvh] flex flex-col p-0 bg-card border-border">
+      <DialogContent className="sm:max-w-3xl max-h-[90dvh] flex flex-col p-0 bg-slate-900 border-slate-800">
          <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="absolute top-3 right-3 z-50 h-8 w-8 bg-black/50 hover:bg-black/70"
+            className="absolute top-3 right-3 z-50 h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full"
         >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
         </Button>
         <ScrollArea className="flex-grow">
-          <DialogHeader className="p-6 pb-4 border-b">
+          <DialogHeader className="p-6 pb-4 border-b border-slate-800">
             <DialogTitle className="text-2xl font-bold">{project.title}</DialogTitle>
             <DialogDescription className="text-base text-primary">{project.subtitle}</DialogDescription>
           </DialogHeader>
@@ -86,7 +86,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                     alt={project.screenshots[currentScreenshotIndex].alt}
                     width={800}
                     height={450}
-                    className="rounded-lg object-cover aspect-video border"
+                    className="rounded-lg object-cover aspect-video border border-slate-700"
                     data-ai-hint={project.screenshots[currentScreenshotIndex].hint}
                   />
                   {project.screenshots.length > 1 && (
@@ -94,7 +94,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                       <Button
                         variant="outline"
                         size="icon"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background rounded-full"
                         onClick={prevScreenshot}
                       >
                         <ChevronLeft className="h-5 w-5" />
@@ -102,7 +102,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
                       <Button
                         variant="outline"
                         size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/70 hover:bg-background rounded-full"
                         onClick={nextScreenshot}
                       >
                         <ChevronRight className="h-5 w-5" />
@@ -123,7 +123,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
               </div>
             )}
             
-            <Separator />
+            <Separator className="bg-slate-800" />
 
             <div>
               <h3 className="text-lg font-semibold mb-2">About this project</h3>
@@ -132,7 +132,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
               </p>
             </div>
 
-            <Separator />
+            <Separator className="bg-slate-800" />
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Technology Stack</h3>
@@ -143,7 +143,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
 
             {project.achievements && project.achievements.length > 0 && (
               <>
-                <Separator />
+                <Separator className="bg-slate-800" />
                 <div>
                   <h3 className="text-lg font-semibold mb-2 flex items-center"><Trophy className="mr-2 h-5 w-5 text-primary" /> Achievements</h3>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
@@ -154,7 +154,7 @@ export function ExpandedProjectModal({ project, isOpen, onClose }: ExpandedProje
             )}
           </div>
         
-          <DialogFooter className="p-6 mt-4 border-t sticky bottom-0 bg-card/95 backdrop-blur-sm flex-wrap justify-start sm:justify-between gap-3">
+          <DialogFooter className="p-6 mt-4 border-t border-slate-800 sticky bottom-0 bg-slate-900/80 backdrop-blur-sm flex-wrap justify-start sm:justify-between gap-3">
             <div className="flex flex-wrap gap-2">
               {project.githubLink && (
                 <Button variant="outline" asChild>

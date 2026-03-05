@@ -2,38 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --radius: 0.75rem;
+    --background: 224 71% 4%; /* Dark Blue/Black */
+    --foreground: 210 40% 98%; /* Almost White */
 
-    --chart-1: 145 70% 45%;
-    --chart-2: 130 60% 55%;
-    --chart-3: 160 50% 35%;
-    --chart-4: 100 50% 60%;
-    --chart-5: 150 40% 70%;
+    --card: 224 71% 6%; /* Slightly lighter than background */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%; /* Bright Blue */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 32.6% 17.5%; /* Darker Blue */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%; /* Grayish Blue */
+
+    --accent: 217 91% 65%; /* Lighter blue for hover */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32.6% 22.5%; /* Dark Blue Border, slightly lighter */
+    --input: 217 32.6% 17.5%;
+    --ring: 217 91% 60%;
+
+    --radius: 1rem; /* 16px */
+
+    --chart-1: 217 91% 60%;
+    --chart-2: 197 89% 51%;
+    --chart-3: 177 78% 39%;
+    --chart-4: 257 89% 68%;
+    --chart-5: 297 89% 68%;
   }
 
   .dark {
@@ -61,11 +66,11 @@ body {
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 32.6% 17.5%; /* Dark Blue Border */
+    --border: 217 32.6% 22.5%; /* Dark Blue Border, slightly lighter */
     --input: 217 32.6% 17.5%;
     --ring: 217 91% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem; /* 16px */
     
     --chart-1: 217 91% 60%;
     --chart-2: 197 89% 51%;
@@ -80,7 +85,8 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300;
+    font-family: var(--font-inter), Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -90,34 +96,20 @@ body {
 }
 
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .glass-card {
+    @apply bg-slate-800/20 backdrop-blur-lg border border-slate-700/50 rounded-2xl transition-all duration-300;
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--border));
-    border-radius: 5px;
-    border: 2px solid hsl(var(--background));
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--accent));
+  .glass-card:hover {
+    @apply border-slate-600/80 shadow-2xl shadow-slate-950/50;
   }
   
-  .text-gradient {
-    @apply bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent;
+  .nav-link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-300 ease-out;
+  }
+
+  .nav-link-underline:hover::after,
+  .nav-link-underline.active::after {
+    @apply scale-x-100;
   }
 }

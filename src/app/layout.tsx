@@ -4,23 +4,25 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"; 
 import { cn } from '@/lib/utils';
+import { PortfolioHeader } from '@/components/portfolio-header';
+import { PortfolioFooter } from '@/components/portfolio-footer';
 
-const geistSans = Inter({ 
-  variable: '--font-geist-sans',
+const inter = Inter({ 
+  variable: '--font-inter',
   subsets: ['latin'],
   display: 'swap',
 });
 
-const geistMono = JetBrains_Mono({ 
-  variable: '--font-geist-mono',
+const jetbrainsMono = JetBrains_Mono({ 
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'K. Komal Eshwara Kumar (KKEK) - Portfolio | Full-Stack Developer & AI Enthusiast', 
-  description: 'Explore the portfolio of K. Komal Eshwara Kumar (KKEK), a 3rd Year CSE student, Full-Stack Developer, and AI Enthusiast. Discover projects built with React, Next.js, Firebase, and Genkit.',
-  keywords: ['K. Komal Eshwara Kumar', 'KKEK', 'Portfolio', 'Full-Stack Developer', 'Web Developer', 'AI Enthusiast', 'Next.js', 'React', 'Firebase', 'Genkit', 'CSE', 'Software Developer'],
+  title: 'K. Komal Eshwara Kumar (KKEK) - Portfolio | Android Developer', 
+  description: 'Explore the portfolio of K. Komal Eshwara Kumar (KKEK), a final-year CSE student and Android Developer specializing in Kotlin, Jetpack Compose, and Firebase.',
+  keywords: ['K. Komal Eshwara Kumar', 'KKEK', 'Portfolio', 'Android Developer', 'Full-Stack Developer', 'Kotlin', 'Jetpack Compose', 'Next.js', 'React', 'Firebase', 'Genkit', 'CSE', 'Software Developer'],
 };
 
 export default function RootLayout({
@@ -29,11 +31,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark overflow-hidden`} suppressHydrationWarning>
-      <body className={`font-sans antialiased bg-black`} suppressHydrationWarning={true}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} dark`} suppressHydrationWarning>
+      <body className={`font-sans antialiased`} suppressHydrationWarning={true}>
+        <PortfolioHeader />
         <div className={cn("flex-1")}>
           {children}
         </div>
+        <PortfolioFooter />
         <Toaster />
       </body>
     </html>
