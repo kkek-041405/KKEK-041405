@@ -113,7 +113,7 @@ export default function PortfolioPage() {
           {/* Left Column */}
           <div className="flex flex-col gap-8 min-h-0">
             {/* Top-Left: Bio */}
-            <AnimatedSection as="div" className="p-6 bg-zinc-900/30 rounded-xl border border-zinc-800 flex flex-col justify-start">
+            <AnimatedSection as="div" className="p-6 bg-zinc-900/30 rounded-xl flex flex-col justify-start">
               <div className="mb-6">
                 <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-zinc-50 to-zinc-400">
                   K.K. Eshwara kumar
@@ -137,12 +137,12 @@ export default function PortfolioPage() {
             </AnimatedSection>
 
             {/* Bottom-Left: Education */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl border border-zinc-800 flex flex-col min-h-0" delay="delay-100">
+            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-100">
               <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><GraduationCap className="mr-2"/>Education</h2>
               <ScrollArea className="flex-1 -mr-4 pr-4">
                 <div className="space-y-4">
                   {education.map(edu => (
-                    <div key={edu.degree} className="p-4 rounded-lg border border-zinc-800">
+                    <div key={edu.degree} className="p-4 rounded-lg">
                        <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
                         <p className="text-sm text-zinc-400 text-right shrink-0 ml-4">{edu.dates}</p>
@@ -161,14 +161,14 @@ export default function PortfolioPage() {
           {/* Right Column */}
           <div className="flex flex-col gap-8 min-h-0">
             {/* Top-Right: Projects */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl border border-zinc-800 flex flex-col min-h-0" delay="delay-200">
+            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-200">
               <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><Code className="mr-2"/>Projects</h2>
               <ScrollArea className="flex-1 -mr-4 pr-4">
                 <div className="space-y-3">
                   {projects.map(project => (
                     <div 
                       key={project.id} 
-                      className="p-3 rounded-lg border border-zinc-800 hover:border-blue-700/50 hover:bg-zinc-900/50 transition-all cursor-pointer group"
+                      className="p-3 rounded-lg hover:border-blue-700/50 hover:bg-zinc-900/50 transition-all cursor-pointer group"
                       onClick={() => handleProjectClick(project)}
                     >
                       <h3 className="font-semibold text-base text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
@@ -180,12 +180,12 @@ export default function PortfolioPage() {
             </AnimatedSection>
 
             {/* Bottom-Right: Experience */}
-            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl border border-zinc-800 flex flex-col min-h-0" delay="delay-300">
+            <AnimatedSection as="div" className="flex-1 p-6 bg-zinc-900/30 rounded-xl flex flex-col min-h-0" delay="delay-300">
               <h2 className="text-xl font-bold mb-4 flex items-center shrink-0"><Briefcase className="mr-2"/>Experience</h2>
               <ScrollArea className="flex-1 -mr-4 pr-4">
                 <div className="space-y-4">
                   {experiences.map(exp => (
-                    <div key={exp.role} className="p-4 rounded-lg border border-zinc-800">
+                    <div key={exp.role} className="p-4 rounded-lg">
                       <div className="flex justify-between items-start">
                         <h3 className="font-semibold text-lg text-zinc-100">{exp.role}</h3>
                         <p className="text-sm text-zinc-400 text-right shrink-0 ml-4">{exp.dates}</p>
