@@ -39,7 +39,10 @@ const FirebaseIcon = () => (
 // New Section component for consistent titling
 const Section = ({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) => (
     <section className={className}>
-        <h2 className="text-xs font-semibold uppercase text-slate-500 tracking-widest mb-3">{title}</h2>
+        <div className="mb-6">
+            <h2 className="text-3xl font-bold text-slate-100">{title}</h2>
+            <div className="mt-2 h-1 w-16 bg-primary rounded-full"></div>
+        </div>
         {children}
     </section>
 );

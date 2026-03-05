@@ -6,7 +6,10 @@ export function PortfolioFooter() {
   return (
     <footer id="contact" className="border-t border-slate-800/50 bg-slate-950/50">
       <div className="container py-12 text-center text-muted-foreground">
-        <h2 className="text-lg font-semibold text-slate-200 mb-4">Get in Touch</h2>
+        <div className="mb-8 inline-block">
+          <h2 className="text-3xl font-bold text-slate-100">Get in Touch</h2>
+          <div className="mt-2 h-1 w-16 bg-primary rounded-full mx-auto"></div>
+        </div>
         <p className="max-w-md mx-auto mb-6">
             I'm currently seeking Android Developer internship opportunities. Feel free to reach out via email or connect with me on social media.
         </p>
