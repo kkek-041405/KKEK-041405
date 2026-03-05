@@ -4,22 +4,20 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
-  Mail, Download, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight, BookOpenCheck
+  Mail, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight, BookOpenCheck
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
-import AnimatedSection from '@/components/animated-section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Data
+// Data - Using your information in the new structure
 const projects: Project[] = [
     {
         id: "chess",
         title: "Multiplayer Chess Application",
         subtitle: "A real-time multiplayer chess app with game state validation and matchmaking, published on the Google Play Store.",
-        shortDescription: "Real-time synchronized chess with matchmaking, move validation, and Firebase-based multiplayer.",
+        shortDescription: "Real-time multiplayer chess app with matchmaking and live game state synchronization using Firebase.",
         detailedDescription: "Developed and deployed a real-time multiplayer chess application enabling synchronized gameplay across devices.\n\nEngineering Highlights:\n- Implemented real-time move synchronization using Firebase Realtime Database\n- Designed game state validation logic to prevent illegal moves\n- Built matchmaking logic for pairing online players\n- Designed responsive UI using Jetpack Compose\n- Managed production deployment on Google Play Store",
         imageSrc: "https://picsum.photos/seed/chess/800/450",
         imageHint: "chess game",
@@ -69,32 +67,32 @@ const experiences = [
         role: "Technical Head",
         organization: "VVISC (VVIT IUCEE Student Chapter)",
         dates: "Aug 2024 – Present",
-        details: [
-            "Organized a 24-hour inter-college hackathon with 300+ participants.",
-            "Coordinated multiple technical and non-technical events across institutions.",
-            "Received Special Mention at Ideathon – Malnad College of Engineering.",
-        ],
+        tech: ["Hackathon Organizing", "Event Management", "Leadership"],
     }
 ];
 
 const education = [
     {
         degree: "B.Tech, Computer Science & Engineering",
-        institution: "Vasireddy Venkatadri Institute of Technology (VVIT), Guntur",
-        dates: "2023 – 2026",
-        score: "CGPA: 6.86",
+        institution: "Vasireddy Venkatadri Institute of Technology (VVIT)",
     },
     {
         degree: "Diploma, Computer Engineering",
-        institution: "M.B.T.S Government Polytechnic, Nallapadu",
-        dates: "2020 – 2023",
-        score: "75%",
+        institution: "M.B.T.S Government Polytechnic",
     }
 ];
 
 const skills = [
   "Kotlin", "Jetpack Compose", "Firebase", "Android SDK", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python", "Node.js", "Git"
 ];
+
+const Section: React.FC<{title: string; children: React.ReactNode; className?: string}> = ({ title, children, className }) => (
+    <section className={className}>
+        <h2 className="text-sm font-semibold uppercase text-zinc-400 tracking-widest mb-6">{title}</h2>
+        {children}
+    </section>
+);
+
 
 export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -112,137 +110,114 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-black text-white p-3 sm:p-4 md:p-6 gap-3 sm:gap-4 md:gap-5">
-        {/* Main 2-Column Layout */}
-        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 md:grid-rows-3 gap-3 sm:gap-4 md:gap-5 min-h-0">
-          
-          {/* Top-Left: Hero */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col justify-center text-left">
-            <h1 className="text-3xl font-bold tracking-tighter">
-              K. K. Eshwara Kumar
-            </h1>
-            <h2 className="text-lg text-blue-400 font-semibold mt-0.5">
-              Android Developer
-            </h2>
-            <p className="mt-2 text-sm text-zinc-400 max-w-md leading-relaxed">
-              Final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
-            </p>
-            <div className="flex gap-3 mt-4">
-              <Button size="default" asChild>
-                <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
-                  Get in Touch <Mail className="ml-2 h-3.5 w-3.5"/>
-                </Link>
-              </Button>
-              <Button size="default" variant="outline" asChild>
-                <Link href="/resume" target="_blank">
-                  View Resume <Download className="ml-2 h-3.5 w-3.5"/>
-                </Link>
-              </Button>
+      <div className="bg-black text-white min-h-screen font-sans">
+        <main className="container mx-auto px-4 sm:px-8 py-16 lg:py-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-20">
+                
+                {/* Left Column */}
+                <div className="flex flex-col gap-20">
+                    
+                    {/* Hero Section */}
+                    <header>
+                        <h1 className="text-4xl sm:text-5xl font-bold text-zinc-100 leading-tight">
+                            Hi, I'm K. K. Eshwara Kumar. I build high-impact Android applications.
+                        </h1>
+                        <p className="mt-4 text-zinc-400 max-w-lg">
+                           Hello, I'm a final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
+                        </p>
+                        <div className="flex gap-4 mt-8">
+                            <Button size="lg" asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                                <Link href="#projects">View Projects</Link>
+                            </Button>
+                            <Button size="lg" variant="outline" asChild className="border-zinc-700 hover:bg-zinc-900 hover:text-white">
+                                <Link href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</Link>
+                            </Button>
+                        </div>
+                    </header>
+                    
+                    {/* Experience Section */}
+                    <Section title="Experience">
+                        <div className="grid grid-cols-1 gap-4">
+                             {experiences.map(exp => (
+                                <div key={exp.role} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="font-semibold text-zinc-100">{exp.role}</h3>
+                                        <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
+                                    </div>
+                                    <p className="text-sm text-zinc-400 font-medium">{exp.organization}</p>
+                                    <div className="flex flex-wrap gap-2 mt-3">
+                                        {exp.tech.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Section>
+
+                    {/* Education Section */}
+                    <Section title="Education">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                             {education.map(edu => (
+                                <div key={edu.degree}>
+                                  <h3 className="font-semibold text-zinc-100">{edu.degree}</h3>
+                                  <p className="text-zinc-500 text-sm">{edu.institution}</p>
+                                </div>
+                              ))}
+                        </div>
+                    </Section>
+
+                     {/* Skills Section */}
+                    <Section title="Skills">
+                        <div className="flex flex-wrap gap-3">
+                            {skills.map(skill => (
+                                <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
+                            ))}
+                        </div>
+                    </Section>
+                </div>
+
+                {/* Right Column (Projects) */}
+                <div id="projects">
+                    <Section title="Projects">
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {projects.map(project => (
+                              <div 
+                                key={project.id} 
+                                className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 flex flex-col group hover:border-zinc-700 transition-colors cursor-pointer"
+                                onClick={() => handleProjectClick(project)}
+                              >
+                                <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                <p className="text-zinc-400 text-sm mt-2 mb-4 flex-grow">{project.shortDescription}</p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                  {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}
+                                </div>
+                                <div className="flex items-center gap-4 text-sm font-medium">
+                                    {project.githubLink && <Link href={project.githubLink} onClick={e => e.stopPropagation()} target="_blank" className="text-blue-400 hover:underline">GitHub</Link>}
+                                    {project.liveLink && <Link href={project.liveLink} onClick={e => e.stopPropagation()} target="_blank" className="text-blue-400 hover:underline">Live Demo</Link>}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                    </Section>
+                </div>
             </div>
-          </AnimatedSection>
-          
-          {/* Right Column, Rows 1 & 2: Projects */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0 md:row-span-2" delay="delay-100">
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Code className="h-5 w-5 text-blue-400"/> Projects</h2>
-            <ScrollArea className="-mr-4 pr-4">
-              <div className="space-y-1">
-                {projects.map(project => (
-                  <div 
-                    key={project.id} 
-                    className="px-3 py-3 border-b border-zinc-800/60 last:border-b-0 flex flex-col group hover:bg-zinc-900/40 transition-colors cursor-pointer rounded-lg"
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <h3 className="font-semibold text-base text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                    <div className="flex flex-wrap gap-1.5 my-1.5">
-                      {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2 py-0">{t}</Badge>)}
-                    </div>
-                    <p className="text-zinc-500 text-sm flex-grow">{project.shortDescription}</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <div className="flex gap-1">
-                          {project.githubLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-1 h-3 w-3"/></Link></Button>}
-                          {project.liveLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs ml-3" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-1 h-3 w-3"/></Link></Button>}
-                        </div>
-                        <span className="text-xs text-zinc-600 group-hover:text-blue-400 transition-colors flex items-center gap-1">Details <ArrowRight className="h-3 w-3"/></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </AnimatedSection>
-
-          {/* Middle-Left: Experience */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-300">
-              <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Briefcase className="h-5 w-5 text-blue-400"/> Experience</h2>
-               <ScrollArea className="-mr-4 pr-4">
-                <div className="space-y-4">
-                    {experiences.map(exp => (
-                        <div key={exp.role} className="border-l-2 border-blue-400/30 pl-3">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-semibold text-base text-zinc-100">{exp.role}</h3>
-                            <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
-                          </div>
-                          <p className="text-zinc-400 text-sm font-medium">{exp.organization}</p>
-                          <ul className="list-disc pl-5 mt-1.5 space-y-0.5 text-zinc-500 text-sm">
-                            {exp.details.map(detail => <li key={detail}>{detail}</li>)}
-                          </ul>
-                        </div>
-                    ))}
-                </div>
-              </ScrollArea>
-          </AnimatedSection>
-
-          {/* Bottom-Left: Education */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-200">
-            <ScrollArea className="-mr-4 pr-4">
-              <div>
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-blue-400"/> Education</h2>
-                  <div className="space-y-3">
-                      {education.map(edu => (
-                        <div key={edu.degree} className="border-l-2 border-blue-400/30 pl-3">
-                          <h3 className="font-semibold text-base text-zinc-100">{edu.degree}</h3>
-                          <p className="text-zinc-500 text-sm">{edu.institution} &bull; {edu.dates}</p>
-                          <p className="font-mono text-xs text-zinc-400 mt-0.5">{edu.score}</p>
-                        </div>
-                      ))}
-                  </div>
-              </div>
-            </ScrollArea>
-          </AnimatedSection>
-          
-          {/* Bottom-Right: Skills */}
-          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-400">
-             <ScrollArea className="-mr-4 pr-4">
-                 <div>
-                    <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><BookOpenCheck className="h-5 w-5 text-blue-400"/> Skills</h2>
-                     <div className="flex flex-wrap gap-2">
-                        {skills.map(skill => (
-                            <Badge key={skill} className="px-2.5 py-0.5 text-xs" variant="secondary">{skill}</Badge>
-                        ))}
-                    </div>
-                </div>
-              </ScrollArea>
-          </AnimatedSection>
-
         </main>
-        
-        {/* Footer */}
-        <footer className="py-1">
-            <div className="container mx-auto flex justify-center gap-x-5">
+         <footer className="container mx-auto py-8 mt-16 border-t border-zinc-800">
+            <div className="text-center flex justify-center gap-x-6">
                 <TooltipProvider>
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></Link>
+                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>LinkedIn</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><Github className="h-5 w-5" /></Link>
+                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Github className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>GitHub</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-600 hover:text-white transition-colors"><Mail className="h-5 w-5" /></Link>
+                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-500 hover:text-white transition-colors"><Mail className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>Email</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><ExternalLink className="h-5 w-5" /></Link>
+                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><ExternalLink className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>Google Play</p></TooltipContent></Tooltip>
                 </TooltipProvider>
             </div>
