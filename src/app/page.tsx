@@ -3,15 +3,11 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { 
-  Mail, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight, BookOpenCheck
-} from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Data - Using your information in the new structure
 const projects: Project[] = [
     {
         id: "chess",
@@ -110,12 +106,13 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="bg-black text-white min-h-screen font-sans">
-        <main className="container mx-auto px-4 sm:px-8 py-16 lg:py-24">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-20">
+      <div className="bg-black text-white h-screen font-sans">
+        <main className="container mx-auto px-4 sm:px-8 h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 h-full">
                 
                 {/* Left Column */}
-                <div className="flex flex-col gap-20">
+                <ScrollArea className="h-full">
+                <div className="flex flex-col gap-12 py-16 lg:py-24 pr-8">
                     
                     {/* Hero Section */}
                     <header>
@@ -127,16 +124,16 @@ export default function PortfolioPage() {
                         </p>
                         <div className="flex gap-4 mt-8">
                             <Button size="lg" asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                                <Link href="#projects">View Projects</Link>
+                                <a href="#projects">View Projects</a>
                             </Button>
                             <Button size="lg" variant="outline" asChild className="border-zinc-700 hover:bg-zinc-900 hover:text-white">
-                                <Link href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</Link>
+                                <a href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</a>
                             </Button>
                         </div>
                     </header>
                     
                     {/* Experience Section */}
-                    <Section title="Experience">
+                    <Section title="EXPERIENCE">
                         <div className="grid grid-cols-1 gap-4">
                              {experiences.map(exp => (
                                 <div key={exp.role} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
@@ -154,7 +151,7 @@ export default function PortfolioPage() {
                     </Section>
 
                     {/* Education Section */}
-                    <Section title="Education">
+                    <Section title="EDUCATION">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                              {education.map(edu => (
                                 <div key={edu.degree}>
@@ -166,7 +163,7 @@ export default function PortfolioPage() {
                     </Section>
 
                      {/* Skills Section */}
-                    <Section title="Skills">
+                    <Section title="SKILLS">
                         <div className="flex flex-wrap gap-3">
                             {skills.map(skill => (
                                 <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
@@ -174,10 +171,12 @@ export default function PortfolioPage() {
                         </div>
                     </Section>
                 </div>
+                </ScrollArea>
 
                 {/* Right Column (Projects) */}
-                <div id="projects">
-                    <Section title="Projects">
+                <ScrollArea className="h-full">
+                <div id="projects" className="py-16 lg:py-24">
+                    <Section title="PROJECTS">
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {projects.map(project => (
                               <div 
@@ -199,29 +198,9 @@ export default function PortfolioPage() {
                         </div>
                     </Section>
                 </div>
+                </ScrollArea>
             </div>
         </main>
-         <footer className="container mx-auto py-8 mt-16 border-t border-zinc-800">
-            <div className="text-center flex justify-center gap-x-6">
-                <TooltipProvider>
-                    <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></Link>
-                    </TooltipTrigger><TooltipContent><p>LinkedIn</p></TooltipContent></Tooltip>
-                    
-                    <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Github className="h-5 w-5" /></Link>
-                    </TooltipTrigger><TooltipContent><p>GitHub</p></TooltipContent></Tooltip>
-                    
-                    <Tooltip><TooltipTrigger asChild>
-                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-500 hover:text-white transition-colors"><Mail className="h-5 w-5" /></Link>
-                    </TooltipTrigger><TooltipContent><p>Email</p></TooltipContent></Tooltip>
-                    
-                    <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><ExternalLink className="h-5 w-5" /></Link>
-                    </TooltipTrigger><TooltipContent><p>Google Play</p></TooltipContent></Tooltip>
-                </TooltipProvider>
-            </div>
-        </footer>
       </div>
       <ExpandedProjectModal project={selectedProject} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>

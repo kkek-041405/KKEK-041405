@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`} suppressHydrationWarning>
-      <body className={`font-sans antialiased bg-black`} suppressHydrationWarning={true}>
+      <body className={`font-sans antialiased bg-black overflow-hidden`} suppressHydrationWarning={true}>
         <div className={cn("flex-1")}>
           {children}
         </div>
