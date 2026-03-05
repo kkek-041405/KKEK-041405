@@ -110,7 +110,7 @@ const skills = [
 
 export default function PortfolioPage() {
   return (
-    <main className="h-screen w-screen overflow-y-auto md:overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
+    <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
         {/* Header */}
         <header className="sticky md:static top-0 z-50 bg-slate-950/80 backdrop-blur-lg md:bg-transparent md:backdrop-blur-none border-b border-slate-800/50 md:border-none">
             <div className="container mx-auto px-4 md:px-8 flex h-16 md:h-20 items-center justify-between">
@@ -192,7 +192,7 @@ export default function PortfolioPage() {
             </div>
 
             {/* Right Column */}
-            <div id="projects" className="flex flex-col justify-center mt-6 md:mt-0">
+            <div id="projects" className="flex flex-col justify-center">
                 <Section title="Projects">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {projects.map(project => (
