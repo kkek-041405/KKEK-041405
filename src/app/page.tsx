@@ -18,7 +18,7 @@ const projects: Project[] = [
         id: "chess",
         title: "Multiplayer Chess Application",
         subtitle: "A real-time multiplayer chess app with game state validation and matchmaking, published on the Google Play Store.",
-        shortDescription: "Real-time multiplayer chess game with live synchronization and matchmaking.",
+        shortDescription: "Real-time synchronized chess with matchmaking, move validation, and Firebase-based multiplayer.",
         detailedDescription: "Developed and deployed a real-time multiplayer chess application enabling synchronized gameplay across devices.\n\nEngineering Highlights:\n- Implemented real-time move synchronization using Firebase Realtime Database\n- Designed game state validation logic to prevent illegal moves\n- Built matchmaking logic for pairing online players\n- Designed responsive UI using Jetpack Compose\n- Managed production deployment on Google Play Store",
         imageSrc: "https://picsum.photos/seed/chess/800/450",
         imageHint: "chess game",
@@ -92,7 +92,7 @@ const education = [
 ];
 
 const skills = [
-  "Kotlin", "Jetpack Compose", "Firebase", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python", "Node.js", "Git"
+  "Kotlin", "Jetpack Compose", "Firebase", "Android SDK", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python", "Node.js", "Git"
 ];
 
 export default function PortfolioPage() {
@@ -111,7 +111,7 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-black text-white p-4 sm:p-6 md:p-8 gap-4">
+      <div className="flex flex-col h-screen bg-black text-white p-4 sm:p-6 md:p-8 gap-4 sm:gap-6 md:gap-8">
         {/* Main 2x2 Grid */}
         <main className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 sm:gap-6 md:gap-8 min-h-0">
           
@@ -148,7 +148,7 @@ export default function PortfolioPage() {
                 {projects.map(project => (
                   <div 
                     key={project.id} 
-                    className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 flex flex-col group hover:-translate-y-1 hover:border-zinc-700 transition-all cursor-pointer"
+                    className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 flex flex-col group hover:-translate-y-1 hover:border-blue-400 transition-all cursor-pointer"
                     onClick={() => handleProjectClick(project)}
                   >
                     <h3 className="font-bold text-lg text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
