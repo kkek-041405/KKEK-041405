@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -112,8 +113,8 @@ export default function PortfolioPage() {
   return (
     <>
       <div className="flex flex-col h-screen bg-black text-white p-4 sm:p-6 md:p-8 gap-4 sm:gap-6 md:gap-8">
-        {/* Main 2x2 Grid */}
-        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 sm:gap-6 md:gap-8 min-h-0">
+        {/* Main 3x2 Grid */}
+        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 md:grid-rows-3 gap-4 sm:gap-6 md:gap-8 min-h-0">
           
           {/* Top-Left: Hero */}
           <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center text-left">
@@ -140,8 +141,8 @@ export default function PortfolioPage() {
             </div>
           </AnimatedSection>
           
-          {/* Top-Right: Projects */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-100">
+          {/* Right Column, Rows 1 & 2: Projects */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0 md:row-span-2" delay="delay-100">
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Code className="h-6 w-6 text-blue-400"/> Projects</h2>
             <ScrollArea className="-mr-4 pr-4">
               <div className="space-y-4">
@@ -169,33 +170,7 @@ export default function PortfolioPage() {
             </ScrollArea>
           </AnimatedSection>
 
-          {/* Bottom-Left: Education & Skills */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-200">
-            <ScrollArea className="-mr-4 pr-4">
-                <div className="mb-6">
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><GraduationCap className="h-6 w-6 text-blue-400"/> Education</h2>
-                    <div className="space-y-4">
-                        {education.map(edu => (
-                          <div key={edu.degree}>
-                            <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
-                            <p className="text-zinc-400 text-sm">{edu.institution} &bull; {edu.dates}</p>
-                            <p className="font-mono text-sm text-zinc-300">{edu.score}</p>
-                          </div>
-                        ))}
-                    </div>
-                </div>
-                 <div>
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><BookOpenCheck className="h-6 w-6 text-blue-400"/> Skills</h2>
-                     <div className="flex flex-wrap gap-3">
-                        {skills.map(skill => (
-                            <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
-                        ))}
-                    </div>
-                </div>
-            </ScrollArea>
-          </AnimatedSection>
-
-          {/* Bottom-Right: Experience */}
+          {/* Middle-Left: Experience */}
           <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-300">
               <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Briefcase className="h-6 w-6 text-blue-400"/> Experience</h2>
                <ScrollArea className="-mr-4 pr-4">
@@ -212,6 +187,38 @@ export default function PortfolioPage() {
                           </ul>
                         </div>
                     ))}
+                </div>
+              </ScrollArea>
+          </AnimatedSection>
+
+          {/* Bottom-Left: Education */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-200">
+            <ScrollArea className="-mr-4 pr-4">
+              <div className="mb-6">
+                  <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><GraduationCap className="h-6 w-6 text-blue-400"/> Education</h2>
+                  <div className="space-y-4">
+                      {education.map(edu => (
+                        <div key={edu.degree}>
+                          <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
+                          <p className="text-zinc-400 text-sm">{edu.institution} &bull; {edu.dates}</p>
+                          <p className="font-mono text-sm text-zinc-300">{edu.score}</p>
+                        </div>
+                      ))}
+                  </div>
+              </div>
+            </ScrollArea>
+          </AnimatedSection>
+          
+          {/* Bottom-Right: Skills */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-400">
+             <ScrollArea className="-mr-4 pr-4">
+                 <div>
+                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><BookOpenCheck className="h-6 w-6 text-blue-400"/> Skills</h2>
+                     <div className="flex flex-wrap gap-3">
+                        {skills.map(skill => (
+                            <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
+                        ))}
+                    </div>
                 </div>
               </ScrollArea>
           </AnimatedSection>
