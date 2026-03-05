@@ -112,57 +112,57 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-black text-white p-4 sm:p-6 md:p-8 gap-4 sm:gap-6 md:gap-8">
-        {/* Main 3x2 Grid */}
-        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 md:grid-rows-3 gap-4 sm:gap-6 md:gap-8 min-h-0">
+      <div className="flex flex-col h-screen bg-black text-white p-3 sm:p-4 md:p-6 gap-3 sm:gap-4 md:gap-5">
+        {/* Main 2-Column Layout */}
+        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 md:grid-rows-3 gap-3 sm:gap-4 md:gap-5 min-h-0">
           
           {/* Top-Left: Hero */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center text-left">
-            <h1 className="text-4xl font-bold tracking-tighter">
+          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col justify-center text-left">
+            <h1 className="text-3xl font-bold tracking-tighter">
               K. K. Eshwara Kumar
             </h1>
-            <h2 className="text-xl text-blue-400 font-semibold mt-1">
+            <h2 className="text-lg text-blue-400 font-semibold mt-0.5">
               Android Developer
             </h2>
-            <p className="mt-3 text-base text-zinc-300 max-w-md">
+            <p className="mt-2 text-sm text-zinc-400 max-w-md leading-relaxed">
               Final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
             </p>
-            <div className="flex gap-4 mt-6">
-              <Button size="lg" asChild>
+            <div className="flex gap-3 mt-4">
+              <Button size="default" asChild>
                 <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
-                  Get in Touch <Mail className="ml-2 h-4 w-4"/>
+                  Get in Touch <Mail className="ml-2 h-3.5 w-3.5"/>
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="default" variant="outline" asChild>
                 <Link href="/resume" target="_blank">
-                  View Resume <Download className="ml-2 h-4 w-4"/>
+                  View Resume <Download className="ml-2 h-3.5 w-3.5"/>
                 </Link>
               </Button>
             </div>
           </AnimatedSection>
           
           {/* Right Column, Rows 1 & 2: Projects */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0 md:row-span-2" delay="delay-100">
-            <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Code className="h-6 w-6 text-blue-400"/> Projects</h2>
+          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0 md:row-span-2" delay="delay-100">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Code className="h-5 w-5 text-blue-400"/> Projects</h2>
             <ScrollArea className="-mr-4 pr-4">
-              <div className="space-y-4">
+              <div className="space-y-1">
                 {projects.map(project => (
                   <div 
                     key={project.id} 
-                    className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 flex flex-col group hover:-translate-y-1 hover:border-blue-400 transition-all cursor-pointer"
+                    className="px-3 py-3 border-b border-zinc-800/60 last:border-b-0 flex flex-col group hover:bg-zinc-900/40 transition-colors cursor-pointer rounded-lg"
                     onClick={() => handleProjectClick(project)}
                   >
-                    <h3 className="font-bold text-lg text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                    <div className="flex flex-wrap gap-2 my-2">
-                      {project.tech.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}
+                    <h3 className="font-semibold text-base text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                    <div className="flex flex-wrap gap-1.5 my-1.5">
+                      {project.tech.map(t => <Badge key={t} variant="secondary" className="text-xs px-2 py-0">{t}</Badge>)}
                     </div>
-                    <p className="text-zinc-400 text-sm mt-1 flex-grow">{project.shortDescription}</p>
-                    <div className="flex justify-between items-center mt-4">
-                        <div className="flex gap-2">
-                          {project.githubLink && <Button variant="link" size="sm" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-1.5"/></Link></Button>}
-                          {project.liveLink && <Button variant="link" size="sm" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-1.5"/></Link></Button>}
+                    <p className="text-zinc-500 text-sm flex-grow">{project.shortDescription}</p>
+                    <div className="flex justify-between items-center mt-2">
+                        <div className="flex gap-1">
+                          {project.githubLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-1 h-3 w-3"/></Link></Button>}
+                          {project.liveLink && <Button variant="link" size="sm" className="h-auto p-0 text-xs ml-3" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-1 h-3 w-3"/></Link></Button>}
                         </div>
-                        <span className="text-xs text-zinc-500 group-hover:text-blue-400 transition-colors flex items-center gap-1">Details <ArrowRight className="h-3 w-3"/></span>
+                        <span className="text-xs text-zinc-600 group-hover:text-blue-400 transition-colors flex items-center gap-1">Details <ArrowRight className="h-3 w-3"/></span>
                     </div>
                   </div>
                 ))}
@@ -171,18 +171,18 @@ export default function PortfolioPage() {
           </AnimatedSection>
 
           {/* Middle-Left: Experience */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-300">
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Briefcase className="h-6 w-6 text-blue-400"/> Experience</h2>
+          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-300">
+              <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Briefcase className="h-5 w-5 text-blue-400"/> Experience</h2>
                <ScrollArea className="-mr-4 pr-4">
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {experiences.map(exp => (
-                        <div key={exp.role}>
+                        <div key={exp.role} className="border-l-2 border-blue-400/30 pl-3">
                           <div className="flex justify-between items-start">
-                            <h3 className="font-bold text-lg text-zinc-100">{exp.role}</h3>
-                            <p className="text-xs text-zinc-400 text-right shrink-0 ml-4">{exp.dates}</p>
+                            <h3 className="font-semibold text-base text-zinc-100">{exp.role}</h3>
+                            <p className="text-xs text-zinc-500 text-right shrink-0 ml-4">{exp.dates}</p>
                           </div>
-                          <p className="text-zinc-300 font-medium">{exp.organization}</p>
-                          <ul className="list-disc pl-5 mt-2 space-y-1 text-zinc-400 text-sm">
+                          <p className="text-zinc-400 text-sm font-medium">{exp.organization}</p>
+                          <ul className="list-disc pl-5 mt-1.5 space-y-0.5 text-zinc-500 text-sm">
                             {exp.details.map(detail => <li key={detail}>{detail}</li>)}
                           </ul>
                         </div>
@@ -192,16 +192,16 @@ export default function PortfolioPage() {
           </AnimatedSection>
 
           {/* Bottom-Left: Education */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-200">
+          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-200">
             <ScrollArea className="-mr-4 pr-4">
-              <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><GraduationCap className="h-6 w-6 text-blue-400"/> Education</h2>
-                  <div className="space-y-4">
+              <div>
+                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><GraduationCap className="h-5 w-5 text-blue-400"/> Education</h2>
+                  <div className="space-y-3">
                       {education.map(edu => (
-                        <div key={edu.degree}>
-                          <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
-                          <p className="text-zinc-400 text-sm">{edu.institution} &bull; {edu.dates}</p>
-                          <p className="font-mono text-sm text-zinc-300">{edu.score}</p>
+                        <div key={edu.degree} className="border-l-2 border-blue-400/30 pl-3">
+                          <h3 className="font-semibold text-base text-zinc-100">{edu.degree}</h3>
+                          <p className="text-zinc-500 text-sm">{edu.institution} &bull; {edu.dates}</p>
+                          <p className="font-mono text-xs text-zinc-400 mt-0.5">{edu.score}</p>
                         </div>
                       ))}
                   </div>
@@ -210,13 +210,13 @@ export default function PortfolioPage() {
           </AnimatedSection>
           
           {/* Bottom-Right: Skills */}
-          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-400">
+          <AnimatedSection as="div" className="p-3 sm:p-4 flex flex-col min-h-0" delay="delay-400">
              <ScrollArea className="-mr-4 pr-4">
                  <div>
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><BookOpenCheck className="h-6 w-6 text-blue-400"/> Skills</h2>
-                     <div className="flex flex-wrap gap-3">
+                    <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><BookOpenCheck className="h-5 w-5 text-blue-400"/> Skills</h2>
+                     <div className="flex flex-wrap gap-2">
                         {skills.map(skill => (
-                            <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
+                            <Badge key={skill} className="px-2.5 py-0.5 text-xs" variant="secondary">{skill}</Badge>
                         ))}
                     </div>
                 </div>
@@ -226,23 +226,23 @@ export default function PortfolioPage() {
         </main>
         
         {/* Footer */}
-        <footer className="py-2">
-            <div className="container mx-auto flex justify-center gap-x-6">
+        <footer className="py-1">
+            <div className="container mx-auto flex justify-center gap-x-5">
                 <TooltipProvider>
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Linkedin className="h-6 w-6" /></Link>
+                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><Linkedin className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>LinkedIn</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Github className="h-6 w-6" /></Link>
+                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><Github className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>GitHub</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-500 hover:text-white transition-colors"><Mail className="h-6 w-6" /></Link>
+                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-600 hover:text-white transition-colors"><Mail className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>Email</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><ExternalLink className="h-6 w-6" /></Link>
+                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-white transition-colors"><ExternalLink className="h-5 w-5" /></Link>
                     </TooltipTrigger><TooltipContent><p>Google Play</p></TooltipContent></Tooltip>
                 </TooltipProvider>
             </div>
