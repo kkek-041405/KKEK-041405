@@ -4,13 +4,14 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
-  Mail, Download, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight
+  Mail, Download, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, ArrowRight, BookOpenCheck
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ExpandedProjectModal, type Project } from '@/components/expanded-project-modal';
 import AnimatedSection from '@/components/animated-section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Data
 const projects: Project[] = [
@@ -93,7 +94,7 @@ const education = [
 
 const skills = [
   "Kotlin", "Jetpack Compose", "Firebase", "React", "Data Structures", "Algorithms", "Next.js", "TypeScript", "Java", "Python",
-]
+];
 
 export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -111,20 +112,22 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-black text-white">
-        <div className="container mx-auto px-6 py-16 space-y-24">
+      <div className="flex flex-col h-screen bg-black text-white p-4 sm:p-6 md:p-8 gap-4">
+        {/* Main 2x2 Grid */}
+        <main className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 sm:gap-6 md:gap-8 min-h-0">
           
-          <AnimatedSection as="header" className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl font-bold tracking-tighter">
+          {/* Top-Left: Hero */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col justify-center text-left">
+            <h1 className="text-4xl font-bold tracking-tighter">
               K. K. Eshwara Kumar
             </h1>
-            <h2 className="text-2xl text-blue-400 font-semibold mt-2">
+            <h2 className="text-xl text-blue-400 font-semibold mt-1">
               Android Developer
             </h2>
-            <p className="mt-4 text-lg text-zinc-300">
+            <p className="mt-3 text-base text-zinc-300 max-w-md">
               Final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.
             </p>
-            <div className="flex justify-center gap-4 mt-8">
+            <div className="flex gap-4 mt-6">
               <Button size="lg" asChild>
                 <Link href="mailto:komaleshwarakumarkonatham@gmail.com">
                   Get in Touch <Mail className="ml-2 h-4 w-4"/>
@@ -138,95 +141,102 @@ export default function PortfolioPage() {
             </div>
           </AnimatedSection>
           
-          <main className="space-y-24">
-            
-            <AnimatedSection as="section" id="projects" delay="delay-100">
-              <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3"><Code className="h-7 w-7 text-blue-400"/> Selected Projects</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Top-Right: Projects */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-100">
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Code className="h-6 w-6 text-blue-400"/> Projects</h2>
+            <ScrollArea className="-mr-4 pr-4">
+              <div className="space-y-4">
                 {projects.map(project => (
                   <div 
                     key={project.id} 
-                    className="bg-zinc-900/50 p-7 rounded-2xl border border-zinc-800 flex flex-col group hover:-translate-y-1 hover:border-zinc-700 transition-all cursor-pointer"
+                    className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 flex flex-col group hover:-translate-y-1 hover:border-zinc-700 transition-all cursor-pointer"
                     onClick={() => handleProjectClick(project)}
                   >
-                    <h3 className="font-bold text-xl text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-                    <div className="flex flex-wrap gap-2 my-3">
+                    <h3 className="font-bold text-lg text-zinc-100 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                    <div className="flex flex-wrap gap-2 my-2">
                       {project.tech.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}
                     </div>
-                    <p className="text-zinc-400 text-base mt-1 flex-grow">{project.shortDescription}</p>
-                    <div className="flex gap-4 mt-6">
-                      {project.githubLink && <Button variant="link" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-2"/></Link></Button>}
-                      {project.liveLink && <Button variant="link" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-2"/></Link></Button>}
+                    <p className="text-zinc-400 text-sm mt-1 flex-grow">{project.shortDescription}</p>
+                    <div className="flex justify-between items-center mt-4">
+                        <div className="flex gap-2">
+                          {project.githubLink && <Button variant="link" size="sm" asChild onClick={(e) => e.stopPropagation()}><Link href={project.githubLink} target="_blank">GitHub <Github className="ml-1.5"/></Link></Button>}
+                          {project.liveLink && <Button variant="link" size="sm" asChild onClick={(e) => e.stopPropagation()}><Link href={project.liveLink} target="_blank">Play Store <ExternalLink className="ml-1.5"/></Link></Button>}
+                        </div>
+                        <span className="text-xs text-zinc-500 group-hover:text-blue-400 transition-colors flex items-center gap-1">Details <ArrowRight className="h-3 w-3"/></span>
                     </div>
                   </div>
                 ))}
               </div>
-            </AnimatedSection>
+            </ScrollArea>
+          </AnimatedSection>
 
-            <div className="grid md:grid-cols-2 gap-8">
-                <AnimatedSection as="section" id="skills" delay="delay-200">
-                    <h2 className="text-3xl font-bold mb-8 flex items-center gap-3"><Code className="h-7 w-7 text-blue-400"/> Skills</h2>
-                     <div className="p-7 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                        <div className="flex flex-wrap gap-3">
-                            {skills.map(skill => (
-                                <Badge key={skill} className="px-4 py-2 text-base" variant="secondary">{skill}</Badge>
-                            ))}
-                        </div>
-                    </div>
-                </AnimatedSection>
-
-                <AnimatedSection as="section" id="experience" delay="delay-300">
-                     <h2 className="text-3xl font-bold mb-8 flex items-center gap-3"><Briefcase className="h-7 w-7 text-blue-400"/> Experience</h2>
-                     <div className="p-7 rounded-2xl bg-zinc-900/50 border border-zinc-800 space-y-6">
-                        {experiences.map(exp => (
-                            <div key={exp.role}>
-                              <div className="flex justify-between items-start">
-                                <h3 className="font-bold text-xl text-zinc-100">{exp.role}</h3>
-                                <p className="text-sm text-zinc-400 text-right shrink-0 ml-4">{exp.dates}</p>
-                              </div>
-                              <p className="text-zinc-300 text-lg font-medium">{exp.organization}</p>
-                              <ul className="list-disc pl-5 mt-2 space-y-1 text-zinc-400 text-base">
-                                {exp.details.map(detail => <li key={detail}>{detail}</li>)}
-                              </ul>
-                            </div>
+          {/* Bottom-Left: Education & Skills */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-200">
+            <ScrollArea className="-mr-4 pr-4">
+                <div className="mb-6">
+                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><GraduationCap className="h-6 w-6 text-blue-400"/> Education</h2>
+                    <div className="space-y-4">
+                        {education.map(edu => (
+                          <div key={edu.degree}>
+                            <h3 className="font-semibold text-lg text-zinc-100">{edu.degree}</h3>
+                            <p className="text-zinc-400 text-sm">{edu.institution} &bull; {edu.dates}</p>
+                            <p className="font-mono text-sm text-zinc-300">{edu.score}</p>
+                          </div>
                         ))}
                     </div>
-                </AnimatedSection>
-            </div>
-            
-            <AnimatedSection as="section" id="education" delay="delay-400">
-                 <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3"><GraduationCap className="h-7 w-7 text-blue-400"/> Education</h2>
-                <div className="space-y-8 max-w-2xl mx-auto">
-                    {education.map(edu => (
-                      <div key={edu.degree} className="p-7 rounded-2xl bg-zinc-900/50 border border-zinc-800">
-                        <h3 className="font-bold text-xl text-zinc-100">{edu.degree}</h3>
-                        <p className="text-zinc-400 text-base mt-1">{edu.institution} &bull; {edu.dates}</p>
-                        <p className="font-mono text-base text-zinc-300 mt-1">{edu.score}</p>
-                      </div>
+                </div>
+                 <div>
+                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><BookOpenCheck className="h-6 w-6 text-blue-400"/> Skills</h2>
+                     <div className="flex flex-wrap gap-3">
+                        {skills.map(skill => (
+                            <Badge key={skill} className="px-3 py-1 text-sm" variant="secondary">{skill}</Badge>
+                        ))}
+                    </div>
+                </div>
+            </ScrollArea>
+          </AnimatedSection>
+
+          {/* Bottom-Right: Experience */}
+          <AnimatedSection as="div" className="bg-zinc-900/30 rounded-xl p-6 flex flex-col min-h-0" delay="delay-300">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-3"><Briefcase className="h-6 w-6 text-blue-400"/> Experience</h2>
+               <ScrollArea className="-mr-4 pr-4">
+                <div className="space-y-6">
+                    {experiences.map(exp => (
+                        <div key={exp.role}>
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-bold text-lg text-zinc-100">{exp.role}</h3>
+                            <p className="text-xs text-zinc-400 text-right shrink-0 ml-4">{exp.dates}</p>
+                          </div>
+                          <p className="text-zinc-300 font-medium">{exp.organization}</p>
+                          <ul className="list-disc pl-5 mt-2 space-y-1 text-zinc-400 text-sm">
+                            {exp.details.map(detail => <li key={detail}>{detail}</li>)}
+                          </ul>
+                        </div>
                     ))}
                 </div>
-            </AnimatedSection>
-            
-          </main>
-        </div>
+              </ScrollArea>
+          </AnimatedSection>
 
-        <footer className="py-8 border-t border-zinc-800">
-            <div className="container mx-auto flex justify-center gap-x-8">
+        </main>
+        
+        {/* Footer */}
+        <footer className="py-2">
+            <div className="container mx-auto flex justify-center gap-x-6">
                 <TooltipProvider>
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Linkedin className="h-7 w-7" /></Link>
+                        <Link href="https://linkedin.com/in/kkek" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Linkedin className="h-6 w-6" /></Link>
                     </TooltipTrigger><TooltipContent><p>LinkedIn</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Github className="h-7 w-7" /></Link>
+                        <Link href="https://github.com/kkek-041405" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><Github className="h-6 w-6" /></Link>
                     </TooltipTrigger><TooltipContent><p>GitHub</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-500 hover:text-white transition-colors"><Mail className="h-7 w-7" /></Link>
+                        <Link href="mailto:komaleshwarakumarkonatham@gmail.com" aria-label="Email" className="text-zinc-500 hover:text-white transition-colors"><Mail className="h-6 w-6" /></Link>
                     </TooltipTrigger><TooltipContent><p>Email</p></TooltipContent></Tooltip>
                     
                     <Tooltip><TooltipTrigger asChild>
-                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><ExternalLink className="h-7 w-7" /></Link>
+                        <Link href="https://play.google.com/store/apps/dev?id=6378119908597517835" aria-label="Google Play Developer Profile" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-white transition-colors"><ExternalLink className="h-6 w-6" /></Link>
                     </TooltipTrigger><TooltipContent><p>Google Play</p></TooltipContent></Tooltip>
                 </TooltipProvider>
             </div>
