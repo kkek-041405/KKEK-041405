@@ -68,7 +68,7 @@ export default function PortfolioPage() {
     <div className="flex flex-col h-screen bg-black text-white p-6 md:p-8 gap-8">
       <main className="flex flex-1 gap-8 overflow-hidden">
         {/* Left Column */}
-        <aside className="w-1/3 flex flex-col justify-start p-4 bg-zinc-900/30 rounded-xl border border-zinc-800">
+        <aside className="flex flex-col justify-start p-4 bg-zinc-900/30 rounded-xl border border-zinc-800">
           <div>
             <div className="mb-8">
               <h1 className="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-zinc-50 to-zinc-400">
@@ -94,7 +94,7 @@ export default function PortfolioPage() {
         </aside>
 
         {/* Right Column */}
-        <section className="w-2/3 flex-1 bg-zinc-900/30 rounded-xl border border-zinc-800 p-6">
+        <section className="flex-1 bg-zinc-900/30 rounded-xl border border-zinc-800 p-6">
           <Tabs defaultValue="projects" className="h-full flex flex-col">
             <TabsList className="bg-zinc-900 border-zinc-800 border">
               <TabsTrigger value="projects"><Code className="mr-2"/>Projects</TabsTrigger>
