@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Github, ExternalLink, Code, Smartphone, GitBranch, Network, Palette, Server, FileText, Linkedin, Mail, Award, Layers } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 // SVGs for specific tech icons not in Lucide
 const KotlinIcon = () => (
@@ -125,7 +126,12 @@ export default function PortfolioPage() {
         <div className="flex-1 w-full max-w-[1600px] mx-auto px-6 py-5 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-[4fr_5fr] gap-x-12 h-full">
                 {/* Left Column - Perfectly Fitted */}
-                <div className="flex flex-col justify-between h-full">
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="flex flex-col justify-between h-full"
+                >
                     
                     {/* Hero Area */}
                     <div>
@@ -139,18 +145,18 @@ export default function PortfolioPage() {
                         
                         {/* Action Buttons & Socials */}
                         <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <Button size="default" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 shadow-lg shadow-primary/20">
+                            <Button size="default" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 shadow-lg shadow-primary/20 transition-transform active:scale-95">
                                 <a href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</a>
                             </Button>
                             
                             <div className="flex flex-wrap gap-2 sm:ml-2">
-                                <a href="https://github.com/kkek-041405" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-colors bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                <a href="https://github.com/kkek-041405" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
                                     <Github className="h-4 w-4" /> GitHub
                                 </a>
-                                <a href="https://linkedin.com/in/kkek" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-colors bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                <a href="https://linkedin.com/in/kkek" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
                                     <Linkedin className="h-4 w-4" /> LinkedIn
                                 </a>
-                                <a href="https://play.google.com/store/apps/dev?id=6378119908597517835" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-colors bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                <a href="https://play.google.com/store/apps/dev?id=6378119908597517835" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
                                     <Smartphone className="h-4 w-4" /> Play Store
                                 </a>
                             </div>
@@ -175,12 +181,12 @@ export default function PortfolioPage() {
                         </div>
                     </Section>
 
-                    {/* Skills Grid */}
+                     {/* Skills Grid */}
                     <Section title="Technical Skills" className="pb-4">
                         <div className="grid grid-cols-5 gap-3 max-w-md">
                             {skills.map(skill => (
                                 <div key={skill.name} className="flex flex-col items-center gap-1.5 text-center group">
-                                    <div className="h-10 w-10 p-2 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 group-hover:border-primary/50 transition-colors shadow-sm">
+                                    <div className="h-10 w-10 p-2 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 transition-all duration-300 group-hover:border-primary/50 group-hover:scale-110 group-hover:-translate-y-1 group-hover:shadow-md group-hover:shadow-primary/20 shadow-sm relative overflow-hidden">
                                         <skill.icon />
                                     </div>
                                     <p className="text-[10px] font-medium text-slate-400">{skill.name}</p>
@@ -188,17 +194,18 @@ export default function PortfolioPage() {
                             ))}
                         </div>
                     </Section>
-                </div>
+                </motion.div>
 
                 {/* Right Column - Dashboard Style */}
                 <div className="flex flex-col justify-start gap-6 lg:gap-8 h-full pb-2">
                     
                     {/* Projects Side-by-Side */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
                     <Section title="Featured Projects">
                         <div className="grid grid-cols-2 gap-4 lg:gap-5">
                             {projects.map(project => (
-                                <div key={project.id} className="bg-slate-900/60 p-4 md:p-5 rounded-xl border border-slate-800 flex flex-col hover:bg-slate-800/40 transition-colors">
-                                    <h3 className="font-bold text-[15px] text-slate-100 group-hover:text-primary">{project.title}</h3>
+                                <div key={project.id} className="bg-slate-900/60 p-4 md:p-5 rounded-xl border border-slate-800 flex flex-col transition-all duration-300 hover:bg-slate-800/60 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 group">
+                                    <h3 className="font-bold text-[15px] text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
                                     <p className="text-slate-400 text-[12px] leading-relaxed mt-1.5 flex-grow line-clamp-3">
                                         {project.shortDescription}
                                     </p>
@@ -226,10 +233,12 @@ export default function PortfolioPage() {
                             ))}
                         </div>
                     </Section>
+                    </motion.div>
 
                     {/* Experience Banner */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
                     <Section title="Experience">
-                        <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800">
+                        <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800 transition-all duration-300 hover:bg-slate-800/60 hover:border-slate-700">
                             <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/50">
                                 <div>
                                     <h3 className="font-bold text-slate-100 text-[14px]">{experiences[0].role}</h3>
@@ -244,10 +253,12 @@ export default function PortfolioPage() {
                             </ul>
                         </div>
                     </Section>
+                    </motion.div>
 
                     {/* Awards Banner */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
                     <Section title="Awards & Achievements">
-                        <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800 flex items-center gap-4">
+                        <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800 flex items-center gap-4 transition-all duration-300 hover:bg-slate-800/60 hover:border-slate-700">
                             <div className="p-2 bg-primary/10 rounded-md text-primary shrink-0">
                                 <Award className="h-5 w-5" />
                             </div>
@@ -257,6 +268,7 @@ export default function PortfolioPage() {
                             </div>
                         </div>
                     </Section>
+                    </motion.div>
 
                 </div>
             </div>
