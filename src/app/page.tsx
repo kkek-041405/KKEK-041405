@@ -115,8 +115,9 @@ export default function PortfolioPage() {
                 K. K. ESHWARA KUMAR <span className="text-primary font-normal ml-1 text-slate-400 hidden sm:inline">| Android Developer</span>
                 </a>
                 <nav className="hidden md:flex items-center space-x-6 text-[13px] font-medium">
+                    <Link href="/notes" className="text-slate-300 hover:text-primary transition-colors">NoteNest</Link>
                     <Button asChild size="sm" variant="outline" className="h-8 border-primary text-primary hover:bg-primary/10 hover:text-primary rounded-md">
-                        <Link href="/resume" target="_blank" rel="noopener noreferrer">Download Resume</Link>
+                        <Link href="/resume" target="_blank" rel="noopener noreferrer">View Resume</Link>
                     </Button>
                 </nav>
             </div>
@@ -147,6 +148,9 @@ export default function PortfolioPage() {
                         <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
                             <Button size="default" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 shadow-lg shadow-primary/20 transition-transform active:scale-95">
                                 <a href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</a>
+                            </Button>
+                            <Button asChild size="default" variant="outline" className="border-slate-700 text-slate-300 hover:text-primary hover:border-primary/50 hover:bg-primary/10 rounded-full px-8 transition-all">
+                                <Link href="/notes">NoteNest Access</Link>
                             </Button>
                             
                             <div className="flex flex-wrap gap-2 sm:ml-2">

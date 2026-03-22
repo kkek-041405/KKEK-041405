@@ -93,7 +93,7 @@ export default function NotesContentPage() {
     // Show a loading state or a minimal message while checking auth status and redirecting.
     // This view is consistent between server and initial client render.
     return (
-       <div className="flex flex-col min-h-screen">
+       <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
         <AppBar
           activeView={activeView}
           onViewChange={setActiveView}
@@ -383,15 +383,15 @@ export default function NotesContentPage() {
 
   if (isLoadingNotes && activeView === 'notes') {
     return (
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
         <AppBar
           activeView={activeView}
           onViewChange={setActiveView}
         />
         <main className="flex-1 flex flex-col md:flex-row overflow-hidden h-[calc(100vh-65px)]">
           {/* Skeleton for NoteList */}
-          <aside className="md:w-80 flex flex-col border-r bg-muted/10">
-            <div className="p-4 border-b flex items-center justify-between gap-2">
+          <aside className="md:w-80 flex flex-col border-r border-slate-800/50 bg-slate-950/40 backdrop-blur-md">
+            <div className="p-4 border-b border-slate-800/50 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-5 w-5" />
                 <Skeleton className="h-5 w-24" />
@@ -415,8 +415,8 @@ export default function NotesContentPage() {
           </aside>
 
           {/* Skeleton for NoteView */}
-          <section className="flex-1 flex-col hidden md:flex bg-card">
-            <div className="flex items-start justify-between gap-4 p-6 border-b">
+          <section className="flex-1 flex-col hidden md:flex bg-slate-900/40 backdrop-blur-md">
+            <div className="flex items-start justify-between gap-4 p-6 border-b border-slate-800/50">
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-7 w-3/5" />
                 <Skeleton className="h-4 w-2/5" />
@@ -445,7 +445,7 @@ export default function NotesContentPage() {
       <aside
         aria-labelledby="items-list-heading"
         className={cn(
-          "flex-col md:w-80 border-r bg-muted/10 md:flex",
+          "flex-col md:w-80 border-r border-slate-800/50 bg-slate-950/40 backdrop-blur-md md:flex",
           selectedNoteId ? "hidden md:flex" : "flex w-full"
         )}
       >
@@ -463,7 +463,7 @@ export default function NotesContentPage() {
       </aside>
 
       <section className={cn(
-          "flex-1 flex-col bg-card",
+          "flex-1 flex-col bg-slate-900/40 backdrop-blur-md",
           selectedNoteId ? "flex" : "hidden md:flex"
         )}>
         {selectedNote ? (
@@ -486,9 +486,9 @@ export default function NotesContentPage() {
           !isLoadingNotes && (
             notes.length > 0 ? (
               // State when notes exist, but none are selected
-              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-                <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold text-foreground">No Item Selected</h3>
+              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-transparent text-slate-300 p-8 text-center">
+                <FileText className="h-16 w-16 text-slate-500 mb-4" />
+                <h3 className="text-xl font-semibold text-slate-100">No Item Selected</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto">Select an item from the list to view its details, or create a new one.</p>
                 
                 <div className="mt-8 w-full max-w-sm">
@@ -512,10 +512,10 @@ export default function NotesContentPage() {
               </div>
             ) : (
               // State when there are no notes at all
-              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-card text-card-foreground p-8 text-center">
-                <Notebook className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold text-foreground">Your NoteNest is Empty</h3>
-                <p className="text-muted-foreground mb-6">Get started by creating your first item.</p>
+              <div className="hidden md:flex flex-1 flex-col items-center justify-center bg-transparent p-8 text-center">
+                <Notebook className="h-16 w-16 text-slate-500 mb-4" />
+                <h3 className="text-xl font-semibold text-slate-100">Your NoteNest is Empty</h3>
+                <p className="text-slate-400 mb-6">Get started by creating your first item.</p>
                 <SheetTrigger asChild>
                   <Button onClick={() => handleDialogValidOpenChange(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -546,7 +546,7 @@ export default function NotesContentPage() {
 
   return (
     <Sheet open={isFormOpen} onOpenChange={handleDialogValidOpenChange}>
-      <div className="flex flex-col h-screen bg-background">
+      <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
         <AppBar
           activeView={activeView}
           onViewChange={setActiveView}
