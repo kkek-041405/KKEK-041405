@@ -1,268 +1,279 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
 import { Badge } from "@/components/ui/badge";
-import { Github, ExternalLink, Code, Smartphone, GitBranch, Network, Palette, Server, FileText, Linkedin, Mail } from 'lucide-react';
+import { Github, ExternalLink, Code, Smartphone, GitBranch, Network, Palette, Server, FileText, Linkedin, Mail, Award, Layers } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 // SVGs for specific tech icons not in Lucide
 const KotlinIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
-    <path d="M2 2H22L12 12L22 22H2V2Z" fill="url(#kotlin-gradient)" />
-    <defs>
-      <linearGradient id="kotlin-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#7F52FF" />
-        <stop offset="1" stopColor="#E040FB" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-const JetpackComposeIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
-        <path d="M7.5 16.5L2 22L12 12L7.5 16.5Z" fill="#3DDC84" />
-        <path d="M12 12L2 2L7.5 7.5L12 12Z" fill="#3DDC84" opacity="0.8" />
-        <path d="M16.5 7.5L22 2L12 12L16.5 7.5Z" fill="#3DDC84" />
-        <path d="M12 12L22 22L16.5 16.5L12 12Z" fill="#3DDC84" opacity="0.8" />
+        <path d="M2 2H22L12 12L22 22H2V2Z" fill="url(#kotlin-gradient)" />
+        <defs>
+            <linearGradient id="kotlin-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#7F52FF" />
+                <stop offset="1" stopColor="#E040FB" />
+            </linearGradient>
+        </defs>
     </svg>
 );
 
 const FirebaseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
-    <path d="M5.016 18.23L12 3.815L18.984 18.229L12.001 22L5.016 18.23Z" fill="#FFCA28"/>
-    <path d="M12 3.815L5.016 18.23L8.08 17.036L12 9.034V3.815Z" fill="#FFA000"/>
-    <path d="M12.0001 21.9999L18.9841 18.229L15.2441 11.233L12.0001 21.9999Z" fill="#F57C00"/>
-  </svg>
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+        <path d="M5.016 18.23L12 3.815L18.984 18.229L12.001 22L5.016 18.23Z" fill="#FFCA28" />
+        <path d="M12 3.815L5.016 18.23L8.08 17.036L12 9.034V3.815Z" fill="#FFA000" />
+        <path d="M12.0001 21.9999L18.9841 18.229L15.2441 11.233L12.0001 21.9999Z" fill="#F57C00" />
+    </svg>
 );
 
-// New Section component for consistent titling
-const Section = ({ title, children, className, size = "default" }: { title: string; children: React.ReactNode; className?: string; size?: "default" | "sm" }) => (
+// Condensed Section Component
+const Section = ({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) => (
     <section className={className}>
-        <div className="mb-2.5">
-            <h2 className={`${size === "sm" ? "text-lg md:text-xl" : "text-xl md:text-2xl"} font-bold tracking-wide text-slate-100 uppercase`}>{title}</h2>
-            <div className="mt-1.5 h-1 w-16 bg-primary rounded-full"></div>
+        <div className="mb-2">
+            <h2 className="text-[14px] font-bold tracking-widest text-slate-100 uppercase">{title}</h2>
+            <div className="mt-1 h-[2px] w-8 bg-primary rounded-full"></div>
         </div>
         {children}
     </section>
 );
 
-
 const projects = [
     {
         id: "chess",
-        title: "Multiplayer Chess Application",
-        shortDescription: "Real-time multiplayer chess app with matchmaking and live game state synchronization using Firebase.",
-        tech: ["Kotlin", "Jetpack Compose", "Firebase"],
+        title: "Multiplayer Chess App",
+        shortDescription: "Developed and successfully deployed a real-time multiplayer chess application, achieving 50+ downloads. Designed the backend using Firebase to handle concurrent matchmaking and state synchronization.",
+        tech: ["Kotlin", "Compose", "Firebase"], // Shortened "Jetpack Compose" to fit tighter
         githubLink: "https://github.com/kkek-041405/chess",
         liveLink: "https://play.google.com/store/apps/dev?id=6378119908597517835",
     },
     {
         id: "zencontrol",
         title: "ZenControl",
-        shortDescription: "Accessibility app using hardware buttons to control a device with a broken touch screen.",
-        tech: ["Kotlin", "Android Accessibility Services"],
+        shortDescription: "Engineered a headless device controller mapped to physical triggers. Bypassed the need for touch interface and implemented low-latency response using Coroutines.",
+        tech: ["Kotlin", "Coroutines", "Accessibility"],
         githubLink: "https://github.com/kkek-041405/ZenControl",
-    },
-    {
-        id: "campus-companion",
-        title: "Campus Companion",
-        shortDescription: "AI-powered student collaboration platform for sharing resources and academic discussions.",
-        tech: ["Kotlin", "Compose"],
-        githubLink: "https://github.com/kkek-041405/CampusCompanion",
-        liveLink: "https://play.google.com/store/apps/dev?id=6378119908597517835",
-    },
-    {
-        id: "another-project",
-        title: "Another Project",
-        shortDescription: "WeatherNow is current temperature, and overvtmper eraaaons pul detals, and motensation temperahabsis.",
-        tech: ["Kotlin", "Jetpack Compose"],
-        githubLink: "https://github.com/kkek-041405/another-project",
-        liveLink: "https://play.google.com/store/apps/dev?id=6378119908597517835",
-    },
+    }
 ];
 
 const experiences = [
     {
         role: "Technical Head",
         organization: "VVISC (VVIT IUCEE Student Chapter)",
-        dates: "Aug 2024 – Present",
-        tags: ["Hackathon Organizing", "Event Management", "Leadership"],
+        dates: "Sept 2024 – Present",
+        tags: ["Hackathons", "Events", "Leadership"],
+        description: [
+            "Co-led a 30-member committee to execute a major hackathon with 300+ participants.",
+            "Engineered the registration platform and portfolio website to streamline onboarding.",
+            "Directed multiple intra-college technical presentation events."
+        ]
     },
 ];
 
 const education = [
     {
         degree: "B.Tech, Computer Science & Engineering",
-        institution: "Vesireddy Venkatadri Institute of Technology (VVIT)",
+        institution: "Vasireddy Venkatadri Institute of Technology",
         dates: "2023 – 2026",
+        score: "CGPA: 6.86"
     },
     {
         degree: "Diploma, Computer Engineering",
         institution: "M.B.T.S Government Polytechnic",
         dates: "2020 – 2023",
+        score: "Score: 76%"
     }
 ];
 
 const skills = [
-  { name: "Kotlin", icon: KotlinIcon },
-  { name: "Aetpack SDK", icon: Smartphone },
-  { name: "Jetpack Compose", icon: JetpackComposeIcon },
-  { name: "Java", icon: Code },
-  { name: "MVVM", icon: Network },
-  { name: "Git", icon: GitBranch },
-  { name: "Fowlever", icon: Github },
-  { name: "Firebase", icon: FirebaseIcon },
-  { name: "REST APIs", icon: Server },
-  { name: "UI/UX", icon: Palette },
+    { name: "Kotlin", icon: KotlinIcon },
+    { name: "Android SDK", icon: Smartphone },
+    { name: "Compose", icon: Layers },
+    { name: "Java", icon: Code },
+    { name: "React.js", icon: Network },
+    { name: "JavaScript", icon: FileText },
+    { name: "Git", icon: GitBranch },
+    { name: "Firebase", icon: FirebaseIcon },
+    { name: "SQL", icon: Server },
+    { name: "HTML/CSS", icon: Palette },
+];
+
+const awards = [
+    {
+        title: "Special Mention (Ideathon)",
+        description: "Recognized for innovative problem-solving and technical excellence while officially representing VVIT in a cross-college competition."
+    }
 ];
 
 export default function PortfolioPage() {
-  return (
-    <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans">
-        {/* Header */}
-        <header className="sticky md:static top-0 z-50 bg-slate-950/80 backdrop-blur-lg md:bg-transparent md:backdrop-blur-none border-b border-slate-800/50 md:border-none">
-            <div className="container mx-auto px-4 md:px-8 flex h-16 md:h-20 items-center justify-between">
-                <a href="#about" className="text-base font-bold">
-                K. K. ESHWARA KUMAR <span className="text-primary font-normal hidden sm:inline">| Android Developer</span>
-                </a>
-                <nav className="hidden md:flex items-center space-x-6 text-sm">
-                    <a href="#about" className="text-slate-300 hover:text-primary transition-colors">About</a>
-                    <a href="#experience" className="text-slate-300 hover:text-primary transition-colors">Experience</a>
-                    <a href="#projects" className="text-slate-300 hover:text-primary transition-colors">Projects</a>
-                    <a href="#skills" className="text-slate-300 hover:text-primary transition-colors">Skills</a>
-                    <a href="#education" className="text-slate-300 hover:text-primary transition-colors">Education</a>
-                    <a href="#contact" className="text-slate-300 hover:text-primary transition-colors">Contact</a>
-                    <Button asChild size="sm" variant="outline" className="border-primary text-primary hover:bg-primary/10 hover:text-primary rounded-md">
-                        <Link href="/resume" target="_blank" rel="noopener noreferrer">Resume</Link>
-                    </Button>
-                </nav>
-                 <div className="md:hidden">
-                    {/* Placeholder for mobile menu if needed */}
-                </div>
-            </div>
-        </header>
-        
-        {/* Main Content */}
-        <div className="mx-4 md:mx-12 grid grid-cols-1 md:grid-cols-[5fr_4fr] gap-x-8 md:h-[calc(100vh-80px)] items-start pt-6 md:pt-4">
-            {/* Left Column */}
-            <div className="flex flex-col justify-between py-6 md:py-0 md:h-full md:pb-28">
-                {/* Hero */}
-                <div id="about">
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-100 leading-tight">Hi, I'm K. K. Eshwara Kumar. I build high-impact Android applications.</h1>
-                    <p className="text-base text-slate-400 max-w-xl mt-3">Hello, I'm a final-year Computer Science student building production-ready mobile applications with Kotlin, Jetpack Compose, and Firebase.</p>
-                    <div className="mt-4 flex flex-wrap gap-4">
-                        <Button size="default" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 shadow-lg shadow-primary/20">
-                            <a href="#projects">View Projects</a>
+    return (
+        <main className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-black text-slate-300 font-sans flex flex-col">
+            {/* Header - Compact */}
+            <header className="flex-none px-6 py-4 border-b border-slate-800/50 bg-slate-950/40 backdrop-blur-md">
+                <div className="max-w-[1600px] w-full mx-auto flex items-center justify-between">
+                    <a href="#about" className="text-sm font-bold text-slate-100 hover:text-white transition-colors">
+                        K. K. ESHWARA KUMAR <span className="text-primary font-normal ml-1 text-slate-400 hidden sm:inline">| Android Developer</span>
+                    </a>
+                    <nav className="hidden md:flex items-center space-x-6 text-[13px] font-medium">
+                        <Link href="/notes" className="text-slate-300 hover:text-primary transition-colors">NoteNest</Link>
+                        <Button asChild size="sm" variant="outline" className="h-8 border-primary text-primary hover:bg-primary/10 hover:text-primary rounded-md">
+                            <Link href="/resume" target="_blank" rel="noopener noreferrer">View Resume</Link>
                         </Button>
-                        <Button size="default" variant="outline" asChild className="border-slate-700 hover:bg-slate-800 hover:text-white rounded-full px-8">
-                            <a href="#contact">Contact Me</a>
-                        </Button>
-                    </div>
+                    </nav>
                 </div>
+            </header>
 
-                {/* Skills */}
-                <Section title="Skills">
-                    <div className="grid grid-cols-5 gap-x-2 gap-y-3 max-w-md">
-                        {skills.map(skill => (
-                            <div key={skill.name} className="flex flex-col items-center gap-1.5 text-center group">
-                                <div className="h-10 w-10 p-2 flex items-center justify-center rounded-lg bg-slate-800/50">
-                                    <skill.icon />
+            {/* Main Content Dashboard */}
+            <div className="flex-1 w-full max-w-[1600px] mx-auto px-6 py-5 overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-[4fr_5fr] gap-x-12 h-full">
+                    {/* Left Column - Perfectly Fitted */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="flex flex-col justify-between h-full"
+                    >
+
+                        {/* Hero Area */}
+                        <div>
+                            <h1 className="text-3xl xl:text-4xl font-extrabold text-slate-100 tracking-tight leading-tight">
+                                Hi, I'm K. K. Eshwara Kumar. <br />
+                                <span className="text-slate-400 font-medium">I build high-impact applications.</span>
+                            </h1>
+                            <p className="text-[14px] text-slate-400 mt-4 leading-relaxed max-w-lg">
+                                Final-year Computer Science student and Technical Head at IUCEE with a focus on Android architecture and full-stack systems. Proven track record of deploying production-ready apps (Kotlin, React) and leading technical teams for large-scale hackathons.
+                            </p>
+
+                            {/* Action Buttons & Socials */}
+                            <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                                <Button size="default" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 shadow-lg shadow-primary/20 transition-transform active:scale-95">
+                                    <a href="mailto:komaleshwarakumarkonatham@gmail.com">Contact Me</a>
+                                </Button>
+
+                                <div className="flex flex-wrap gap-2 sm:ml-2">
+                                    <a href="https://github.com/kkek-041405" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                        <Github className="h-4 w-4" /> GitHub
+                                    </a>
+                                    <a href="https://linkedin.com/in/kkek" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                        <Linkedin className="h-4 w-4" /> LinkedIn
+                                    </a>
+                                    <a href="https://play.google.com/store/apps/dev?id=6378119908597517835" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-300 hover:text-primary transition-all hover:-translate-y-0.5 bg-slate-900/80 px-3 py-2 rounded-full border border-slate-800 hover:border-primary/50">
+                                        <Smartphone className="h-4 w-4" /> Play Store
+                                    </a>
                                 </div>
-                                <p className="text-xs font-medium text-slate-400">{skill.name}</p>
                             </div>
-                        ))}
-                    </div>
-                </Section>
+                        </div>
 
-                {/* Education */}
-                <Section title="Education">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {education.map(edu => (
-                            <div key={edu.degree} className="bg-slate-900/70 p-4 rounded-lg border border-slate-800">
-                                <h3 className="font-semibold text-slate-100 text-sm">{edu.degree}</h3>
-                                <p className="text-xs text-slate-400 mt-1">{edu.institution}</p>
-                                <p className="text-xs text-slate-500 mt-1">{edu.dates}</p>
+                        {/* Education Side-by-Side */}
+                        <Section title="Education">
+                            <div className="grid grid-cols-2 gap-3 max-w-lg">
+                                {education.map(edu => (
+                                    <div key={edu.degree} className="bg-slate-900/60 p-3 rounded-lg border border-slate-800 flex flex-col h-full justify-between">
+                                        <div>
+                                            <h3 className="font-semibold text-slate-100 text-[12px] leading-tight">{edu.degree}</h3>
+                                            <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">{edu.institution}</p>
+                                        </div>
+                                        <div className="mt-2 pt-2 border-t border-slate-800/50 flex items-center justify-between">
+                                            <p className="text-[11px] font-bold text-primary">{edu.score}</p>
+                                            <p className="text-[10px] text-slate-500 font-medium">{edu.dates}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </Section>
-            </div>
+                        </Section>
 
-            {/* Right Column */}
-            <div id="projects" className="flex flex-col md:justify-between space-y-3 md:h-full md:pb-28">
-                <Section title="Projects">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {projects.map(project => (
-                            <div key={project.id} className="bg-slate-900/70 p-3.5 rounded-xl border border-slate-800 flex flex-col h-full group transition-all duration-300 hover:border-slate-700 hover:-translate-y-1">
-                                <h3 className="font-bold text-base text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
-                                <p className="text-slate-400 text-xs mt-1.5 mb-3 flex-grow">{project.shortDescription}</p>
-                                <div className="flex flex-wrap gap-1.5 mb-3">
-                                    {project.tech.map(t => (
-                                        <Badge key={t} variant="secondary" className="text-xs px-2 py-0.5 flex items-center gap-1">
-                                            {t === "Kotlin" && <span className="h-3 w-3 inline-block"><KotlinIcon /></span>}
-                                            {(t === "Jetpack Compose" || t === "Compose") && <span className="h-3 w-3 inline-block"><JetpackComposeIcon /></span>}
-                                            {t}
-                                        </Badge>
+                        {/* Skills Grid */}
+                        <Section title="Technical Skills" className="pb-4">
+                            <div className="grid grid-cols-5 gap-3 max-w-md">
+                                {skills.map(skill => (
+                                    <div key={skill.name} className="flex flex-col items-center gap-1.5 text-center group">
+                                        <div className="h-10 w-10 p-2 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 transition-all duration-300 group-hover:border-primary/50 group-hover:scale-110 group-hover:-translate-y-1 group-hover:shadow-md group-hover:shadow-primary/20 shadow-sm relative overflow-hidden">
+                                            <skill.icon />
+                                        </div>
+                                        <p className="text-[10px] font-medium text-slate-400">{skill.name}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </Section>
+                    </motion.div>
+
+                    {/* Right Column - Dashboard Style */}
+                    <div className="flex flex-col justify-start gap-6 lg:gap-8 h-full pb-2">
+
+                        {/* Projects Side-by-Side */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+                            <Section title="Featured Projects">
+                                <div className="grid grid-cols-2 gap-4 lg:gap-5">
+                                    {projects.map(project => (
+                                        <div key={project.id} className="bg-slate-900/60 p-4 md:p-5 rounded-xl border border-slate-800 flex flex-col transition-all duration-300 hover:bg-slate-800/60 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 group">
+                                            <h3 className="font-bold text-[15px] text-slate-100 group-hover:text-primary transition-colors">{project.title}</h3>
+                                            <p className="text-slate-400 text-[12px] leading-relaxed mt-1.5 flex-grow line-clamp-3">
+                                                {project.shortDescription}
+                                            </p>
+                                            <div className="flex flex-wrap gap-1.5 my-3">
+                                                {project.tech.map(t => (
+                                                    <Badge key={t} variant="secondary" className="font-normal text-[9px] px-1.5 py-0 bg-slate-950/50 border border-slate-700/50 text-slate-300">
+                                                        {t}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-auto pt-2 border-t border-slate-800/50">
+                                                {project.githubLink && (
+                                                    <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-[11px] font-medium text-slate-300 hover:text-primary transition-colors">
+                                                        <Github className="mr-1 h-3 w-3" /> Source
+                                                    </a>
+                                                )}
+                                                {project.githubLink && project.liveLink && <span className="text-slate-700 mx-1">|</span>}
+                                                {project.liveLink && (
+                                                    <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="flex items-center text-[11px] font-medium text-slate-300 hover:text-primary transition-colors">
+                                                        <ExternalLink className="mr-1 h-3 w-3" /> Live App
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
                                     ))}
                                 </div>
-                                <div className="flex items-center gap-4 text-xs font-medium mt-auto text-primary">
-                                    {project.githubLink && <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary/80 transition-colors">GitHub</a>}
-                                    {project.githubLink && project.liveLink && <span className="text-slate-600">|</span>}
-                                    {project.liveLink && <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary/80 transition-colors">Live Demo</a>}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Section>
+                            </Section>
+                        </motion.div>
 
-                {/* Experience */}
-                <Section title="Experience" size="sm">
-                    <div className="space-y-3">
-                        {experiences.map(exp => (
-                            <div key={exp.role} className="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
-                                <div className="flex items-start justify-between">
-                                    <div>
-                                        <h3 className="font-semibold text-slate-100 text-sm">{exp.role}</h3>
-                                        <p className="text-xs text-slate-400 font-medium">{exp.organization}</p>
+                        {/* Experience Banner */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+                            <Section title="Experience">
+                                <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800 transition-all duration-300 hover:bg-slate-800/60 hover:border-slate-700">
+                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/50">
+                                        <div>
+                                            <h3 className="font-bold text-slate-100 text-[14px]">{experiences[0].role}</h3>
+                                            <p className="text-[12px] text-primary mt-0.5 font-medium">{experiences[0].organization}</p>
+                                        </div>
+                                        <span className="text-[11px] text-slate-500 font-medium bg-slate-950 px-2 py-1 rounded-md">{experiences[0].dates}</span>
                                     </div>
-                                    <span className="text-xs text-slate-500 whitespace-nowrap ml-4">{exp.dates}</span>
-                                </div>
-                                {exp.tags && (
-                                    <div className="flex flex-wrap gap-1.5 mt-2">
-                                        {exp.tags.map(tag => (
-                                            <Badge key={tag} variant="secondary" className="text-[11px] px-2 py-0.5">{tag}</Badge>
+                                    <ul className="list-disc list-outside ml-4 text-[12px] text-slate-400 space-y-1">
+                                        {experiences[0].description.map((point, idx) => (
+                                            <li key={idx} className="leading-snug pl-1">{point}</li>
                                         ))}
+                                    </ul>
+                                </div>
+                            </Section>
+                        </motion.div>
+
+                        {/* Awards Banner */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+                            <Section title="Awards & Achievements">
+                                <div className="bg-slate-900/60 p-5 rounded-lg border border-slate-800 flex items-center gap-4 transition-all duration-300 hover:bg-slate-800/60 hover:border-slate-700">
+                                    <div className="p-2 bg-primary/10 rounded-md text-primary shrink-0">
+                                        <Award className="h-5 w-5" />
                                     </div>
-                                )}
-                            </div>
-                        ))}
+                                    <div>
+                                        <h3 className="font-bold text-slate-100 text-[13px]">{awards[0].title}</h3>
+                                        <p className="text-[12px] text-slate-400 mt-0.5 line-clamp-2">{awards[0].description}</p>
+                                    </div>
+                                </div>
+                            </Section>
+                        </motion.div>
+
                     </div>
-                </Section>
+                </div>
             </div>
-        </div>
-        
-        {/* Contact & Footer centered */}
-        <footer id="contact" className="absolute bottom-5 left-0 right-0">
-            <div className="flex items-center justify-center gap-x-8">
-                <a href="https://github.com/kkek-041405" title="GitHub" target="_blank" rel="noopener noreferrer" className="group relative text-slate-500 hover:text-primary transition-all duration-300 hover:scale-125 hover:-translate-y-1">
-                    <Github className="h-7 w-7" />
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">GitHub</span>
-                </a>
-                <a href="https://linkedin.com/in/kkek" title="LinkedIn" target="_blank" rel="noopener noreferrer" className="group relative text-slate-500 hover:text-primary transition-all duration-300 hover:scale-125 hover:-translate-y-1">
-                    <Linkedin className="h-7 w-7" />
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">LinkedIn</span>
-                </a>
-                <a href="https://play.google.com/store/apps/dev?id=6378119908597517835" title="Play Store" target="_blank" rel="noopener noreferrer" className="group relative text-slate-500 hover:text-primary transition-all duration-300 hover:scale-125 hover:-translate-y-1">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7"><path d="M3.61 1.814L13.793 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .61-.92zm.96-.574l11.2 6.272-2.88 2.882L4.57 1.24zm11.2 15.52L4.57 22.76l8.32-9.154 2.88 2.882v.272zM16.8 11.2L20.4 12l-3.6.8-2.16-1.6 2.16-1.6z"/></svg>
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">Play Store</span>
-                </a>
-                <a href="mailto:komaleshwarakumarkonatham@gmail.com" title="Email" target="_blank" rel="noopener noreferrer" className="group relative text-slate-500 hover:text-primary transition-all duration-300 hover:scale-125 hover:-translate-y-1">
-                    <Mail className="h-7 w-7" />
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-slate-800 text-slate-200 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">Email</span>
-                </a>
-            </div>
-        </footer>
-    </main>
-  );
+        </main>
+    );
 }

@@ -31,7 +31,7 @@ export function AppBar({ activeView, onViewChange }: AppBarProps) {
   const activeViewLabel = viewOptions[activeView].label;
   
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/40 backdrop-blur-md">
       <div className="container relative flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center group" aria-label="Go to Portfolio Home Page">

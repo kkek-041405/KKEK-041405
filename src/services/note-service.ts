@@ -14,6 +14,8 @@ import {
   query,
   orderBy,
   getDoc,
+  limit,
+  where,
 } from 'firebase/firestore';
 
 export const NOTES_COLLECTION = 'notes';
@@ -82,6 +84,20 @@ export const getNoteFromFirestore = async (noteId: string): Promise<Note | null>
     console.warn(`Note with id ${noteId} not found.`);
     return null;
   }
+};
+
+export const getNoteByTitleFromFirestore = async (title: string): Promise<Note | null> => {
+  const notesQuery = query(
+    collection(db, NOTES_COLLECTION),
+    where('title', '==', title),
+    limit(1)
+  );
+  const querySnapshot = await getDocs(notesQuery);
+  if (!querySnapshot.empty) {
+    const docSnap = querySnapshot.docs[0];
+    return formatNoteTimestamps(docSnap.data(), docSnap.id);
+  }
+  return null;
 };
 
 export const updateNoteInFirestore = async (

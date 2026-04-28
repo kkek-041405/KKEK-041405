@@ -48,7 +48,9 @@ const nextConfig = {
     ],
   },
   experimental: {
-    allowedDevOrigins: ["http://localhost:3000/","kkek.vercel.app,9002-firebase-studio-1746938842451.cluster-iktsryn7xnhpexlu6255bftka4.cloudworkstations.dev","9003-firebase-studio-1746938842451.cluster-iktsryn7xnhpexlu6255bftka4.cloudworkstations.dev"],
+    serverActions: {
+      allowedOrigins: ["http://localhost:3000/","kkek.vercel.app","9002-firebase-studio-1746938842451.cluster-iktsryn7xnhpexlu6255bftka4.cloudworkstations.dev","9003-firebase-studio-1746938842451.cluster-iktsryn7xnhpexlu6255bftka4.cloudworkstations.dev"]
+    }
   },
 };
 
