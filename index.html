@@ -496,8 +496,11 @@
                     throw new Error(`HTTP Error: ${response.status}`);
 
                 }
-                console.log("Backend sucessfully waked up");
-                isOnline = true;
+                else{
+                    console.log("Backend sucessfully waked up");
+                    isOnline = true;
+                    setTimeout(fetchStartupUrl,4000)
+                }
                 
                 return await response.text();
             } catch (error) {
