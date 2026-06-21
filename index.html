@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>KKEK | Android & Full-Stack Developer</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed": "#151f00",
+                        "on-tertiary": "#273500",
+                        "on-primary-fixed-variant": "#00522b",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#002e69",
+                        "on-secondary-container": "#dae4ff",
+                        "surface-tint": "#43e188",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary-fixed-dim": "#a6d700",
+                        "surface-variant": "#353534",
+                        "surface": "#131313",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary": "#60f99e",
+                        "tertiary-container": "#a3d200",
+                        "on-error": "#690005",
+                        "surface-container": "#201f1f",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#006d3b",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-fixed-variant": "#3a4d00",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-container": "#3ddc84",
+                        "secondary-container": "#0162cf",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#bbcbbc",
+                        "on-primary": "#00391c",
+                        "outline": "#869587",
+                        "secondary": "#adc6ff",
+                        "on-secondary-fixed-variant": "#004494",
+                        "on-primary-fixed": "#00210e",
+                        "background": "#131313",
+                        "surface-bright": "#393939",
+                        "primary-fixed": "#66fea2",
+                        "on-primary-container": "#005c31",
+                        "on-tertiary-container": "#415700",
+                        "error-container": "#93000a",
+                        "outline-variant": "#3c4a3f",
+                        "tertiary-fixed": "#bef500",
+                        "surface-dim": "#131313",
+                        "tertiary": "#baf000",
+                        "primary-fixed-dim": "#43e188",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-on-surface": "#313030",
+                        "on-secondary-fixed": "#001a41"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "label-md": ["JetBrains Mono", "monospace"],
+                        "title-lg": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "700" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #353534; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3DDC84; }
+        
+        /* High-Contrast Badge Base */
+        .badge-brutal {
+            border: 2px solid currentColor;
+            box-shadow: 2px 2px 0px currentColor;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface border-b border-surface-container-low transition-all duration-300" id="top-nav">
+    <div class="flex items-center gap-md">
+        <span class="font-label-md text-xl font-black text-primary tracking-tight badge-brutal px-2 py-1 bg-black">KKEK_</span>
+    </div>
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-xl h-full">
+        <a class="h-full flex items-center px-sm font-label-md text-label-md text-primary border-b-2 border-primary transition-all" href="#projects">Projects</a>
+        <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#skills">Skills</a>
+        <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#leadership">Leadership & Edu</a>
+    </div>
+    <div class="flex items-center gap-md">
+        <button onclick="toggleAiModal()" class="text-secondary hover:bg-secondary hover:text-black transition-colors px-4 py-2 font-label-md badge-brutal bg-surface-container-lowest hidden sm:block">
+            [ ✨ ASK MY AI ]
+        </button>
+        <a href="#contact" aria-label="terminal action" class="text-primary hover:bg-primary hover:text-black transition-colors px-4 py-2 font-label-md badge-brutal bg-surface-container-lowest">
+            [ CONNECT ]
+        </a>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow pt-24 pb-xl flex flex-col gap-[64px]">
+
+    <!-- Hero Section -->
+    <section class="relative w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-center min-h-[60vh] py-12">
+        
+        <!-- Abstract Background Elements -->
+        <!-- Four-Point Star Sparkle -->
+        <svg class="absolute top-10 left-10 w-12 h-12 text-primary opacity-60 animate-pulse" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+        </svg>
+        <svg class="absolute bottom-20 right-10 w-8 h-8 text-secondary opacity-60 animate-pulse" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="animation-delay: 1s;">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+        </svg>
+
+        <!-- Raw Geometric Solid (Isometric Cube Wireframe) -->
+        <svg class="absolute top-20 right-20 w-32 h-32 text-outline-variant opacity-30 transform rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,10 90,30 90,70 50,90 10,70 10,30"/>
+            <polyline points="10,30 50,50 90,30"/>
+            <line x1="50" y1="50" x2="50" y2="90"/>
+        </svg>
+
+        <!-- Raw Geometric Solid (Pyramid Wireframe) -->
+        <svg class="absolute bottom-10 left-20 w-24 h-24 text-outline-variant opacity-30 transform -rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,10 90,80 10,80"/>
+            <line x1="50" y1="10" x2="50" y2="60"/>
+            <polyline points="10,80 50,60 90,80"/>
+        </svg>
+
+        <!-- Main Hero Content -->
+        <div class="relative z-10 max-w-4xl text-center flex flex-col items-center gap-lg">
+            
+            <div class="inline-flex items-center gap-sm bg-black px-md py-xs border-2 border-outline-variant w-fit mb-sm shadow-[4px_4px_0px_#353534]">
+                <span class="w-3 h-3 bg-primary animate-pulse border border-black"></span>
+                <span class="font-label-md text-label-md text-primary tracking-widest uppercase">System.out.println("Eshwara Kumar K.K.");</span>
+            </div>
+
+            <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight leading-tight">
+                Architecting 
+                <span class="text-primary-container relative inline-block mx-2">
+                    Android
+                    <!-- Vector Scribble / Underline -->
+                    <svg class="absolute -bottom-3 left-0 w-full h-4 text-primary" viewBox="0 0 100 20" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="square" preserveAspectRatio="none">
+                        <path d="M0,15 Q20,0 40,15 T80,5 T100,15" />
+                    </svg>
+                </span> 
+                <br/> &amp; Scalable <br/>
+                <span class="text-secondary relative inline-block mt-2">
+                    Full-Stack Systems
+                    <!-- Squiggle -->
+                    <svg class="absolute -top-6 -right-12 w-10 h-10 text-secondary transform rotate-45" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="4">
+                        <path d="M10,40 C10,20 40,30 40,10" stroke-linecap="square"/>
+                        <path d="M25,50 C5,30 45,20 25,0" stroke-linecap="square"/>
+                    </svg>
+                </span>
+            </h1>
+
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed mt-4">
+                I’m a final-year Computer Science student and Technical Head at IUCEE. I build high-performance mobile clients with <strong>Kotlin & Jetpack Compose</strong> and engineer robust systems solving complex algorithmic challenges. Proven track record of deploying production-ready applications.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-md mt-sm">
+                <a class="inline-flex items-center justify-center badge-brutal bg-primary text-black font-label-md text-label-md px-xl py-md hover:-translate-y-1 hover:shadow-[4px_4px_0px_#43e188] transition-all" href="#projects">
+                    EXPLORE ARCHITECTURE
+                </a>
+                <a class="inline-flex items-center justify-center badge-brutal bg-black text-on-surface font-label-md text-label-md px-xl py-md hover:-translate-y-1 hover:shadow-[4px_4px_0px_#e5e2e1] transition-all" href="https://github.com/kkek-041405" target="_blank">
+                    GITHUB REPOS
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects Grid -->
+    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="projects">
+        <div class="flex items-center gap-md mb-xl relative">
+            <!-- Sparkle -->
+            <svg class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+            </svg>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-wider">Production Implements</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            
+            <!-- Multiplayer Chess App -->
+            <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-secondary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#adc6ff] group relative">
+                <div class="absolute top-0 right-0 p-md">
+                    <span class="material-symbols-outlined text-secondary text-3xl">chess</span>
+                </div>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Multiplayer Chess App</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                    Developed and successfully deployed a real-time multiplayer chess application to the Google Play Store, achieving 50+ downloads. Designed backend architecture to handle real-time state synchronization, user authentication, and concurrent matchmaking.
+                </p>
+                <div class="flex flex-wrap gap-3 mt-auto pt-md">
+                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Kotlin</span>
+                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Jetpack Compose</span>
+                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Firebase</span>
+                </div>
+            </div>
+
+            <!-- Personal Cloud Storage -->
+            <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-primary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#3ddc84] group relative">
+                <div class="absolute top-0 right-0 p-md">
+                    <span class="material-symbols-outlined text-primary text-3xl">cloud</span>
+                </div>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Personal Cloud Storage</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                    Developed a custom file management system to store and access semi-important data globally, effectively bypassing the login-walls and restrictions of commercial cloud services.
+                </p>
+                <div class="flex flex-wrap gap-3 mt-auto pt-md">
+                    <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Java</span>
+                    <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Full-Stack</span>
+                    <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Convex</span>
+                </div>
+            </div>
+
+            <!-- ZenControl / Hardware Mapping -->
+            <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-primary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#3ddc84] group relative">
+                <div class="absolute top-0 right-0 p-md">
+                    <span class="material-symbols-outlined text-primary text-3xl">settings_suggest</span>
+                </div>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Hardware Action Mapping</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                    Mapped complex background actions (call management, app launching) to physical hardware triggers on Android devices, completely bypassing the need for a functional touch interface.
+                </p>
+                <div class="flex flex-wrap gap-3 mt-auto pt-md">
+                    <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Android SDK</span>
+                    <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">System APIs</span>
+                </div>
+            </div>
+
+            <!-- Event Platform -->
+            <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-secondary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#adc6ff] group relative">
+                <div class="absolute top-0 right-0 p-md">
+                    <span class="material-symbols-outlined text-secondary text-3xl">event_available</span>
+                </div>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Hackathon Registration Platform</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                    Engineered and managed a dedicated registration platform and portfolio website for a major inter-college hackathon, ensuring a streamlined onboarding pipeline for 300+ attendees across 50+ teams.
+                </p>
+                <div class="flex flex-wrap gap-3 mt-auto pt-md">
+                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">React.js</span>
+                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Web Platform</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Architecture Ideator (Gemini Feature) -->
+    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="ideator">
+        <div class="bg-surface-container-lowest p-xl border-2 border-primary shadow-[4px_4px_0px_#60f99e] relative">
+            <h2 class="font-headline-lg text-headline-lg text-primary uppercase tracking-wider mb-sm">✨ System Architecture Ideator</h2>
+            <p class="font-body-md text-on-surface-variant mb-lg max-w-3xl">
+                Pitch an app idea below. My integrated AI will design a high-level system architecture to build it using my core stack: Android (Kotlin), Java, and scalable databases.
+            </p>
+            
+            <div class="flex flex-col md:flex-row gap-md mb-lg">
+                <input type="text" id="arch-input" placeholder="e.g., A real-time ride-sharing app..." class="flex-grow bg-black text-on-surface border-2 border-outline-variant p-3 font-label-md focus:border-primary focus:outline-none focus:ring-0 placeholder-on-surface-variant/50" />
+                <button onclick="generateArchitecture()" id="arch-btn" class="badge-brutal bg-primary text-black font-label-md px-6 py-3 hover:-translate-y-1 hover:shadow-[4px_4px_0px_#43e188] transition-all whitespace-nowrap">
+                    ✨ GENERATE ARCHITECTURE
+                </button>
+            </div>
+
+            <div id="arch-output-container" class="hidden bg-black border-2 border-outline-variant p-md">
+                <div class="flex items-center gap-sm border-b border-outline-variant pb-2 mb-4">
+                    <span class="w-3 h-3 bg-primary animate-pulse border border-black"></span>
+                    <span class="font-label-md text-primary tracking-widest uppercase">SYSTEM.OUT :: ARCHITECTURE_PROPOSAL</span>
+                </div>
+                <div id="arch-loading" class="hidden text-secondary font-label-md animate-pulse">
+                    > Compiling system requirements...<br/>> Provisioning virtual architecture...<br/>> Awaiting Gemini response...
+                </div>
+                <pre id="arch-result" class="font-label-md text-on-surface-variant whitespace-pre-wrap leading-relaxed text-sm"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Skill Matrix -->
+    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="skills">
+        <div class="bg-black p-xl border-4 border-surface-bright shadow-[8px_8px_0px_#1c1b1b] relative overflow-hidden">
+            <!-- Raw Geometric Solid Background -->
+            <svg class="absolute -right-10 -bottom-10 w-64 h-64 text-surface-bright opacity-50" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="20" width="60" height="60" />
+                <circle cx="50" cy="50" r="30" />
+                <line x1="20" y1="20" x2="80" y2="80" />
+                <line x1="80" y1="20" x2="20" y2="80" />
+            </svg>
+
+            <h2 class="font-label-md text-label-md text-primary mb-xl tracking-widest uppercase badge-brutal border-primary px-3 py-1 inline-block">SYSTEM.STACK_TRACE</h2>
+            
+            <div class="grid md:grid-cols-3 gap-xl relative z-10 mt-8">
+                <!-- Languages -->
+                <div class="flex flex-col gap-md">
+                    <h3 class="font-title-lg text-title-lg font-black text-on-surface border-b-4 border-surface-bright pb-xs uppercase">Languages</h3>
+                    <div class="flex flex-wrap gap-sm pt-2">
+                        <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">JAVA</span>
+                        <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">KOTLIN</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">JAVASCRIPT</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">SQL</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">HTML/CSS</span>
+                    </div>
+                </div>
+                
+                <!-- Frameworks -->
+                <div class="flex flex-col gap-md">
+                    <h3 class="font-title-lg text-title-lg font-black text-on-surface border-b-4 border-surface-bright pb-xs uppercase">Frameworks</h3>
+                    <div class="flex flex-wrap gap-sm pt-2">
+                        <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">ANDROID SDK</span>
+                        <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">JETPACK COMPOSE</span>
+                        <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">REACT.JS</span>
+                        <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">KOTLIN COROUTINES</span>
+                    </div>
+                </div>
+                
+                <!-- CS & Tools -->
+                <div class="flex flex-col gap-md">
+                    <h3 class="font-title-lg text-title-lg font-black text-on-surface border-b-4 border-surface-bright pb-xs uppercase">CS & Infra</h3>
+                    <div class="flex flex-wrap gap-sm pt-2">
+                        <span class="badge-brutal bg-surface text-tertiary font-label-md px-md py-xs">DSA</span>
+                        <span class="badge-brutal bg-surface text-tertiary font-label-md px-md py-xs">OOPS</span>
+                        <span class="badge-brutal bg-surface text-tertiary font-label-md px-md py-xs">DBMS & OS</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">FIREBASE</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">CONVEX</span>
+                        <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">GIT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership, Education & Achievements -->
+    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24 mb-xl" id="leadership">
+        <div class="flex items-center gap-md mb-xl">
+            <!-- Sparkle -->
+            <svg class="w-8 h-8 text-secondary" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+            </svg>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-wider">Leadership, Edu & Awards</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-lg relative">
+            <!-- Vector Squiggle -->
+            <svg class="absolute -top-10 right-1/4 w-32 h-10 text-outline-variant opacity-50" viewBox="0 0 100 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" preserveAspectRatio="none">
+                <path d="M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10" />
+            </svg>
+
+            <!-- Item 1: Leadership -->
+            <div class="bg-black p-lg border-2 border-primary shadow-[4px_4px_0px_#60f99e] relative">
+                <span class="absolute top-0 right-0 bg-primary text-black font-label-md px-2 py-1 uppercase badge-brutal transform translate-x-2 -translate-y-2">Role</span>
+                <h3 class="font-title-lg text-title-lg font-bold text-on-surface mb-xs uppercase">Technical Head</h3>
+                <p class="font-label-md text-label-md text-primary mb-md font-bold">IUCEE Student Chapter | Sept 2024 - Present</p>
+                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Co-led a 30-member organizing committee to execute a major inter-college hackathon, scaling the event to 300+ participants across 50+ teams. Directed multiple intra-college events, including technical presentations and debates, to foster collaborative engineering skills.
+                </p>
+            </div>
+            
+            <!-- Item 2: Education & Awards -->
+            <div class="bg-black p-lg border-2 border-secondary shadow-[4px_4px_0px_#adc6ff] relative flex flex-col gap-4">
+                <span class="absolute top-0 right-0 bg-secondary text-black font-label-md px-2 py-1 uppercase badge-brutal transform translate-x-2 -translate-y-2">Milestones</span>
+                
+                <div>
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface mb-xs uppercase">Education</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        <strong>B.Tech in CSE</strong> — VVIT, Nambur (Expected May 2026) | CGPA: 6.86<br>
+                        <strong>Diploma in Comp. Engg.</strong> — M.B.T.S. Govt Polytechnic (2020-2023) | Score: 76%
+                    </p>
+                </div>
+
+                <div class="border-t border-surface-variant pt-4">
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface mb-xs uppercase">Distinctions</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        <strong>Special Mention (Ideathon):</strong> Recognized for innovative problem-solving and technical excellence at Avishkar Manthan, Malnad College of Engineering.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer id="contact" class="w-full py-xl px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-md bg-surface-container-low border-t-4 border-surface-bright mt-auto">
+    <div class="flex items-center gap-sm">
+        <div class="badge-brutal border-on-surface text-on-surface font-label-md px-3 py-1 bg-black">
+            KKEK // +91 7671945929
+        </div>
+    </div>
+    <nav class="flex flex-wrap justify-center items-center gap-lg">
+        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2" href="https://github.com/kkek-041405" target="_blank">
+            <span class="material-symbols-outlined text-[16px]">code</span> GITHUB
+        </a>
+        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-secondary hover:text-secondary transition-colors flex items-center gap-2" href="https://kkek.dev" target="_blank">
+            <span class="material-symbols-outlined text-[16px]">language</span> WEBSITE
+        </a>
+        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-tertiary hover:text-tertiary transition-colors flex items-center gap-2" href="mailto:komalkonatham@gmail.com">
+            <span class="material-symbols-outlined text-[16px]">mail</span> EMAIL
+        </a>
+    </nav>
+</footer>
+
+<!-- AI Assistant Modal -->
+<div id="ai-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface border-4 border-secondary shadow-[8px_8px_0px_#adc6ff] w-full max-w-2xl flex flex-col max-h-[80vh]">
+        <!-- Modal Header -->
+        <div class="bg-secondary text-black p-3 flex justify-between items-center border-b-4 border-black">
+            <span class="font-label-md font-bold uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">terminal</span>
+                KKEK AI Assistant
+            </span>
+            <button onclick="toggleAiModal()" class="hover:bg-black hover:text-secondary px-2 transition-colors font-bold font-label-md border-2 border-transparent hover:border-currentColor">
+                [X] CLOSE
+            </button>
+        </div>
+        
+        <!-- Chat History -->
+        <div id="chat-history" class="p-lg flex-grow overflow-y-auto font-label-md text-sm flex flex-col gap-4 bg-black">
+            <div class="text-secondary">
+                > Initializing KKEK Recruiter AI...<br/>
+                > Connection established.<br/>
+                > Ask me anything about KKEK's hackathons, Android projects, or CS fundamentals.
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-md bg-surface border-t-4 border-secondary flex gap-2">
+            <span class="text-secondary font-label-md py-2">></span>
+            <input type="text" id="chat-input" placeholder="e.g. Tell me about the Chess App or your hackathon leadership..." class="flex-grow bg-transparent text-on-surface font-label-md focus:outline-none border-none ring-0 placeholder-on-surface-variant/50" onkeypress="handleChatEnter(event)" />
+            <button id="chat-btn" onclick="sendChatMessage()" class="badge-brutal bg-secondary text-black font-label-md px-4 py-2 hover:-translate-y-1 hover:shadow-[4px_4px_0px_#dae4ff] transition-all">
+                ✨ SEND
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Gemini API Configuration ---
+    const apiKey = ""; // API Key injected by environment
+    
+    // Exponential backoff retry utility
+    const wait = (ms) => new Promise(res => setTimeout(res, ms));
+
+    async function callGeminiAPI(prompt, systemInstruction = null) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }]
+        };
+        
+        if (systemInstruction) {
+            payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+        }
+
+        const delays = [1000, 2000, 4000, 8000, 16000];
+        let lastError = null;
+
+        for (let i = 0; i <= delays.length; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No response generated.";
+            } catch (err) {
+                lastError = err;
+                if (i === delays.length) break;
+                await wait(delays[i]);
+            }
+        }
+        return `[SYSTEM ERROR] Failed to connect to Gemini API after retries. ${lastError.message}`;
+    }
+
+    // --- Feature 1: AI Chat Assistant ---
+    function toggleAiModal() {
+        const modal = document.getElementById('ai-modal');
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
+            document.getElementById('chat-input').focus();
+        }
+    }
+
+    async function sendChatMessage() {
+        const inputEl = document.getElementById('chat-input');
+        const btnEl = document.getElementById('chat-btn');
+        const historyEl = document.getElementById('chat-history');
+        const message = inputEl.value.trim();
+
+        if (!message) return;
+
+        // Append User Message
+        historyEl.innerHTML += `<div class="text-on-surface"><span class="text-primary">USER:</span> ${message}</div>`;
+        inputEl.value = '';
+        btnEl.disabled = true;
+        btnEl.innerText = "WAIT...";
+        
+        // Auto-scroll
+        historyEl.scrollTop = historyEl.scrollHeight;
+
+        const systemPrompt = `You are a professional, direct AI assistant representing Eshwara Kumar K.K. (KKEK).
+        KKEK is a 4th-year CS student at VVIT and Technical Head of the IUCEE Student Chapter. He previously got a diploma in Computer Engineering from M.B.T.S. Govt Polytechnic (76%). 
+        His projects include:
+        1. Multiplayer Chess App (Kotlin, Compose, Firebase, published on Play Store with 50+ downloads)
+        2. Personal Cloud Storage (Java Full-Stack, Convex)
+        3. Campus Companion (React.js, Firebase)
+        4. Hardware Action Mapping (Android SDK, bypassing touch interfaces)
+        He led a 30-member committee for a 300+ participant hackathon and engineered its registration platform. He won a Special Mention at Avishkar Manthan.
+        He has a passion for AI in education, robotics (IISc goal), and storytelling/short films.
+        Keep answers concise, brutalist, and technical. No sugar-coating. Do not use markdown bolding formatting (no **), just use normal text. Decline unrelated questions.`;
+
+        const responseText = await callGeminiAPI(message, systemPrompt);
+
+        // Append AI Message
+        historyEl.innerHTML += `<div class="text-secondary"><span class="text-secondary font-bold">KKEK_AI:</span> ${responseText.replace(/\n/g, '<br/>')}</div><div class="border-b border-surface-variant my-2"></div>`;
+        
+        btnEl.disabled = false;
+        btnEl.innerHTML = "✨ SEND";
+        historyEl.scrollTop = historyEl.scrollHeight;
+    }
+
+    function handleChatEnter(event) {
+        if (event.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+
+    // --- Feature 2: Architecture Ideator ---
+    async function generateArchitecture() {
+        const inputEl = document.getElementById('arch-input');
+        const btnEl = document.getElementById('arch-btn');
+        const containerEl = document.getElementById('arch-output-container');
+        const loadingEl = document.getElementById('arch-loading');
+        const resultEl = document.getElementById('arch-result');
+        
+        const idea = inputEl.value.trim();
+        if (!idea) {
+            alert("Please provide an app idea first.");
+            return;
+        }
+
+        // Setup UI for loading
+        containerEl.classList.remove('hidden');
+        resultEl.classList.add('hidden');
+        loadingEl.classList.remove('hidden');
+        btnEl.disabled = true;
+        btnEl.innerText = "PROCESSING...";
+
+        const prompt = `Design a high-level system architecture for the following application idea: "${idea}".`;
+        const systemPrompt = `You are an expert software architect. Provide a brief, highly structured technical architecture. 
+        MANDATORY constraints: 
+        1. The frontend MUST be Android built with Kotlin and Jetpack Compose. 
+        2. The backend MUST be built with Java.
+        3. Mention specific databases (like PostgreSQL, Firebase, or Convex) and fundamental concepts (DSA, caching).
+        Output the response in plain text with clear bullet points, keeping it under 150 words. Do not use markdown formatting like ** or ##, just use standard capitalization and dashes for lists.`;
+
+        const responseText = await callGeminiAPI(prompt, systemPrompt);
+
+        // Display results
+        loadingEl.classList.add('hidden');
+        resultEl.classList.remove('hidden');
+        resultEl.innerText = responseText;
+        
+        btnEl.disabled = false;
+        btnEl.innerHTML = "✨ GENERATE ARCHITECTURE";
+    }
+
+    // Solid brutalist nav background on scroll
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('top-nav');
+        if (window.scrollY > 20) {
+            nav.classList.add('shadow-[0_4px_0px_#131313]', 'bg-surface-container-highest');
+            nav.classList.remove('bg-surface', 'border-surface-container-low');
+        } else {
+            nav.classList.remove('shadow-[0_4px_0px_#131313]', 'bg-surface-container-highest');
+            nav.classList.add('bg-surface', 'border-surface-container-low');
+        }
+    });
+</script>
+</body>
+</html>
