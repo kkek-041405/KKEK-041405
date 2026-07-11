@@ -1,6 +1,6 @@
 # Konatham Komal Eshwara Kumar (KKEK)
 
-Final-year Computer Science and Engineering student at VVIT and Technical Head of the IUCEE Student Chapter. My work focuses on Android architecture and full-stack systems, with a proven track record of deploying production-ready applications and solving complex algorithmic challenges.
+Computer Science and Engineering Graduate at VVIT and Technical Head of the IUCEE Student Chapter. My work focuses on Android architecture and full-stack systems, with a proven track record of deploying production-ready applications and solving complex algorithmic challenges.
 
 I advocate for a deterministic engineering approach: utilizing AI to drive complex decision-making processes while strictly relying on robust, hard-coded logic for system execution.
 
