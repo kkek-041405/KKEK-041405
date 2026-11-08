@@ -121,7 +121,8 @@
     </div>
     <!-- Desktop Nav -->
     <div class="hidden md:flex items-center gap-xl h-full">
-        <a class="h-full flex items-center px-sm font-label-md text-label-md text-primary border-b-2 border-primary transition-all" href="#projects">Projects</a>
+        <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#experience">Experience</a>
+        <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#projects">Projects</a>
         <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#skills">Skills</a>
         <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#leadership">Leadership & Edu</a>
     </div>
@@ -173,7 +174,7 @@
             </div>
 
             <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight leading-tight">
-                Architecting 
+                Building
                 <span class="text-primary-container relative inline-block mx-2">
                     Android
                     <!-- Vector Scribble / Underline -->
@@ -193,7 +194,7 @@
             </h1>
 
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed mt-4">
-                I'm a Computer Science graduate from VVIT and Technical Head at IUCEE. I build high-performance mobile clients with <strong>Kotlin & Jetpack Compose</strong> and engineer robust systems solving complex algorithmic challenges. Proven track record of deploying production-ready applications.
+                I'm a CS grad from VVIT who spent three months shipping real features at <strong class="text-on-surface">Ziegler Aerospace</strong> — fixing real bugs, cutting real load times, and learning how production systems actually behave under pressure. I build Android apps in <strong>Kotlin &amp; Jetpack Compose</strong>, and I care a lot about writing code that actually works.
             </p>
 
             <div class="flex flex-wrap justify-center gap-md mt-sm">
@@ -207,6 +208,106 @@
         </div>
     </section>
 
+
+    <!-- Work Experience -->
+    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="experience">
+        <!-- Section Header -->
+        <div class="flex items-center gap-md mb-xl relative">
+            <svg class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6h-2.18c.07-.44.18-.86.18-1a3 3 0 0 0-6 0c0 .14.11.56.18 1H10c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-1a1 1 0 0 1 2 0c0 .14-.11.56-.18 1h-1.64C13.11 5.56 13 5.14 13 5zm7 14H10V8h10v11z"/>
+            </svg>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-wider">Work Experience</h2>
+        </div>
+
+        <!-- Ziegler Aerospace Card -->
+        <div class="relative bg-black border-l-4 border-primary p-xl shadow-[8px_8px_0px_#1c1b1b] overflow-hidden">
+
+            <!-- Background Grid Decoration -->
+            <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(0deg,#60f99e,#60f99e 1px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,#60f99e,#60f99e 1px,transparent 1px,transparent 32px);"></div>
+
+            <!-- Header Row -->
+            <div class="relative z-10 flex flex-col md:flex-row md:items-start md:justify-between gap-md mb-lg">
+                <div>
+                    <div class="flex flex-wrap items-center gap-sm mb-sm">
+                        <span class="badge-brutal bg-primary text-black font-label-md px-md py-xs">Full-Stack Intern</span>
+                        <span class="badge-brutal bg-surface text-on-surface-variant font-label-md px-md py-xs">Aug 2026 – Nov 2026</span>
+                        <span class="badge-brutal bg-surface text-on-surface-variant font-label-md px-md py-xs">Hyderabad, India</span>
+                    </div>
+                    <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Ziegler Aerospace</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Internal Tools &amp; MRO Technology — sky-dice · ZA-InternalTool · ZA Backend · Upload-Service</p>
+                </div>
+                <!-- Rising Star Award Badge -->
+                <div class="flex-shrink-0 bg-black border-2 border-primary shadow-[4px_4px_0px_#60f99e] p-md flex flex-col items-center text-center min-w-[160px]">
+                    <span class="material-symbols-outlined text-primary text-3xl mb-xs">military_tech</span>
+                    <span class="font-label-md text-label-md text-primary leading-tight uppercase">Rising Star</span>
+                    <span class="font-label-md text-label-md text-primary leading-tight uppercase">Intern Award</span>
+
+                </div>
+            </div>
+
+            <!-- Impact Stat Chips -->
+            <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-md mb-lg">
+                <div class="bg-surface-container border-2 border-primary shadow-[2px_2px_0px_#60f99e] p-md text-center">
+                    <div class="font-display-lg text-[28px] leading-none font-black text-primary">99<span class="text-[16px]">%</span></div>
+                    <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Fewer DB Calls</div>
+                </div>
+                <div class="bg-surface-container border-2 border-primary shadow-[2px_2px_0px_#60f99e] p-md text-center">
+                    <div class="font-display-lg text-[28px] leading-none font-black text-primary">85<span class="text-[16px]">%</span></div>
+                    <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Latency Cut</div>
+                </div>
+                <div class="bg-surface-container border-2 border-secondary shadow-[2px_2px_0px_#adc6ff] p-md text-center">
+                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary">48<span class="text-[16px]">+</span></div>
+                    <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">PRs Merged</div>
+                </div>
+                <div class="bg-surface-container border-2 border-secondary shadow-[2px_2px_0px_#adc6ff] p-md text-center">
+                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary">4</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Prod Repos</div>
+                </div>
+            </div>
+
+            <!-- Key Contributions -->
+            <div class="relative z-10">
+                <h4 class="font-label-md text-label-md text-primary uppercase tracking-widest mb-md border-b border-surface-variant pb-xs">Key Contributions</h4>
+                <ul class="font-body-md text-body-md text-on-surface-variant space-y-md list-none">
+                    <li class="flex gap-sm">
+                        <span class="text-primary font-black flex-shrink-0 mt-0.5">▸</span>
+                        <span>Built vendor, inventory, and purchase order modules from scratch — React/TypeScript on the frontend, Node.js/Express/MongoDB on the backend. Shipped 8+ new API endpoints that went straight into production.</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="text-primary font-black flex-shrink-0 mt-0.5">▸</span>
+                        <span>Found the Upload Service was making ~2,000 individual DB queries per file. Rewrote it to batch them — down to ~20 queries for the same 1,000-row upload. Timeouts stopped happening.</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="text-primary font-black flex-shrink-0 mt-0.5">▸</span>
+                        <span>The main dashboard was taking 8 seconds to load. Dug into the MongoDB aggregation pipeline, moved filters earlier, projected only what we needed, and got it to 1.2s. Colleagues noticed without being told.</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="text-primary font-black flex-shrink-0 mt-0.5">▸</span>
+                        <span>The database had hundreds of duplicate buyer records because Excel imports were freeform — "Boeing", "BOEING", "Boeing Ltd" all meant the same company. Wrote a matching algorithm using email domains to resolve them, and cleaned up ~15% of duplicate entries.</span>
+                    </li>
+                    <li class="flex gap-sm">
+                        <span class="text-primary font-black flex-shrink-0 mt-0.5">▸</span>
+                        <span>Added security headers to the Express server (X-Frame-Options, CSP, XSS protection), set up single-session enforcement in production, and debounced heavy search inputs that were firing on every keystroke.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="relative z-10 mt-lg pt-md border-t border-surface-variant">
+                <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mr-md">Stack:</span>
+                <div class="inline-flex flex-wrap gap-sm mt-sm">
+                    <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">React</span>
+                    <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">TypeScript</span>
+                    <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">Node.js</span>
+                    <span class="badge-brutal bg-surface text-primary font-label-md px-md py-xs">Express</span>
+                    <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">MongoDB</span>
+                    <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">AWS S3</span>
+                    <span class="badge-brutal bg-surface text-secondary font-label-md px-md py-xs">Docker</span>
+                    <span class="badge-brutal bg-surface text-on-surface font-label-md px-md py-xs">REST APIs</span>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- Featured Projects Grid -->
     <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="projects">
         <div class="flex items-center gap-md mb-xl relative">
@@ -226,7 +327,7 @@
                 </div>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Multiplayer Chess App</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
-                    Developed and successfully deployed a real-time multiplayer chess application to the Google Play Store, achieving 50+ downloads. Designed backend architecture to handle real-time state synchronization, user authentication, and concurrent matchmaking.
+                    A fully playable multiplayer chess game on the Play Store — 50+ downloads, real-time moves, online matchmaking, and local pass-and-play. The whole backend runs on Firebase. I built this mostly to see if I could.
                 </p>
                 <div class="flex flex-wrap gap-3 mt-auto pt-md">
                     <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Kotlin</span>
@@ -242,7 +343,7 @@
                 </div>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Personal Cloud Storage</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
-                    Developed a custom file management system to store and access semi-important data globally, effectively bypassing the login-walls and restrictions of commercial cloud services.
+                    Built my own file storage because I was tired of commercial cloud services requiring accounts and limiting access. Runs on Convex, accessible from anywhere, no subscriptions.
                 </p>
                 <div class="flex flex-wrap gap-3 mt-auto pt-md">
                     <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Java</span>
@@ -258,7 +359,7 @@
                 </div>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Hardware Action Mapping</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
-                    Mapped complex background actions (call management, app launching) to physical hardware triggers on Android devices, completely bypassing the need for a functional touch interface.
+                    Maps phone actions — answer calls, launch apps, control media — to physical hardware buttons. No touchscreen needed. Uses Android Accessibility Services and Broadcast Receivers running entirely in the background.
                 </p>
                 <div class="flex flex-wrap gap-3 mt-auto pt-md">
                     <span class="badge-brutal text-primary bg-black font-label-md px-3 py-1">Android SDK</span>
@@ -273,7 +374,7 @@
                 </div>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Hackathon Registration Platform</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
-                    Engineered and managed a dedicated registration platform and portfolio website for a major inter-college hackathon, ensuring a streamlined onboarding pipeline for 300+ attendees across 50+ teams.
+                    Registration platform for InnovaHack, a 24-hour inter-college event I helped organize. Handled 1,000+ signups, team formation via invite codes, automated confirmation emails, and an admin dashboard to track everything live.
                 </p>
                 <div class="flex flex-wrap gap-3 mt-auto pt-md">
                     <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">React.js</span>
@@ -389,7 +490,7 @@
                 <ul class="font-body-md text-body-md text-on-surface-variant list-disc space-y-2">
                     <li><strong class="text-primary font-label-md tracking-wide">🏆 Best Student Chapter Award</strong> — Led the VVIT IUCEE chapter to win this national award at IASF Jan 2026 held at GITAM</li>
                     <li><strong class="text-primary">Organized a major inter-college hackathon</strong> — Oversaw a 30-member committee and scaled the event to 300+ participants across 50+ teams</li>
-                    <li>Directed multiple intra-college events, including technical presentations and debates, to foster collaborative engineering skills</li>
+                    <li>Ran workshops on DSA, Git, and debugging — the kind of things I wish someone had taught me earlier</li>
                 </ul>
             </div>
             
@@ -400,7 +501,7 @@
                 <div>
                     <h3 class="font-title-lg text-title-lg font-bold text-on-surface mb-xs uppercase">Education</h3>
                     <ul class="font-body-md text-body-md text-on-surface-variant list-disc  space-y-2">
-                        <li><strong class="text-primary font-label-md tracking-wide">B.Tech in CSE</strong> — VVIT, Nambur (2023-2026) | Completed | CGPA: 6.86<br></li>
+                        <li><strong class="text-primary font-label-md tracking-wide">B.Tech in CSE</strong> — VVIT, Nambur (2023-2026) | Completed | CGPA: 7.26<br></li>
                         <li><strong class="text-primary font-label-md tracking-wide">Diploma in Comp. Engg.</strong> — M.B.T.S. Govt Polytechnic (2020-2023) | Score: 76%</li>
                     </ul>
                 </div>
@@ -409,8 +510,10 @@
                     <h3 class="font-title-lg text-title-lg font-bold text-on-surface mb-xs uppercase">Distinctions</h3>
                     <ul class="font-body-md text-body-md text-on-surface-variant list-disc space-y-2">
                         <li>
-                        <strong class="text-primary font-label-md tracking-wide">Special Mention (Ideathon):</strong> Recognized for innovative problem-solving and technical excellence at Avishkar Manthan, Malnad College of Engineering.
-
+                            <strong class="text-primary font-label-md tracking-wide">TCS CodeVita Season 11</strong> — Global Rank 2,947 out of 4.4 lakh participants. Top 0.6% worldwide.
+                        </li>
+                        <li>
+                            <strong class="text-primary font-label-md tracking-wide">Special Mention, Avishkar Manthan</strong> — Ideathon at Malnad College of Engineering, Hassan.
                         </li>
                     </ul>
                 </div>

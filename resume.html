@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>KKEK — Resume | Konatham Komal Eshwara Kumar</title>
+    <meta name="description" content="Resume of Konatham Komal Eshwara Kumar — Full-Stack Developer & Android Engineer."/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        /* ── Reset ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Tokens ── */
+        :root {
+            --bg:        #131313;
+            --surface:   #1c1b1b;
+            --surface-high: #2a2a2a;
+            --border:    #353534;
+            --primary:   #60f99e;
+            --secondary: #adc6ff;
+            --tertiary:  #baf000;
+            --text:      #e5e2e1;
+            --muted:     #9aab9b;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Top bar ── */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--bg);
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 32px;
+            gap: 16px;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .logo {
+            font-family: var(--mono);
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: 2px 2px 0 var(--primary);
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .back-link {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid var(--border);
+            box-shadow: 2px 2px 0 var(--border);
+            padding: 4px 10px;
+            transition: color .2s, border-color .2s, box-shadow .2s;
+        }
+        .back-link:hover { color: var(--primary); border-color: var(--primary); box-shadow: 2px 2px 0 var(--primary); }
+        .print-btn {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--primary);
+            color: #000;
+            border: 2px solid var(--primary);
+            box-shadow: 3px 3px 0 #3ddc84;
+            padding: 6px 16px;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .print-btn:hover { transform: translateY(-1px); box-shadow: 4px 4px 0 #3ddc84; }
+        .print-btn:active { transform: translateY(0); box-shadow: 1px 1px 0 #3ddc84; }
+
+        /* ── Page wrapper ── */
+        .page {
+            max-width: 900px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+        }
+
+        /* ── Header block ── */
+        .resume-header {
+            background: #000;
+            border: 2px solid var(--primary);
+            box-shadow: 6px 6px 0 #1c1b1b;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .resume-name {
+            font-family: var(--mono);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+        .resume-name span { color: var(--primary); }
+        .resume-title {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .contact-pill {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            padding: 3px 10px;
+            text-decoration: none;
+            transition: color .2s, border-color .2s;
+        }
+        .contact-pill:hover { color: var(--primary); border-color: var(--primary); }
+
+        /* ── Sections ── */
+        .section { margin-bottom: 20px; }
+        .section-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 4px;
+            margin-bottom: 14px;
+        }
+
+        /* ── Summary ── */
+        .summary-text {
+            color: var(--muted);
+            font-size: 13.5px;
+            line-height: 1.65;
+            border-left: 3px solid var(--primary);
+            padding-left: 16px;
+        }
+        .summary-text strong { color: var(--text); }
+
+        /* ── Experience block ── */
+        .exp-block {
+            background: var(--surface);
+            border-left: 3px solid var(--primary);
+            padding: 20px 20px 20px 20px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .exp-role {
+            font-family: var(--sans);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .exp-company {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .exp-meta {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: right;
+        }
+        .award-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--mono);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000;
+            background: var(--primary);
+            border: 1.5px solid var(--primary);
+            box-shadow: 2px 2px 0 #3ddc84;
+            padding: 2px 8px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        .exp-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-top: 10px;
+        }
+        .exp-bullets li {
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+        .exp-bullets li::before {
+            content: "▸";
+            color: var(--primary);
+            font-weight: 900;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .exp-bullets li strong { color: var(--text); font-weight: 600; }
+
+        /* ── Project block ── */
+        .proj-block {
+            background: var(--surface);
+            border-left: 3px solid var(--secondary);
+            padding: 16px 18px;
+            margin-bottom: 10px;
+        }
+        .proj-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .proj-name {
+            font-family: var(--sans);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .proj-stack {
+            font-family: var(--mono);
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--secondary);
+        }
+        .proj-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .proj-bullets li {
+            display: flex;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        .proj-bullets li::before {
+            content: "▸";
+            color: var(--secondary);
+            font-weight: 900;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .proj-bullets li strong { color: var(--text); font-weight: 600; }
+
+        /* ── Skills ── */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .skill-group { }
+        .skill-category {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag {
+            font-family: var(--mono);
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border: 1.5px solid var(--border);
+            color: var(--muted);
+        }
+        .tag.p { border-color: var(--primary);   color: var(--primary); }
+        .tag.s { border-color: var(--secondary); color: var(--secondary); }
+        .tag.t { border-color: var(--tertiary);  color: var(--tertiary); }
+
+        /* ── Two-column sections ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+        /* ── Leadership block ── */
+        .lead-block {
+            background: var(--surface);
+            border-left: 3px solid var(--primary);
+            padding: 16px 18px;
+        }
+        .lead-role {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .lead-org {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        .lead-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .lead-bullets li {
+            display: flex;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        .lead-bullets li::before {
+            content: "▸";
+            color: var(--primary);
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .lead-bullets li strong { color: var(--text); font-weight: 600; }
+
+        /* ── Achievements ── */
+        .ach-block {
+            background: var(--surface);
+            border-left: 3px solid var(--tertiary);
+            padding: 16px 18px;
+        }
+        .ach-item {
+            display: flex;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .ach-item:last-child { margin-bottom: 0; }
+        .ach-item::before {
+            content: "★";
+            color: var(--tertiary);
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .ach-item strong { color: var(--text); font-weight: 600; }
+
+        /* ── Education ── */
+        .edu-block {
+            background: var(--surface);
+            border-left: 3px solid var(--secondary);
+            padding: 16px 18px;
+        }
+        .edu-degree { font-size: 14px; font-weight: 700; color: var(--text); }
+        .edu-inst {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+            margin-bottom: 4px;
+        }
+        .edu-meta { font-size: 12px; color: var(--muted); }
+        .edu-meta strong { color: var(--primary); }
+
+        /* ── Stat chips in experience ── */
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .stat-chip {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            padding: 3px 10px;
+        }
+        .stat-chip.s { border-color: var(--secondary); color: var(--secondary); }
+
+        /* ── Print styles ── */
+        @media print {
+            @page { margin: 14mm 12mm; size: A4; }
+            body { background: #fff; color: #111; font-size: 11px; }
+            .topbar { display: none; }
+            .page { max-width: 100%; margin: 0; padding: 0; }
+            :root {
+                --bg: #fff;
+                --surface: #f4f4f4;
+                --surface-high: #eee;
+                --border: #ccc;
+                --primary: #006d3b;
+                --secondary: #004494;
+                --tertiary: #3a4d00;
+                --text: #111;
+                --muted: #444;
+            }
+            .resume-header { box-shadow: none; border-color: var(--primary); background: #f9f9f9; }
+            .exp-block, .proj-block, .lead-block, .ach-block, .edu-block { background: #f4f4f4; }
+            .print-btn { display: none; }
+            a { color: inherit; text-decoration: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="logo">KKEK_</span>
+        <a class="back-link" href="/">← Portfolio</a>
+    </div>
+    <button class="print-btn" onclick="window.print()">⬇ Download PDF</button>
+</div>
+
+<!-- Resume Page -->
+<div class="page">
+
+    <!-- Header -->
+    <div class="resume-header">
+        <div class="resume-name">Konatham Komal <span>Eshwara Kumar</span></div>
+        <div class="resume-title">Full-Stack Developer · Android Engineer</div>
+        <div class="contact-row">
+            <a class="contact-pill" href="tel:+917671945929">+91 7671945929</a>
+            <a class="contact-pill" href="mailto:komaleshwarakumarkonatham@gmail.com">komaleshwarakumarkonatham@gmail.com</a>
+            <a class="contact-pill" href="https://kkek.dev" target="_blank">kkek.dev</a>
+            <a class="contact-pill" href="https://github.com/kkek-041405" target="_blank">github.com/kkek-041405</a>
+            <span class="contact-pill">Guntur / Hyderabad, India</span>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="section">
+        <div class="section-label">Summary</div>
+        <p class="summary-text">
+            CS grad from VVIT with <strong>hands-on experience shipping production code at Ziegler Aerospace</strong> — fixing real performance problems, building full-stack modules, and working across 4 live repositories over 3 months. Strong foundation in Java and DSA (TCS CodeVita Global Rank 2,947). I build Android apps in Kotlin and care about writing code that actually holds up.
+        </p>
+    </div>
+
+    <!-- Experience -->
+    <div class="section">
+        <div class="section-label">Experience</div>
+        <div class="exp-block">
+            <div class="exp-header">
+                <div>
+                    <div class="exp-role">Full Stack Developer Intern</div>
+                    <div class="exp-company">Ziegler Aerospace</div>
+                </div>
+                <div class="exp-meta">
+                    Aug 2026 – Nov 2026<br>Hyderabad, India
+                </div>
+            </div>
+            <div class="award-badge">🏅 Rising Star Intern Award</div>
+            <div class="stat-row">
+                <span class="stat-chip">99% fewer DB calls</span>
+                <span class="stat-chip">85% latency cut</span>
+                <span class="stat-chip s">48+ PRs merged</span>
+                <span class="stat-chip s">4 prod repos</span>
+            </div>
+            <ul class="exp-bullets">
+                <li>Built vendor, inventory, and purchase order modules from scratch — React/TypeScript frontend, Node.js/Express/MongoDB backend. <strong>Shipped 8+ new API endpoints</strong> that went straight into production.</li>
+                <li>Found the Upload Service was making ~2,000 individual DB queries per file. Rewrote it to batch them — <strong>down to ~20 queries for the same 1,000-row upload</strong>. Timeouts stopped happening.</li>
+                <li>The main dashboard was taking 8 seconds to load. Dug into the MongoDB aggregation pipeline, moved filters earlier, projected only what we needed. <strong>Got it down to 1.2s.</strong> Colleagues noticed without being told.</li>
+                <li>The database had hundreds of duplicate buyer records because Excel imports were freeform — "Boeing", "BOEING", "Boeing Ltd" all meant the same company. Wrote a matching algorithm using email domains. <strong>Cleaned up ~15% of duplicate entries.</strong></li>
+                <li>Added security headers to the Express server (X-Frame-Options, CSP, XSS protection), set up <strong>single-session enforcement</strong> in production, and debounced heavy search inputs that were firing on every keystroke.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section">
+        <div class="section-label">Projects</div>
+
+        <div class="proj-block">
+            <div class="proj-header">
+                <div class="proj-name">Real-Time Multiplayer Chess</div>
+                <div class="proj-stack">Kotlin · Jetpack Compose · Firebase · WebSockets</div>
+            </div>
+            <ul class="proj-bullets">
+                <li>A fully playable multiplayer chess game on the Play Store — <strong>50+ downloads</strong>, real-time moves, online matchmaking, and local pass-and-play. Built this mostly to see if I could.</li>
+                <li>Firebase handles auth, matchmaking, and concurrent game state. Move legality is validated entirely client-side with deterministic logic before syncing.</li>
+                <li>Built with Jetpack Compose — reactive UI that tracks turn state, enforces rules, and updates the board without any manual view manipulation.</li>
+            </ul>
+        </div>
+
+        <div class="proj-block">
+            <div class="proj-header">
+                <div class="proj-name">InnovaHack — Registration & Management Platform</div>
+                <div class="proj-stack">Next.js · TypeScript · Firebase · Tailwind CSS</div>
+            </div>
+            <ul class="proj-bullets">
+                <li>Registration platform for a 24-hour inter-college hackathon. Handled <strong>1,000+ signups</strong> with zero downtime during peak traffic.</li>
+                <li>Team formation via unique invite codes, automated confirmation emails, and real-time roster validation to block duplicate entries.</li>
+                <li>Admin dashboard to track live registrations, manage shortlisting from 1,000+ applicants down to <strong>300+ finalists across 50+ teams</strong>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="section">
+        <div class="section-label">Technical Skills</div>
+        <div class="skills-grid">
+            <div class="skill-group">
+                <div class="skill-category">Languages</div>
+                <div class="skill-tags">
+                    <span class="tag p">Java</span>
+                    <span class="tag p">Kotlin</span>
+                    <span class="tag s">TypeScript</span>
+                    <span class="tag s">JavaScript</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">SQL</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <div class="skill-category">Web & Cloud</div>
+                <div class="skill-tags">
+                    <span class="tag s">React.js</span>
+                    <span class="tag s">Next.js</span>
+                    <span class="tag s">Node.js</span>
+                    <span class="tag s">Express.js</span>
+                    <span class="tag">AWS S3</span>
+                    <span class="tag">Docker</span>
+                    <span class="tag">REST APIs</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <div class="skill-category">Mobile</div>
+                <div class="skill-tags">
+                    <span class="tag p">Android SDK</span>
+                    <span class="tag p">Jetpack Compose</span>
+                    <span class="tag">Kotlin Coroutines</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <div class="skill-category">Databases</div>
+                <div class="skill-tags">
+                    <span class="tag">MongoDB</span>
+                    <span class="tag">PostgreSQL</span>
+                    <span class="tag">Firebase</span>
+                    <span class="tag">Redis</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <div class="skill-category">CS Fundamentals</div>
+                <div class="skill-tags">
+                    <span class="tag t">DSA</span>
+                    <span class="tag t">OOP</span>
+                    <span class="tag t">DBMS</span>
+                    <span class="tag t">OS</span>
+                    <span class="tag">System Design</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <div class="skill-category">Tools</div>
+                <div class="skill-tags">
+                    <span class="tag">Git</span>
+                    <span class="tag">GitHub</span>
+                    <span class="tag">Postman</span>
+                    <span class="tag">Android Studio</span>
+                    <span class="tag">Linux</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leadership + Education side by side -->
+    <div class="section">
+        <div class="section-label">Leadership & Involvement</div>
+        <div class="lead-block">
+            <div class="lead-role">Technical Head & Core Organizer</div>
+            <div class="lead-org">IUCEE Student Chapter, VVIT · Aug 2024 – Mar 2026</div>
+            <ul class="lead-bullets">
+                <li>One of 6 core organizers behind <strong>InnovaHack</strong> — handled all technical infrastructure, objective-exam screening, and live event operations for a 24-hour national hackathon.</li>
+                <li>Chapter won the <strong>Best Student Chapter Award</strong> at IUCEE Annual Student Forum 2026 (IASF, GITAM).</li>
+                <li>Ran workshops on DSA, Git, and debugging — the kind of things I wish someone had taught me earlier.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Education + Achievements side by side -->
+    <div class="two-col section">
+        <div>
+            <div class="section-label">Education</div>
+            <div class="edu-block" style="margin-bottom:10px;">
+                <div class="edu-degree">B.Tech in Computer Science & Engineering</div>
+                <div class="edu-inst">VVIT, Nambur, Guntur, AP</div>
+                <div class="edu-meta">2023 – 2026 &nbsp;|&nbsp; <strong>CGPA: 7.26 / 10.0</strong></div>
+            </div>
+            <div class="edu-block">
+                <div class="edu-degree">Diploma in Computer Engineering</div>
+                <div class="edu-inst">M.B.T.S. Govt Polytechnic, Nallapadu, Guntur</div>
+                <div class="edu-meta">2020 – 2023 &nbsp;|&nbsp; <strong>Score: 76.0%</strong></div>
+            </div>
+        </div>
+        <div>
+            <div class="section-label">Achievements</div>
+            <div class="ach-block">
+                <div class="ach-item">
+                    <strong>Global Rank 2,947</strong> — TCS CodeVita Season 11. Out of 4.4 lakh participants. Top 0.6% worldwide.
+                </div>
+                <div class="ach-item">
+                    <strong>Special Mention, Avishkar Manthan</strong> — Ideathon at Malnad College of Engineering, Hassan, for technical innovation.
+                </div>
+                <div class="ach-item">
+                    <strong>Rising Star Intern Award</strong> — Ziegler Aerospace, Nov 2026. Recognized for contribution across 4 production repositories in 12 weeks.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
