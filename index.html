@@ -220,15 +220,9 @@
 
         <!-- Terminal Output Screen -->
         <div class="p-5 font-mono text-xs md:text-sm leading-relaxed space-y-3 min-h-[240px]">
-            <!-- Java Code Block -->
-            <div id="boot-code" class="text-on-surface-variant opacity-90 border-l-2 border-primary pl-3 py-1 space-y-0.5 text-xs">
-                <div><span class="text-secondary font-bold">public class</span> <span class="text-primary font-bold">Portfolio</span> {</div>
-                <div class="pl-4"><span class="text-secondary font-bold">public static void</span> <span class="text-on-surface">main</span>(String[] args) {</div>
-                <div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Compiling KKEK.portfolio..."</span>);</div>
-                <div class="pl-8 text-on-surface-variant">Build.mount(Stack.ANDROID, Stack.FULL_STACK, Org.ZIEGLER);</div>
-                <div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Status: 200 OK — Launching UI"</span>);</div>
-                <div class="pl-4">}</div>
-                <div>}</div>
+            <!-- Java Code Block (typed dynamically) -->
+            <div id="boot-code" class="text-on-surface-variant opacity-90 border-l-2 border-primary pl-3 py-1 space-y-0.5 text-xs font-mono min-h-[140px]">
+                <!-- Lines typed dynamically -->
             </div>
 
             <!-- Build Logs -->
@@ -815,25 +809,67 @@
         overlay.style.display = 'flex';
         overlay.classList.remove('boot-exit');
 
+        const codeEl = document.getElementById('boot-code');
         const logsEl = document.getElementById('boot-logs');
         const statusTextEl = document.getElementById('boot-status-text');
         const percentEl = document.getElementById('boot-percent');
         const progressBar = document.getElementById('boot-progress-bar');
         
+        codeEl.innerHTML = '';
         logsEl.innerHTML = '';
         progressBar.style.width = '0%';
         percentEl.textContent = '0%';
-        statusTextEl.textContent = 'INITIALIZING JVM...';
+        statusTextEl.textContent = 'WRITING JAVA SOURCE...';
 
-        const steps = [
-            { time: 200, percent: 25, status: 'COMPILING JAVA SOURCE...', log: '> [javac] Compiling Portfolio.java (JVM 22.0.2 target)... <span class="text-primary font-bold">[OK]</span>' },
-            { time: 600, percent: 60, status: 'MOUNTING MODULES...', log: '> [runtime] Mounting Android SDK, Compose, Express, MongoDB... <span class="text-primary font-bold">[OK]</span>' },
-            { time: 1000, percent: 85, status: 'LINKING REPOSITORIES...', log: '> [link] Ziegler Aerospace (48 PRs, 4 repos) verified... <span class="text-primary font-bold">[OK]</span>' },
-            { time: 1350, percent: 100, status: 'SYSTEM.OUT.PRINTLN()', log: '> <strong class="text-primary font-bold">System.out.println("200 OK — Launching KKEK.portfolio");</strong>' },
-            { time: 1850, action: 'exit' }
+        const javaLines = [
+            '<div><span class="text-secondary font-bold">public class</span> <span class="text-primary font-bold">Portfolio</span> {</div>',
+            '<div class="pl-4"><span class="text-secondary font-bold">public static void</span> <span class="text-on-surface">main</span>(String[] args) {</div>',
+            '<div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Compiling KKEK.portfolio..."</span>);</div>',
+            '<div class="pl-8 text-on-surface-variant">Build.mount(Stack.ANDROID, Stack.FULL_STACK, Org.ZIEGLER);</div>',
+            '<div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Status: 200 OK — Launching UI"</span>);</div>',
+            '<div class="pl-4">}</div>',
+            '<div>}</div>'
         ];
 
-        steps.forEach(step => {
+        // Type out the Java code line by line with active cursor
+        const cursorHtml = '<span id="active-cursor" class="inline-block w-1.5 h-3.5 bg-primary ml-1.5 align-middle term-cursor"></span>';
+        
+        javaLines.forEach((lineHtml, idx) => {
+            const timerId = setTimeout(() => {
+                if (overlay.style.display === 'none') return;
+                
+                // Remove previous cursor if any
+                const prevCursor = document.getElementById('active-cursor');
+                if (prevCursor) prevCursor.remove();
+
+                const temp = document.createElement('div');
+                temp.innerHTML = lineHtml;
+                const lineNode = temp.firstElementChild;
+                lineNode.innerHTML += cursorHtml;
+                codeEl.appendChild(lineNode);
+
+                // Update percent as code writes
+                const codeProgress = Math.round(((idx + 1) / javaLines.length) * 20);
+                progressBar.style.width = codeProgress + '%';
+                percentEl.textContent = codeProgress + '%';
+
+                if (idx === javaLines.length - 1) {
+                    statusTextEl.textContent = 'SOURCE READY — COMPILING...';
+                }
+            }, 250 + (idx * 240));
+            bootTimers.push(timerId);
+        });
+
+        // After code is typed (starts at ~2000ms), stream build logs & compile
+        const buildSteps = [
+            { time: 2100, percent: 38, status: 'COMPILING JAVA SOURCE...', log: '> [javac] Compiling Portfolio.java (JVM 22.0.2 target)... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 2700, percent: 65, status: 'MOUNTING MODULES...', log: '> [runtime] Mounting Android SDK, Jetpack Compose, Express, MongoDB... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 3300, percent: 88, status: 'LINKING REPOSITORIES...', log: '> [link] Ziegler Aerospace (48 PRs, 4 repos) verified... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 3900, percent: 100, status: 'SYSTEM.OUT.PRINTLN()', log: '> <strong class="text-primary font-bold">System.out.println("200 OK — Launching KKEK.portfolio");</strong>' },
+            { time: 4700, action: 'exit' }
+        ];
+
+        buildSteps.forEach(step => {
             const timerId = setTimeout(() => {
                 if (overlay.style.display === 'none') return;
                 if (step.log) {
