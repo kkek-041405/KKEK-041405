@@ -460,14 +460,23 @@
                 <div class="absolute top-0 right-0 p-md">
                     <span class="material-symbols-outlined text-secondary text-3xl">chess</span>
                 </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge-brutal bg-secondary text-black font-label-md text-[10px] px-2 py-0.5 font-bold uppercase">Production App</span>
+                    <span class="text-xs text-on-surface-variant font-mono">50+ Downloads</span>
+                </div>
                 <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Multiplayer Chess App</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
-                    A fully playable multiplayer chess game on the Play Store — 50+ downloads, real-time moves, online matchmaking, and local pass-and-play. The whole backend runs on Firebase. I built this mostly to see if I could.
+                    A fully playable multiplayer chess game on the Google Play Store — real-time move synchronization, online matchmaking, custom board-state validation, and local pass-and-play. Entire backend powered by Firebase.
                 </p>
-                <div class="flex flex-wrap gap-3 mt-auto pt-md">
-                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Kotlin</span>
-                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Jetpack Compose</span>
-                    <span class="badge-brutal text-secondary bg-black font-label-md px-3 py-1">Firebase</span>
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-auto pt-md border-t border-surface-variant">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge-brutal text-secondary bg-black font-label-md px-2.5 py-1 text-xs">Kotlin</span>
+                        <span class="badge-brutal text-secondary bg-black font-label-md px-2.5 py-1 text-xs">Compose</span>
+                        <span class="badge-brutal text-secondary bg-black font-label-md px-2.5 py-1 text-xs">Firebase</span>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" class="badge-brutal bg-secondary text-black font-label-md px-3 py-1.5 flex items-center gap-1.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#ffffff] transition-all font-bold text-xs" title="Open in Google Play Store">
+                        <span class="material-symbols-outlined text-[16px]">shop</span> GOOGLE PLAY ↗
+                    </a>
                 </div>
             </div>
 
@@ -810,7 +819,23 @@
         let destination = action.url || "";
 
         // Route to specific Java programs
-        if (destination.includes('github.com')) {
+        if (destination.includes('play.google.com')) {
+            className = "OpenPlayStore";
+            actionDesc = "Dispatching Google Play Store Intent";
+            executeBtn.innerText = "[ LAUNCH PLAY STORE ↗ ]";
+            javaCode = `import java.awt.Desktop;
+import java.net.URI;
+
+public class OpenPlayStore {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Target: com.KKEK.chess");
+        System.out.println("Dispatching Intent: android.intent.action.VIEW");
+        System.out.println("URI: https://play.google.com/store/apps/details?id=com.KKEK.chess");
+        Desktop.getDesktop().browse(URI.create("${destination}"));
+        System.out.println("Status: 200 OK — Redirecting to Google Play...");
+    }
+}`;
+        } else if (destination.includes('github.com')) {
             className = "OpenGitHub";
             actionDesc = "Opening GitHub Profile";
             executeBtn.innerText = "[ OPEN GITHUB ↗ ]";
