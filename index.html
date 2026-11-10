@@ -161,6 +161,17 @@
             animation: term-blink 1s infinite;
         }
 
+        /* First-Load Boot Overlay */
+        #boot-overlay {
+            transition: opacity 0.4s var(--ease-brutal), transform 0.4s var(--ease-brutal), filter 0.4s ease;
+        }
+        #boot-overlay.boot-exit {
+            opacity: 0;
+            transform: scale(1.02);
+            filter: blur(2px);
+            pointer-events: none;
+        }
+
         /* Accessibility: Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -178,6 +189,73 @@
 </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
 
+<!-- First-Load Java Boot Screen Overlay -->
+<div id="boot-overlay" class="fixed inset-0 z-[9999] bg-[#0c0c0c] text-on-surface flex flex-col justify-center items-center p-4 select-none">
+    <!-- Subtle CRT Scanline -->
+    <div class="pointer-events-none absolute inset-0 opacity-[0.06] bg-[radial-gradient(#60f99e_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    
+    <!-- Top System Bar -->
+    <div class="w-full max-w-2xl flex justify-between items-center mb-3 text-xs font-label-md relative z-10">
+        <span class="text-on-surface-variant flex items-center gap-2">
+            <span class="w-2 h-2 bg-primary animate-pulse"></span>
+            <span>JVM 22.0.2 // KKEK-OS v2.6</span>
+        </span>
+        <button onclick="skipBoot()" class="text-on-surface-variant hover:text-primary transition-colors border border-outline-variant hover:border-primary px-2.5 py-1 text-[10px] tracking-wider uppercase font-bold bg-black">
+            [ SKIP (ESC) ]
+        </button>
+    </div>
+
+    <!-- Terminal Window Frame -->
+    <div class="w-full max-w-2xl bg-black border-2 border-primary shadow-[8px_8px_0px_#1c1b1b] overflow-hidden flex flex-col font-label-md relative z-10">
+        <!-- Terminal Header -->
+        <div class="bg-surface-container-high px-4 py-2 flex items-center justify-between border-b-2 border-outline-variant">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-error inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+                <span class="text-xs text-on-surface-variant ml-2 font-mono">bash — javac Portfolio.java &amp;&amp; java Portfolio</span>
+            </div>
+            <span class="text-[10px] text-primary tracking-widest uppercase font-bold">STDOUT</span>
+        </div>
+
+        <!-- Terminal Output Screen -->
+        <div class="p-5 font-mono text-xs md:text-sm leading-relaxed space-y-3 min-h-[240px]">
+            <!-- Java Code Block -->
+            <div id="boot-code" class="text-on-surface-variant opacity-90 border-l-2 border-primary pl-3 py-1 space-y-0.5 text-xs">
+                <div><span class="text-secondary font-bold">public class</span> <span class="text-primary font-bold">Portfolio</span> {</div>
+                <div class="pl-4"><span class="text-secondary font-bold">public static void</span> <span class="text-on-surface">main</span>(String[] args) {</div>
+                <div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Compiling KKEK.portfolio..."</span>);</div>
+                <div class="pl-8 text-on-surface-variant">Build.mount(Stack.ANDROID, Stack.FULL_STACK, Org.ZIEGLER);</div>
+                <div class="pl-8 text-primary">System.out.println(<span class="text-secondary">"Status: 200 OK — Launching UI"</span>);</div>
+                <div class="pl-4">}</div>
+                <div>}</div>
+            </div>
+
+            <!-- Build Logs -->
+            <div id="boot-logs" class="pt-1 text-[11px] md:text-xs space-y-1 font-mono min-h-[56px]">
+                <!-- Streamed sequentially -->
+            </div>
+
+            <!-- Terminal Progress Bar -->
+            <div id="boot-progress-container" class="pt-2 border-t border-surface-variant">
+                <div class="flex justify-between text-[11px] text-on-surface-variant mb-1">
+                    <span id="boot-status-text">INITIALIZING JVM...</span>
+                    <span id="boot-percent" class="text-primary font-bold">0%</span>
+                </div>
+                <div class="w-full h-2 bg-surface-container border border-outline-variant overflow-hidden">
+                    <div id="boot-progress-bar" class="h-full bg-primary transition-all duration-150 ease-out w-0" style="box-shadow: 0 0 8px rgba(96, 249, 158, 0.8);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Inline check to prevent flicker on return visits -->
+<script>
+    if (sessionStorage.getItem('kkek_booted')) {
+        document.getElementById('boot-overlay').style.display = 'none';
+    }
+</script>
+
 <!-- Navigation -->
 <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface border-b border-surface-container-low transition-all duration-300" id="top-nav">
     <div class="flex items-center gap-md">
@@ -191,9 +269,6 @@
         <a class="h-full flex items-center px-sm font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#leadership">Leadership & Edu</a>
     </div>
     <div class="flex items-center gap-md">
-        <button onclick="toggleAiModal()" class="text-secondary hover:bg-secondary hover:text-black transition-colors px-4 py-2 font-label-md badge-brutal bg-surface-container-lowest hidden sm:block">
-            [ ✨ ASK MY AI ]
-        </button>
         <a href="#contact" aria-label="terminal action" class="text-primary hover:bg-primary hover:text-black transition-colors px-4 py-2 font-label-md badge-brutal bg-surface-container-lowest">
             [ CONNECT ]
         </a>
@@ -265,7 +340,7 @@
 
             <div class="flex flex-wrap justify-center gap-md mt-sm">
                 <a class="inline-flex items-center justify-center badge-brutal bg-primary text-black font-label-md text-label-md px-xl py-md hover:-translate-y-1 hover:shadow-[4px_4px_0px_#43e188] transition-all" href="#projects">
-                    EXPLORE ARCHITECTURE
+                    VIEW PROJECTS
                 </a>
                 <a class="inline-flex items-center justify-center badge-brutal bg-black text-on-surface font-label-md text-label-md px-xl py-md hover:-translate-y-1 hover:shadow-[4px_4px_0px_#e5e2e1] transition-all" href="https://github.com/kkek-041405" target="_blank">
                     GITHUB REPOS
@@ -451,33 +526,6 @@
         </div>
     </section>
 
-    <!-- Architecture Ideator (Gemini Feature) -->
-    <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="ideator">
-        <div class="bg-surface-container-lowest p-xl border-2 border-primary shadow-[4px_4px_0px_#60f99e] relative scroll-reveal">
-            <h2 class="font-headline-lg text-headline-lg text-primary uppercase tracking-wider mb-sm">✨ System Architecture Ideator</h2>
-            <p class="font-body-md text-on-surface-variant mb-lg max-w-3xl">
-                Pitch an app idea below. My integrated AI will design a high-level system architecture to build it using my core stack: Android (Kotlin), Java, and scalable databases.
-            </p>
-            
-            <div class="flex flex-col md:flex-row gap-md mb-lg">
-                <input type="text" id="arch-input" placeholder="e.g., A real-time ride-sharing app..." class="flex-grow bg-black text-on-surface border-2 border-outline-variant p-3 font-label-md focus:border-primary focus:outline-none focus:ring-0 placeholder-on-surface-variant/50" />
-                <button onclick="generateArchitecture()" id="arch-btn" class="badge-brutal bg-primary text-black font-label-md px-6 py-3 hover:-translate-y-1 hover:shadow-[4px_4px_0px_#43e188] transition-all whitespace-nowrap">
-                    ✨ GENERATE ARCHITECTURE
-                </button>
-            </div>
-
-            <div id="arch-output-container" class="hidden bg-black border-2 border-outline-variant p-md">
-                <div class="flex items-center gap-sm border-b border-outline-variant pb-2 mb-4">
-                    <span class="w-3 h-3 bg-primary animate-pulse border border-black"></span>
-                    <span class="font-label-md text-primary tracking-widest uppercase">SYSTEM.OUT :: ARCHITECTURE_PROPOSAL</span>
-                </div>
-                <div id="arch-loading" class="hidden text-secondary font-label-md animate-pulse">
-                    > Compiling system requirements...<br/>> Provisioning virtual architecture...<br/>> Awaiting Gemini response...
-                </div>
-                <pre id="arch-result" class="font-label-md text-on-surface-variant whitespace-pre-wrap leading-relaxed text-sm"></pre>
-            </div>
-        </div>
-    </section>
 
     <!-- Technical Skill Matrix -->
     <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="skills">
@@ -606,218 +654,21 @@
         <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-tertiary hover:text-tertiary transition-colors flex items-center gap-2" href="mailto:komalkonatham@gmail.com">
             <span class="material-symbols-outlined text-[16px]">mail</span> EMAIL
         </a>
-        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2" href="/resume">`r`n            <span class="material-symbols-outlined text-[16px]">description</span> RESUME`r`n        </a>`r`n        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2" href="/privacy.html">
+        <button onclick="replayBootSequence()" class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">terminal</span> REBOOT
+        </button>
+        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2" href="/resume">
+            <span class="material-symbols-outlined text-[16px]">description</span> RESUME
+        </a>
+        <a class="badge-brutal border-on-surface-variant bg-black text-on-surface font-label-md px-3 py-1 hover:border-primary hover:text-primary transition-colors flex items-center gap-2" href="/privacy.html">
             <span class="material-symbols-outlined text-[16px]">policy</span> PRIVACY POLICY
         </a>
     </nav>
-<!-- Top Scroll Progress Bar -->
-<div id="scroll-progress" class="fixed top-16 left-0 h-[2px] bg-primary z-50 transition-[width] duration-75 w-0 pointer-events-none" style="box-shadow: 0 0 8px rgba(96, 249, 158, 0.6);"></div>
 </footer>
 
-<!-- AI Assistant Modal -->
-<div id="ai-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-surface border-4 border-secondary shadow-[8px_8px_0px_#adc6ff] w-full max-w-2xl flex flex-col max-h-[80vh]">
-        <!-- Modal Header -->
-        <div class="bg-secondary text-black p-3 flex justify-between items-center border-b-4 border-black">
-            <span class="font-label-md font-bold uppercase tracking-widest flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">terminal</span>
-                KKEK AI Assistant
-            </span>
-            <button onclick="toggleAiModal()" class="hover:bg-black hover:text-secondary px-2 transition-colors font-bold font-label-md border-2 border-transparent hover:border-currentColor">
-                [X] CLOSE
-            </button>
-        </div>
-        
-        <!-- Chat History -->
-        <div id="chat-history" class="p-lg flex-grow overflow-y-auto font-label-md text-sm flex flex-col gap-4 bg-black">
-            <div class="text-secondary">
-                > Initializing KKEK Recruiter AI...<br/>
-                > Connection established.<br/>
-                > Ask me anything about KKEK's hackathons, Android projects, or CS fundamentals.
-            </div>
-        </div>
-
-        <!-- Chat Input -->
-        <div class="p-md bg-surface border-t-4 border-secondary flex gap-2">
-            <span class="text-secondary font-label-md py-2">></span>
-            <input type="text" id="chat-input" placeholder="e.g. Tell me about the Chess App or your hackathon leadership..." class="flex-grow bg-transparent text-on-surface font-label-md focus:outline-none border-none ring-0 placeholder-on-surface-variant/50" onkeypress="handleChatEnter(event)" />
-            <button id="chat-btn" onclick="sendChatMessage()" class="badge-brutal bg-secondary text-black font-label-md px-4 py-2 hover:-translate-y-1 hover:shadow-[4px_4px_0px_#dae4ff] transition-all">
-                ✨ SEND
-            </button>
-        </div>
-    </div>
-</div>
 
 <script>
    
-    const startupFetchUrl = "https://backend.kkek.dev/"; // Set this to the URL you want requested on page load
-    
-    // Exponential backoff retry utility
-    const wait = (ms) => new Promise(res => setTimeout(res, ms));
-
-    async function fetchStartupUrl(url = startupFetchUrl) {
-        if (!url) return null;
-        console.log("waking up backend")
-
-        var isOnline = false;
-        
-        while(!isOnline){
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    console.log("backend is still offline. Trying agian")
-                    fetchStartupUrl();
-                    throw new Error(`HTTP Error: ${response.status}`);
-
-                }
-                else{
-                    console.log("Backend sucessfully waked up");
-                    isOnline = true;
-                    setTimeout(fetchStartupUrl,100000)
-                }
-                
-                return await response.text();
-            } catch (error) {
-                return
-                console.error('Startup fetch failed:', error);
-                return null;
-            }
-        }
-        
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchStartupUrl();
-    });
-
-    async function callGeminiAPI(prompt, systemInstruction = null) {
-        const url = `https://backend.kkek.dev/PAI`;
-        const payload = {
-            contents: [{ parts: [{ text: prompt }] }]
-        };
-        
-        if (systemInstruction) {
-            payload.systemInstruction = { parts: [{ text: systemInstruction }] };
-        }
-
-        const delays = [1000, 2000, 4000, 8000, 16000];
-        let lastError = null;
-
-        for (let i = 0; i <= delays.length; i++) {
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No response generated.";
-            } catch (err) {
-                lastError = err;
-                if (i === delays.length) break;
-                await wait(delays[i]);
-            }
-        }
-        return `[SYSTEM ERROR] Failed to connect to Gemini API after retries. ${lastError.message}`;
-    }
-
-    // --- Feature 1: AI Chat Assistant ---
-    function toggleAiModal() {
-        const modal = document.getElementById('ai-modal');
-        modal.classList.toggle('hidden');
-        if (!modal.classList.contains('hidden')) {
-            document.getElementById('chat-input').focus();
-        }
-    }
-
-    async function sendChatMessage() {
-        const inputEl = document.getElementById('chat-input');
-        const btnEl = document.getElementById('chat-btn');
-        const historyEl = document.getElementById('chat-history');
-        const message = inputEl.value.trim();
-
-        if (!message) return;
-
-        // Append User Message
-        historyEl.innerHTML += `<div class="text-on-surface"><span class="text-primary">USER:</span> ${message}</div>`;
-        inputEl.value = '';
-        btnEl.disabled = true;
-        btnEl.innerText = "WAIT...";
-        
-        // Auto-scroll
-        historyEl.scrollTop = historyEl.scrollHeight;
-
-        const systemPrompt = `You are a professional, direct AI assistant representing Eshwara Kumar K.K. (KKEK).
-        KKEK is a CS graduate from VVIT and Technical Head of the IUCEE Student Chapter (Sept 2024 - March 2026). He completed his B.Tech in CSE with CGPA 7.26 and previously got a diploma in Computer Engineering from M.B.T.S. Govt Polytechnic (76%). He completed a high-impact Software Engineering Internship at Ziegler Aerospace (Aug - Nov 2026) where he won the Rising Star Intern Award, contributed to 4 production repositories across 48+ merged PRs, cut query latency by 85%, and eliminated 99% of bulk database calls. 
-        His projects include:
-        1. Multiplayer Chess App (Kotlin, Compose, Firebase, published on Play Store with 50+ downloads)
-        2. Personal Cloud Storage (Java Full-Stack, Convex)
-        3. Campus Companion (React.js, Firebase)
-        4. Hardware Action Mapping (Android SDK, bypassing touch interfaces)
-        He led a 30-member committee for a 300+ participant hackathon and engineered its registration platform. He won a Special Mention at Avishkar Manthan and led his VVIT IUCEE Student Chapter to win the Best Student Chapter Award at IASF Jan 2026 held at GITAM.
-        He has a passion for AI in education, robotics (IISc goal), and storytelling/short films.
-        Keep answers concise, brutalist, and technical. No sugar-coating. Do not use markdown bolding formatting (no **), just use normal text. Decline unrelated questions.`;
-
-        const responseText = await callGeminiAPI(message, systemPrompt);
-
-        // Append AI Message
-        historyEl.innerHTML += `<div class="text-secondary"><span class="text-secondary font-bold">KKEK_AI:</span> ${responseText.replace(/\n/g, '<br/>')}</div><div class="border-b border-surface-variant my-2"></div>`;
-        
-        btnEl.disabled = false;
-        btnEl.innerHTML = "✨ SEND";
-        historyEl.scrollTop = historyEl.scrollHeight;
-    }
-
-    function handleChatEnter(event) {
-        if (event.key === 'Enter') {
-            sendChatMessage();
-        }
-    }
-
-    // --- Feature 2: Architecture Ideator ---
-    async function generateArchitecture() {
-        const inputEl = document.getElementById('arch-input');
-        const btnEl = document.getElementById('arch-btn');
-        const containerEl = document.getElementById('arch-output-container');
-        const loadingEl = document.getElementById('arch-loading');
-        const resultEl = document.getElementById('arch-result');
-        
-        const idea = inputEl.value.trim();
-        if (!idea) {
-            alert("Please provide an app idea first.");
-            return;
-        }
-
-        // Setup UI for loading
-        containerEl.classList.remove('hidden');
-        resultEl.classList.add('hidden');
-        loadingEl.classList.remove('hidden');
-        btnEl.disabled = true;
-        btnEl.innerText = "PROCESSING...";
-
-        const prompt = `Design a high-level system architecture for the following application idea: "${idea}".`;
-        const systemPrompt = `You are an expert software architect. Provide a brief, highly structured technical architecture. 
-        MANDATORY constraints: 
-        1. The frontend MUST be Android built with Kotlin and Jetpack Compose. 
-        2. The backend MUST be built with Java.
-        3. Mention specific databases (like PostgreSQL, Firebase, or Convex) and fundamental concepts (DSA, caching).
-        Output the response in plain text with clear bullet points, keeping it under 150 words. Do not use markdown formatting like ** or ##, just use standard capitalization and dashes for lists.`;
-
-        const responseText = await callGeminiAPI(prompt, systemPrompt);
-
-        // Display results
-        loadingEl.classList.add('hidden');
-        resultEl.classList.remove('hidden');
-        resultEl.innerText = responseText;
-        
-        btnEl.disabled = false;
-        btnEl.innerHTML = "✨ GENERATE ARCHITECTURE";
-    }
 
 // --- Scroll Progress Bar & Nav styling ---
     window.addEventListener('scroll', () => {
@@ -921,7 +772,97 @@
         counters.forEach(el => observer.observe(el));
     }
 
+        // --- First-Load Java Boot Screen Engine ---
+    let bootTimers = [];
+
+    function clearBootTimers() {
+        bootTimers.forEach(id => clearTimeout(id));
+        bootTimers = [];
+    }
+
+    function skipBoot() {
+        clearBootTimers();
+        const overlay = document.getElementById('boot-overlay');
+        if (!overlay) return;
+        
+        sessionStorage.setItem('kkek_booted', 'true');
+        overlay.classList.add('boot-exit');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            overlay.classList.remove('boot-exit');
+        }, 400);
+    }
+
+    function replayBootSequence() {
+        sessionStorage.removeItem('kkek_booted');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        runBootSequence(true);
+    }
+
+    function runBootSequence(forced = false) {
+        const overlay = document.getElementById('boot-overlay');
+        if (!overlay) return;
+
+        if (!forced && (sessionStorage.getItem('kkek_booted') || window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+            return;
+        }
+
+        clearBootTimers();
+        document.body.style.overflow = 'hidden';
+        overlay.style.display = 'flex';
+        overlay.classList.remove('boot-exit');
+
+        const logsEl = document.getElementById('boot-logs');
+        const statusTextEl = document.getElementById('boot-status-text');
+        const percentEl = document.getElementById('boot-percent');
+        const progressBar = document.getElementById('boot-progress-bar');
+        
+        logsEl.innerHTML = '';
+        progressBar.style.width = '0%';
+        percentEl.textContent = '0%';
+        statusTextEl.textContent = 'INITIALIZING JVM...';
+
+        const steps = [
+            { time: 200, percent: 25, status: 'COMPILING JAVA SOURCE...', log: '> [javac] Compiling Portfolio.java (JVM 22.0.2 target)... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 600, percent: 60, status: 'MOUNTING MODULES...', log: '> [runtime] Mounting Android SDK, Compose, Express, MongoDB... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 1000, percent: 85, status: 'LINKING REPOSITORIES...', log: '> [link] Ziegler Aerospace (48 PRs, 4 repos) verified... <span class="text-primary font-bold">[OK]</span>' },
+            { time: 1350, percent: 100, status: 'SYSTEM.OUT.PRINTLN()', log: '> <strong class="text-primary font-bold">System.out.println("200 OK — Launching KKEK.portfolio");</strong>' },
+            { time: 1850, action: 'exit' }
+        ];
+
+        steps.forEach(step => {
+            const timerId = setTimeout(() => {
+                if (overlay.style.display === 'none') return;
+                if (step.log) {
+                    const line = document.createElement('div');
+                    line.innerHTML = step.log;
+                    logsEl.appendChild(line);
+                }
+                if (step.percent !== undefined) {
+                    progressBar.style.width = step.percent + '%';
+                    percentEl.textContent = step.percent + '%';
+                }
+                if (step.status) {
+                    statusTextEl.textContent = step.status;
+                }
+                if (step.action === 'exit') {
+                    skipBoot();
+                }
+            }, step.time);
+            bootTimers.push(timerId);
+        });
+    }
+
+    // ESC key listener
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') skipBoot();
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
+        runBootSequence();
         initScrollReveal();
         initStatCounters();
     });
