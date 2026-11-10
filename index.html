@@ -103,12 +103,76 @@
         ::-webkit-scrollbar-thumb { background: #353534; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #3DDC84; }
         
+        :root {
+            --ease-brutal: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         /* High-Contrast Badge Base */
         .badge-brutal {
             border: 2px solid currentColor;
             box-shadow: 2px 2px 0px currentColor;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: transform 0.15s var(--ease-brutal), box-shadow 0.15s var(--ease-brutal), color 0.15s, background-color 0.15s;
+        }
+        .badge-brutal:active, button.badge-brutal:active, a.badge-brutal:active {
+            transform: translate(2px, 2px) !important;
+            box-shadow: 0px 0px 0px currentColor !important;
+        }
+
+        /* Subtle Scroll Reveal */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.45s var(--ease-brutal), transform 0.45s var(--ease-brutal);
+            will-change: opacity, transform;
+        }
+        .scroll-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stagger-1 { transition-delay: 40ms; }
+        .stagger-2 { transition-delay: 90ms; }
+        .stagger-3 { transition-delay: 140ms; }
+        .stagger-4 { transition-delay: 190ms; }
+
+        /* Ambient Hero Wireframe Float */
+        @keyframes ambient-drift-slow {
+            0%, 100% { transform: translateY(0px) rotate(12deg); }
+            50% { transform: translateY(-6px) rotate(10deg); }
+        }
+        @keyframes ambient-drift-reverse {
+            0%, 100% { transform: translateY(0px) rotate(-12deg); }
+            50% { transform: translateY(6px) rotate(-14deg); }
+        }
+        .ambient-drift {
+            animation: ambient-drift-slow 16s ease-in-out infinite;
+        }
+        .ambient-drift-rev {
+            animation: ambient-drift-reverse 18s ease-in-out infinite;
+        }
+
+        /* Terminal Cursor Blink */
+        @keyframes term-blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        .term-cursor {
+            animation: term-blink 1s infinite;
+        }
+
+        /* Accessibility: Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .scroll-reveal {
+                opacity: 1 !important;
+                transform: none !important;
+            }
         }
     </style>
 </head>
@@ -135,6 +199,8 @@
         </a>
     </div>
 </nav>
+<!-- Top Scroll Progress Bar -->
+<div id="scroll-progress" class="fixed top-16 left-0 h-[2px] bg-primary z-50 transition-[width] duration-75 w-0 pointer-events-none" style="box-shadow: 0 0 8px rgba(96, 249, 158, 0.6);"></div>
 
 <!-- Main Content -->
 <main class="flex-grow pt-24 pb-xl flex flex-col gap-[64px]">
@@ -152,14 +218,14 @@
         </svg>
 
         <!-- Raw Geometric Solid (Isometric Cube Wireframe) -->
-        <svg class="absolute top-20 right-20 w-32 h-32 text-outline-variant opacity-30 transform rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+        <svg class="absolute top-20 right-20 w-32 h-32 text-outline-variant opacity-30 transform rotate-12 ambient-drift" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
             <polygon points="50,10 90,30 90,70 50,90 10,70 10,30"/>
             <polyline points="10,30 50,50 90,30"/>
             <line x1="50" y1="50" x2="50" y2="90"/>
         </svg>
 
         <!-- Raw Geometric Solid (Pyramid Wireframe) -->
-        <svg class="absolute bottom-10 left-20 w-24 h-24 text-outline-variant opacity-30 transform -rotate-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+        <svg class="absolute bottom-10 left-20 w-24 h-24 text-outline-variant opacity-30 transform -rotate-12 ambient-drift-rev" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
             <polygon points="50,10 90,80 10,80"/>
             <line x1="50" y1="10" x2="50" y2="60"/>
             <polyline points="10,80 50,60 90,80"/>
@@ -170,7 +236,7 @@
             
             <div class="inline-flex items-center gap-sm bg-black px-md py-xs border-2 border-outline-variant w-fit mb-sm shadow-[4px_4px_0px_#353534]">
                 <span class="w-3 h-3 bg-primary animate-pulse border border-black"></span>
-                <span class="font-label-md text-label-md text-primary tracking-widest uppercase">System.out.println("Eshwara Kumar K.K.");</span>
+                <span class="font-label-md text-label-md text-primary tracking-widest uppercase">System.out.println("Eshwara Kumar K.K.");<span class="inline-block w-2 h-3.5 bg-primary ml-1.5 align-middle term-cursor"></span></span>
             </div>
 
             <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight leading-tight">
@@ -220,7 +286,7 @@
         </div>
 
         <!-- Ziegler Aerospace Card -->
-        <div class="relative bg-black border-l-4 border-primary p-xl shadow-[8px_8px_0px_#1c1b1b] overflow-hidden">
+        <div class="relative bg-black border-l-4 border-primary p-xl shadow-[8px_8px_0px_#1c1b1b] overflow-hidden scroll-reveal">
 
             <!-- Background Grid Decoration -->
             <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(0deg,#60f99e,#60f99e 1px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,#60f99e,#60f99e 1px,transparent 1px,transparent 32px);"></div>
@@ -248,19 +314,19 @@
             <!-- Impact Stat Chips -->
             <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-md mb-lg">
                 <div class="bg-surface-container border-2 border-primary shadow-[2px_2px_0px_#60f99e] p-md text-center">
-                    <div class="font-display-lg text-[28px] leading-none font-black text-primary">99<span class="text-[16px]">%</span></div>
+                    <div class="font-display-lg text-[28px] leading-none font-black text-primary stat-counter" data-stat-target="99" data-stat-suffix="%">99<span class="text-[16px]">%</span></div>
                     <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Fewer DB Calls</div>
                 </div>
                 <div class="bg-surface-container border-2 border-primary shadow-[2px_2px_0px_#60f99e] p-md text-center">
-                    <div class="font-display-lg text-[28px] leading-none font-black text-primary">85<span class="text-[16px]">%</span></div>
+                    <div class="font-display-lg text-[28px] leading-none font-black text-primary stat-counter" data-stat-target="85" data-stat-suffix="%">85<span class="text-[16px]">%</span></div>
                     <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Latency Cut</div>
                 </div>
                 <div class="bg-surface-container border-2 border-secondary shadow-[2px_2px_0px_#adc6ff] p-md text-center">
-                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary">48<span class="text-[16px]">+</span></div>
+                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary stat-counter" data-stat-target="48" data-stat-suffix="+">48<span class="text-[16px]">+</span></div>
                     <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">PRs Merged</div>
                 </div>
                 <div class="bg-surface-container border-2 border-secondary shadow-[2px_2px_0px_#adc6ff] p-md text-center">
-                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary">4</div>
+                    <div class="font-display-lg text-[28px] leading-none font-black text-secondary stat-counter" data-stat-target="4" data-stat-suffix="">4</div>
                     <div class="font-label-md text-label-md text-on-surface-variant mt-xs uppercase">Prod Repos</div>
                 </div>
             </div>
@@ -387,7 +453,7 @@
 
     <!-- Architecture Ideator (Gemini Feature) -->
     <section class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop scroll-mt-24" id="ideator">
-        <div class="bg-surface-container-lowest p-xl border-2 border-primary shadow-[4px_4px_0px_#60f99e] relative">
+        <div class="bg-surface-container-lowest p-xl border-2 border-primary shadow-[4px_4px_0px_#60f99e] relative scroll-reveal">
             <h2 class="font-headline-lg text-headline-lg text-primary uppercase tracking-wider mb-sm">✨ System Architecture Ideator</h2>
             <p class="font-body-md text-on-surface-variant mb-lg max-w-3xl">
                 Pitch an app idea below. My integrated AI will design a high-level system architecture to build it using my core stack: Android (Kotlin), Java, and scalable databases.
@@ -544,6 +610,8 @@
             <span class="material-symbols-outlined text-[16px]">policy</span> PRIVACY POLICY
         </a>
     </nav>
+<!-- Top Scroll Progress Bar -->
+<div id="scroll-progress" class="fixed top-16 left-0 h-[2px] bg-primary z-50 transition-[width] duration-75 w-0 pointer-events-none" style="box-shadow: 0 0 8px rgba(96, 249, 158, 0.6);"></div>
 </footer>
 
 <!-- AI Assistant Modal -->
@@ -685,7 +753,7 @@
         historyEl.scrollTop = historyEl.scrollHeight;
 
         const systemPrompt = `You are a professional, direct AI assistant representing Eshwara Kumar K.K. (KKEK).
-        KKEK is a CS graduate from VVIT and Technical Head of the IUCEE Student Chapter (Sept 2024 - March 2026). He completed his B.Tech in CSE with CGPA 6.86 and previously got a diploma in Computer Engineering from M.B.T.S. Govt Polytechnic (76%). 
+        KKEK is a CS graduate from VVIT and Technical Head of the IUCEE Student Chapter (Sept 2024 - March 2026). He completed his B.Tech in CSE with CGPA 7.26 and previously got a diploma in Computer Engineering from M.B.T.S. Govt Polytechnic (76%). He completed a high-impact Software Engineering Internship at Ziegler Aerospace (Aug - Nov 2026) where he won the Rising Star Intern Award, contributed to 4 production repositories across 48+ merged PRs, cut query latency by 85%, and eliminated 99% of bulk database calls. 
         His projects include:
         1. Multiplayer Chess App (Kotlin, Compose, Firebase, published on Play Store with 50+ downloads)
         2. Personal Cloud Storage (Java Full-Stack, Convex)
@@ -751,7 +819,7 @@
         btnEl.innerHTML = "✨ GENERATE ARCHITECTURE";
     }
 
-    // Solid brutalist nav background on scroll
+// --- Scroll Progress Bar & Nav styling ---
     window.addEventListener('scroll', () => {
         const nav = document.getElementById('top-nav');
         if (window.scrollY > 20) {
@@ -761,6 +829,101 @@
             nav.classList.remove('shadow-[0_4px_0px_#131313]', 'bg-surface-container-highest');
             nav.classList.add('bg-surface', 'border-surface-container-low');
         }
+
+        const progressEl = document.getElementById('scroll-progress');
+        if (progressEl) {
+            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = totalScroll > 0 ? (window.scrollY / totalScroll) * 100 : 0;
+            progressEl.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        }
+    });
+
+    // --- Subtle Scroll-Reveal Engine ---
+    function initScrollReveal() {
+        const items = document.querySelectorAll('.scroll-reveal');
+        if (!items.length) return;
+
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            items.forEach(el => el.classList.add('is-visible'));
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -30px 0px'
+        });
+
+        items.forEach(el => observer.observe(el));
+    }
+
+    // --- Experience Metric Counters ---
+    function initStatCounters() {
+        const counters = document.querySelectorAll('.stat-counter');
+        if (!counters.length) return;
+
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    obs.unobserve(el);
+
+                    const target = parseInt(el.getAttribute('data-stat-target'), 10);
+                    const suffix = el.getAttribute('data-stat-suffix') || '';
+                    if (isNaN(target)) return;
+
+                    const duration = 650;
+                    const startTime = performance.now();
+
+                    function update(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const easeOut = 1 - Math.pow(1 - progress, 2);
+                        const currentVal = Math.floor(easeOut * target);
+
+                        if (suffix === '%') {
+                            el.innerHTML = `${currentVal}<span class="text-[16px]">%</span>`;
+                        } else if (suffix === '+') {
+                            el.innerHTML = `${currentVal}<span class="text-[16px]">+</span>`;
+                        } else {
+                            el.textContent = currentVal;
+                        }
+
+                        if (progress < 1) {
+                            requestAnimationFrame(update);
+                        } else {
+                            if (suffix === '%') {
+                                el.innerHTML = `${target}<span class="text-[16px]">%</span>`;
+                            } else if (suffix === '+') {
+                                el.innerHTML = `${target}<span class="text-[16px]">+</span>`;
+                            } else {
+                                el.textContent = target;
+                            }
+                        }
+                    }
+                    requestAnimationFrame(update);
+                }
+            });
+        }, {
+            threshold: 0.25
+        });
+
+        counters.forEach(el => observer.observe(el));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initScrollReveal();
+        initStatCounters();
     });
 </script>
 </body>
