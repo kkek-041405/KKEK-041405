@@ -660,11 +660,339 @@
     </nav>
 </footer>
 
+<!-- Java Action Execution Terminal Modal -->
+<div id="java-action-modal" class="fixed inset-0 z-[10000] bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface border-4 border-primary shadow-[8px_8px_0px_#60f99e] w-full max-w-xl flex flex-col font-label-md overflow-hidden relative">
+        <!-- Terminal Header -->
+        <div class="bg-primary text-black p-3 flex justify-between items-center border-b-2 border-black font-bold">
+            <span class="flex items-center gap-2 text-xs uppercase tracking-wider">
+                <span class="material-symbols-outlined text-[18px]">terminal</span>
+                <span id="jam-title">JVM 22.0.2 // JAVA_ACTION_RUNNER</span>
+            </span>
+            <button onclick="closeJavaActionModal()" class="hover:bg-black hover:text-primary px-2 py-0.5 transition-colors text-xs font-mono font-bold border border-transparent hover:border-currentColor">
+                [X] ESC
+            </button>
+        </div>
+
+        <!-- Terminal Command Bar -->
+        <div class="bg-black text-on-surface-variant px-4 py-2 text-xs border-b border-surface-variant font-mono flex items-center justify-between">
+            <span id="jam-cmd" class="text-primary">> javac Action.java &amp;&amp; java Action</span>
+            <span id="jam-status" class="text-secondary text-[10px] tracking-widest uppercase font-bold">COMPILING</span>
+        </div>
+
+        <!-- Code & Output Screen -->
+        <div class="p-4 bg-[#0a0a0a] text-xs font-mono space-y-3">
+            <!-- Java Code Snippet -->
+            <div id="jam-code" class="text-on-surface-variant border-l-2 border-primary pl-3 py-1 text-xs leading-relaxed overflow-x-auto whitespace-pre font-mono bg-black/50">
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Execution Logs -->
+            <div id="jam-logs" class="text-[11px] space-y-1 border-t border-surface-variant pt-2 text-on-surface-variant min-h-[44px]">
+                <!-- Streamed logs -->
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="pt-1">
+                <div class="flex justify-between text-[10px] text-on-surface-variant mb-1">
+                    <span id="jam-progress-text">EXECUTING BYTECODE...</span>
+                    <span id="jam-percent" class="text-primary font-bold">0%</span>
+                </div>
+                <div class="w-full h-1.5 bg-surface-container overflow-hidden border border-outline-variant">
+                    <div id="jam-progress-bar" class="h-full bg-primary transition-all duration-75 ease-out w-0" style="box-shadow: 0 0 8px rgba(96, 249, 158, 0.8);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Action Bar -->
+        <div class="bg-surface-container p-3 flex flex-wrap justify-between items-center gap-2 border-t border-surface-variant text-xs">
+            <span id="jam-auto-note" class="text-on-surface-variant text-[11px] flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-primary animate-pulse"></span>
+                <span>Auto-executing in <span id="jam-countdown">0.8</span>s...</span>
+            </span>
+            <div class="flex items-center gap-2">
+                <button id="jam-copy-btn" onclick="copyJavaCode()" class="badge-brutal border-outline-variant bg-black text-on-surface-variant hover:text-primary hover:border-primary px-3 py-1 text-xs">
+                    [ COPY CODE ]
+                </button>
+                <button id="jam-execute-btn" onclick="executeJavaActionNow()" class="badge-brutal bg-primary text-black font-bold px-4 py-1 text-xs hover:-translate-y-0.5 transition-all">
+                    [ PROCEED NOW ↗ ]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
    
 
-// --- Scroll Progress Bar & Nav styling ---
+    // =========================================================================
+    // --- JAVA TERMINAL ACTION EXECUTOR ENGINE ---
+    // Every action (except in-page # anchors) executes in terminal using Java code
+    // =========================================================================
+
+    let currentActionContext = null;
+    let jamExecutionTimer = null;
+    let jamProgressInterval = null;
+    let jamRawCodeToCopy = "";
+
+    function closeJavaActionModal() {
+        if (jamExecutionTimer) clearTimeout(jamExecutionTimer);
+        if (jamProgressInterval) clearInterval(jamProgressInterval);
+        const modal = document.getElementById('java-action-modal');
+        if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        currentActionContext = null;
+    }
+
+    function executeJavaActionNow() {
+        if (!currentActionContext) return;
+        const ctx = currentActionContext;
+        closeJavaActionModal();
+
+        if (ctx.type === 'link') {
+            if (ctx.url.startsWith('mailto:')) {
+                window.location.href = ctx.url;
+            } else if (ctx.target === '_blank' || ctx.url.startsWith('http')) {
+                window.open(ctx.url, '_blank', 'noopener,noreferrer');
+            } else {
+                window.location.href = ctx.url;
+            }
+        } else if (ctx.type === 'phone') {
+            window.location.href = 'tel:+917671945929';
+        } else if (ctx.type === 'reboot') {
+            replayBootSequence();
+        }
+    }
+
+    function copyJavaCode() {
+        if (!jamRawCodeToCopy) return;
+        navigator.clipboard.writeText(jamRawCodeToCopy).then(() => {
+            const btn = document.getElementById('jam-copy-btn');
+            const original = btn.innerText;
+            btn.innerText = "[ COPIED! ]";
+            btn.classList.add('text-primary', 'border-primary');
+            setTimeout(() => {
+                btn.innerText = original;
+                btn.classList.remove('text-primary', 'border-primary');
+            }, 1500);
+        });
+    }
+
+    function handleJavaAction(action) {
+        currentActionContext = action;
+        const modal = document.getElementById('java-action-modal');
+        const cmdEl = document.getElementById('jam-cmd');
+        const codeEl = document.getElementById('jam-code');
+        const logsEl = document.getElementById('jam-logs');
+        const statusEl = document.getElementById('jam-status');
+        const progressEl = document.getElementById('jam-progress-bar');
+        const percentEl = document.getElementById('jam-percent');
+        const noteEl = document.getElementById('jam-auto-note');
+        const executeBtn = document.getElementById('jam-execute-btn');
+
+        if (!modal) return;
+
+        // Reset state
+        if (jamExecutionTimer) clearTimeout(jamExecutionTimer);
+        if (jamProgressInterval) clearInterval(jamProgressInterval);
+        
+        progressEl.style.width = '0%';
+        percentEl.textContent = '0%';
+        logsEl.innerHTML = '';
+        statusEl.textContent = 'COMPILING';
+        statusEl.className = 'text-secondary text-[10px] tracking-widest uppercase font-bold';
+        document.body.style.overflow = 'hidden';
+
+        let javaCode = "";
+        let className = "Action";
+        let actionDesc = "Executing Action";
+        let destination = action.url || "";
+
+        // Route to specific Java programs
+        if (destination.includes('github.com')) {
+            className = "OpenGitHub";
+            actionDesc = "Opening GitHub Profile";
+            executeBtn.innerText = "[ OPEN GITHUB ↗ ]";
+            javaCode = `import java.awt.Desktop;
+import java.net.URI;
+
+public class OpenGitHub {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Connecting to GitHub: @kkek-041405");
+        Desktop.getDesktop().browse(URI.create("${destination}"));
+        System.out.println("Status: 200 OK — Redirecting to repository...");
+    }
+}`;
+        } else if (destination.startsWith('mailto:')) {
+            className = "SendEmail";
+            actionDesc = "Initializing SMTP Client";
+            executeBtn.innerText = "[ COMPOSE MAIL ↗ ]";
+            javaCode = `import java.awt.Desktop;
+import java.net.URI;
+
+public class SendEmail {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Opening default SMTP transport...");
+        Desktop.getDesktop().mail(URI.create("${destination}"));
+        System.out.println("Draft buffer created: komalkonatham@gmail.com");
+    }
+}`;
+        } else if (destination === '/resume' || destination.includes('resume')) {
+            className = "ViewResume";
+            actionDesc = "Routing to Resume Bytecode";
+            executeBtn.innerText = "[ VIEW RESUME ↗ ]";
+            javaCode = `import dev.kkek.runtime.HttpRouter;
+
+public class ViewResume {
+    public static void main(String[] args) {
+        System.out.println("Dispatching GET /resume (A4 Print-Ready Document)...");
+        HttpRouter.navigate("/resume");
+        System.out.println("Status: 200 OK — Document compiled successfully.");
+    }
+}`;
+        } else if (destination.includes('privacy')) {
+            className = "ViewPrivacyPolicy";
+            actionDesc = "Fetching Privacy Policy";
+            executeBtn.innerText = "[ OPEN POLICY ↗ ]";
+            javaCode = `import dev.kkek.runtime.HttpRouter;
+
+public class ViewPrivacyPolicy {
+    public static void main(String[] args) {
+        System.out.println("Fetching Google Play & GDPR compliance document...");
+        HttpRouter.navigate("/privacy.html");
+        System.out.println("Status: 200 OK — Rendered.");
+    }
+}`;
+        } else if (action.type === 'phone') {
+            className = "TelephonyBridge";
+            actionDesc = "Dialing Voice Bridge";
+            executeBtn.innerText = "[ CALL +91 7671945929 ]";
+            javaCode = `import dev.kkek.telephony.AndroidDialer;
+
+public class TelephonyBridge {
+    public static void main(String[] args) {
+        System.out.println("Initiating telephony bridge handshake...");
+        AndroidDialer.connect("+91 7671945929");
+        System.out.println("Channel active: +91 7671945929");
+    }
+}`;
+        } else {
+            className = "ExecuteCommand";
+            actionDesc = "Executing Action";
+            executeBtn.innerText = "[ PROCEED ↗ ]";
+            javaCode = `import java.net.URI;
+
+public class ExecuteCommand {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Target: ${destination}");
+        java.awt.Desktop.getDesktop().browse(URI.create("${destination}"));
+        System.out.println("200 OK — Executed.");
+    }
+}`;
+        }
+
+        jamRawCodeToCopy = javaCode;
+        cmdEl.innerHTML = `> javac ${className}.java &amp;&amp; java ${className}`;
+        
+        // Highlight Java code syntax
+        const highlighted = javaCode
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/(public class|public static void|import|throws Exception)/g, '<span class="text-secondary font-bold">$1</span>')
+            .replace(/(System\.out\.println|Desktop\.getDesktop\(\)\.\w+|HttpRouter\.navigate|AndroidDialer\.connect)/g, '<span class="text-primary font-bold">$1</span>')
+            .replace(/("[^"]*")/g, '<span class="text-tertiary">$1</span>');
+
+        codeEl.innerHTML = highlighted;
+        modal.classList.remove('hidden');
+
+        // Streaming logs
+        setTimeout(() => {
+            logsEl.innerHTML += `<div class="text-on-surface-variant">> [javac] Compiling <span class="text-primary font-bold">${className}.java</span> (JVM 22 target)... <span class="text-primary">[OK]</span></div>`;
+        }, 120);
+
+        setTimeout(() => {
+            logsEl.innerHTML += `<div class="text-on-surface-variant">> [JVM] Executing <span class="text-primary">${className}.main()</span> — ${actionDesc}...</div>`;
+        }, 320);
+
+        // Progress bar 0% to 100% in 700ms
+        const startTime = performance.now();
+        const duration = 750;
+
+        jamProgressInterval = setInterval(() => {
+            const elapsed = performance.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const percent = Math.round(progress * 100);
+            
+            progressEl.style.width = percent + '%';
+            percentEl.textContent = percent + '%';
+
+            const remaining = Math.max(0, ((duration - elapsed) / 1000)).toFixed(1);
+            const countdownEl = document.getElementById('jam-countdown');
+            if (countdownEl) countdownEl.textContent = remaining;
+
+            if (progress >= 1) {
+                clearInterval(jamProgressInterval);
+                statusEl.textContent = 'EXECUTED';
+                statusEl.className = 'text-primary text-[10px] tracking-widest uppercase font-bold';
+                logsEl.innerHTML += `<div class="text-primary font-bold">> [STDOUT] Operation completed. Redirecting...</div>`;
+                
+                // Auto execute
+                jamExecutionTimer = setTimeout(() => {
+                    executeJavaActionNow();
+                }, 220);
+            }
+        }, 25);
+    }
+
+    // Intercept clicks on any <a> tag that is NOT an internal in-page # anchor
+    document.addEventListener('click', (e) => {
+        // Don't intercept clicks inside the Java action modal itself
+        if (e.target.closest('#java-action-modal')) return;
+
+        const link = e.target.closest('a');
+        if (link) {
+            const href = link.getAttribute('href');
+            // If internal in-page anchor starting with #, allow default smooth scroll
+            if (!href || href.startsWith('#')) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            handleJavaAction({
+                type: 'link',
+                url: href,
+                label: link.innerText.trim(),
+                target: link.target
+            });
+            return;
+        }
+
+        const actionBtn = e.target.closest('[data-action]');
+        if (actionBtn) {
+            const actionType = actionBtn.getAttribute('data-action');
+            e.preventDefault();
+            e.stopPropagation();
+            handleJavaAction({
+                type: actionType,
+                label: actionBtn.innerText.trim()
+            });
+        }
+    });
+
+    // ESC key closes action modal
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeJavaActionModal();
+        } else if (e.key === 'Enter') {
+            const modal = document.getElementById('java-action-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                executeJavaActionNow();
+            }
+        }
+    });
+
+    // --- Scroll Progress Bar & Nav styling ---
     window.addEventListener('scroll', () => {
         const nav = document.getElementById('top-nav');
         if (window.scrollY > 20) {
