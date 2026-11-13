@@ -534,6 +534,18 @@
 
         <div class="proj-block">
             <div class="proj-header">
+                <div class="proj-name">Distributed Notification Engine &nbsp;<a href="https://github.com/kkek-041405/notification-engine" target="_blank" style="color:var(--primary); font-size:11px; text-decoration:underline;">[GitHub ↗]</a></div>
+                <div class="proj-stack">Java 25 · Spring Boot 4 · Redis Streams · Redis Lua · Docker</div>
+            </div>
+            <ul class="proj-bullets">
+                <li>Architected an event-driven distributed notification pipeline sustaining <strong>3,000+ RPS</strong> with sub-5ms p99 ingestion latency by decoupling ingestion from external provider dispatch.</li>
+                <li>Engineered atomic sliding-window rate limiting via Redis Lua scripts (EVALSHA) in O(1) sorted-set operations, eliminating distributed TOCTOU race conditions across horizontal clusters.</li>
+                <li>Implemented two-phase distributed idempotency locks (SETNX with 30s lease + 24h terminal cache) and resilient stream consumer groups with Pending Entries List (PEL) tracking, full-jitter exponential backoff, and DLQ routing.</li>
+            </ul>
+        </div>
+
+        <div class="proj-block">
+            <div class="proj-header">
                 <div class="proj-name">Real-Time Multiplayer Chess &nbsp;<a href="https://play.google.com/store/apps/details?id=com.KKEK.chess" target="_blank" style="color:var(--secondary); font-size:11px; text-decoration:underline;">[Play Store ↗]</a></div>
                 <div class="proj-stack">Kotlin · Jetpack Compose · Firebase · WebSockets</div>
             </div>
@@ -575,13 +587,14 @@
             <div class="skill-group">
                 <div class="skill-category">Web & Cloud</div>
                 <div class="skill-tags">
+                    <span class="tag p">Spring Boot</span>
                     <span class="tag s">React.js</span>
                     <span class="tag s">Next.js</span>
                     <span class="tag s">Node.js</span>
                     <span class="tag s">Express.js</span>
-                    <span class="tag">AWS S3</span>
                     <span class="tag">Docker</span>
                     <span class="tag">REST APIs</span>
+                    <span class="tag">AWS S3</span>
                 </div>
             </div>
             <div class="skill-group">
@@ -595,10 +608,10 @@
             <div class="skill-group">
                 <div class="skill-category">Databases</div>
                 <div class="skill-tags">
-                    <span class="tag">MongoDB</span>
+                    <span class="tag p">Redis</span>
                     <span class="tag">PostgreSQL</span>
+                    <span class="tag">MongoDB</span>
                     <span class="tag">Firebase</span>
-                    <span class="tag">Redis</span>
                 </div>
             </div>
             <div class="skill-group">

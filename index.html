@@ -455,6 +455,33 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
             
+            <!-- Distributed Notification Engine -->
+            <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-primary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#3ddc84] group relative">
+                <div class="absolute top-0 right-0 p-md">
+                    <span class="material-symbols-outlined text-primary text-3xl">hub</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge-brutal bg-primary text-black font-label-md text-[10px] px-2 py-0.5 font-bold uppercase">Distributed System</span>
+                    <span class="text-xs text-on-surface-variant font-mono">3,000+ RPS Benchmark</span>
+                </div>
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold uppercase">Distributed Notification Engine</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant flex-grow">
+                    High-throughput, fault-tolerant notification delivery pipeline built with Spring Boot and Redis Streams. Decouples 3,000+ RPS ingestion (&lt; 5ms latency) from delivery, featuring atomic sliding-window rate limiting via Redis Lua, two-phase distributed idempotency locks, PEL consumer groups, and full-jitter exponential backoff to a Dead Letter Queue (DLQ).
+                </p>
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-auto pt-md border-t border-surface-variant">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge-brutal text-primary bg-black font-label-md px-2.5 py-1 text-xs">Java 25</span>
+                        <span class="badge-brutal text-primary bg-black font-label-md px-2.5 py-1 text-xs">Spring Boot</span>
+                        <span class="badge-brutal text-primary bg-black font-label-md px-2.5 py-1 text-xs">Redis Streams</span>
+                        <span class="badge-brutal text-primary bg-black font-label-md px-2.5 py-1 text-xs">Lua</span>
+                        <span class="badge-brutal text-primary bg-black font-label-md px-2.5 py-1 text-xs">Docker</span>
+                    </div>
+                    <a href="https://github.com/kkek-041405/notification-engine" target="_blank" class="badge-brutal bg-primary text-black font-label-md px-3 py-1.5 flex items-center gap-1.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#ffffff] transition-all font-bold text-xs" title="Open in GitHub">
+                        <span class="material-symbols-outlined text-[16px]">code</span> GITHUB ↗
+                    </a>
+                </div>
+            </div>
+            
             <!-- Multiplayer Chess App -->
             <div class="bg-surface rounded-none p-lg flex flex-col gap-md border-2 border-outline-variant hover:border-secondary transition-colors shadow-[4px_4px_0px_#353534] hover:shadow-[8px_8px_0px_#adc6ff] group relative">
                 <div class="absolute top-0 right-0 p-md">
@@ -819,7 +846,25 @@
         let destination = action.url || "";
 
         // Route to specific Java programs
-        if (destination.includes('play.google.com')) {
+        if (destination.includes('notification-engine')) {
+            className = "InspectNotificationEngine";
+            actionDesc = "Inspecting Distributed Pipeline Repository";
+            executeBtn.innerText = "[ VIEW SOURCE ON GITHUB ↗ ]";
+            javaCode = `package com.system.notification_engine;
+
+import java.awt.Desktop;
+import java.net.URI;
+
+public class InspectNotificationEngine {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Cluster: Spring Boot 4 + Redis 7 Streams");
+        System.out.println("Benchmark: 3,000+ RPS sustained (<5ms p99)");
+        System.out.println("Connecting to: https://github.com/kkek-041405/notification-engine");
+        Desktop.getDesktop().browse(URI.create("${destination}"));
+        System.out.println("Status: 200 OK — Opening architecture & source...");
+    }
+}`;
+        } else if (destination.includes('play.google.com')) {
             className = "OpenPlayStore";
             actionDesc = "Dispatching Google Play Store Intent";
             executeBtn.innerText = "[ LAUNCH PLAY STORE ↗ ]";

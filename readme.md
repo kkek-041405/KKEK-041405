@@ -9,17 +9,18 @@ I advocate for a deterministic engineering approach: utilizing AI to drive compl
 * **Languages:** Java, Kotlin, JavaScript, SQL, HTML/CSS
 
 
-* **Frameworks & Libraries:** Jetpack Compose, React.js, Android SDK, Kotlin Coroutines
+* **Frameworks & Libraries:** Spring Boot, Redis Streams, Jetpack Compose, React.js, Android SDK, Kotlin Coroutines
 
+* **Core Competencies:** Data Structures & Algorithms (DSA), Object-Oriented Programming, DBMS, Operating Systems, Distributed Systems
 
-* **Core Competencies:** Data Structures & Algorithms (DSA), Object-Oriented Programming, DBMS, Operating Systems
-
-
-* **Tools & Platforms:** Firebase, Git
+* **Tools & Platforms:** Redis, Docker, Firebase, Git
 
 
 
 ## Featured Work
+
+* **Distributed Notification Engine:** Engineered a high-throughput, fault-tolerant notification delivery architecture in Java 25 & Spring Boot backed by Redis Streams. Sustains 3,000+ RPS with sub-5ms ingestion latency, featuring atomic sliding-window rate limiting via Redis Lua scripts, two-phase distributed idempotency locks, PEL consumer group delivery safety, and exponential backoff with full jitter to a Dead Letter Queue (DLQ).
+
 
 * **ZenControl (System-Level Android Controller):** Engineered a headless device controller that maps complex background actions to physical hardware triggers. By leveraging Accessibility Services, Broadcast Receivers, and Kotlin Coroutines, it enables full smartphone operation with low-latency hardware responses, entirely bypassing the touch interface.
 
